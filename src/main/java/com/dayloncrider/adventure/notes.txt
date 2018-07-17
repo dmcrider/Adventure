@@ -31,15 +31,7 @@ Carrying-capacity is determined with the following formula:
     OccupationModifier (Thief) = 10.25
     (Character Level + Constitution) * OccupationModifier
 
-Story:
-An old man approaches you as you head to enter the local tavern. You decide to indulge the old man and listen to him.
-    A nearby town has been overrun with Orcs and he would like you, a strong-looking << RACE >> to go check on his family that lives there.
-
-You agree and head to the market to pick up some supplies.
-    On the way there, a seller whose poor reputation preceedes him approaches you.
-    If you give him << 60 >> gold, he'll give you a scroll that will aid you later in your adventure
-
-You continue on to the market and purchase some supplies
+Beginner's market:
     Shield/Sword                |
     Bow/Quiver                  |---------> Occupation dependant
     Quarterstaff/Spell Book     |
@@ -52,12 +44,8 @@ You continue on to the market and purchase some supplies
     Flint
     Orb of concealment
 
-You leave the market and head towards the overrun city
+EXP Needed to reach next level:
+    20 * PlayerLevel
 
-As you approach the outskirts, you see two Orcs that seem to be patrolling the area
-    What do you do?
-        1 Find a way around
-        2 Wait for nightfall
-        3 (Ranger / Mage) Attack from a distance
-        4 (Warrior / Defender) Rush them and strike the first blow
-        5 (Thief) Sneak up behind them and attack
+Intro_Story_Outline.png carries the player through the Intro. At the end, the player will be level 2.
+    Depending on the path they chose, some will be closer to level 3 than others
