@@ -1,0 +1,9 @@
+Character
+---------
++ name : String
++ hitPoints : int
++ strength : int
++ constitution : int
++ backpack : Backpack
+- occupation : String
+- race : String

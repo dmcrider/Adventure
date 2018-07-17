@@ -1,0 +1,63 @@
+*** This is simply a place for me to write notes and references for gameplay ***
+
+Races: Elf, Human, Dwarf
+Occupation: Ranger, Warrior, Defender, Mage, Thief
+
+Race/Occupation exclusions: Dwarves cannot be Rangers and Elves cannot be Theives
+
+Stuff you start with:
+    100 Gold
+    Backpack (with 1 bedding, 1 extra pair of boots, 1 small knife, 3 small animal furs)
+    Canteen
+
+Level 1 Stats (Max Carry):
+    Ranger - 66
+    Warrior - 72
+    Defender - 72
+    Mage - 64
+    Thief - 62
+
+Small items have a weight of 2
+Medium items have a weight of 5
+Large items have a weight of 10
+Extra-large items have a weight of 15
+Special items have their own weight defined
+
+Carrying-capacity is determined with the following formula:
+    OccupationModifier (Ranger) = 11
+    OccupationModifier (Warrior) = 12
+    OccupationModifier (Defender) = 12
+    OccupationModifier (Mage) = 10.6
+    OccupationModifier (Thief) = 10.25
+    (Character Level + Constitution) * OccupationModifier
+
+Story:
+An old man approaches you as you head to enter the local tavern. You decide to indulge the old man and listen to him.
+    A nearby town has been overrun with Orcs and he would like you, a strong-looking << RACE >> to go check on his family that lives there.
+
+You agree and head to the market to pick up some supplies.
+    On the way there, a seller whose poor reputation preceedes him approaches you.
+    If you give him << 60 >> gold, he'll give you a scroll that will aid you later in your adventure
+
+You continue on to the market and purchase some supplies
+    Shield/Sword                |
+    Bow/Quiver                  |---------> Occupation dependant
+    Quarterstaff/Spell Book     |
+    Dagger/Disguise             |
+
+    2-Day Rations
+    1-Day Rations
+    Lamp with oil
+    Rope
+    Flint
+    Orb of concealment
+
+You leave the market and head towards the overrun city
+
+As you approach the outskirts, you see two Orcs that seem to be patrolling the area
+    What do you do?
+        1 Find a way around
+        2 Wait for nightfall
+        3 (Ranger / Mage) Attack from a distance
+        4 (Warrior / Defender) Rush them and strike the first blow
+        5 (Thief) Sneak up behind them and attack
