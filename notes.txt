@@ -1,5 +1,7 @@
 *** This is simply a place for me to write notes and references for gameplay ***
 
+Should use AJAX to update stats on the side
+
 Races: Elf, Human, Dwarf
 Occupation: Ranger, Warrior, Defender, Mage, Thief
 
