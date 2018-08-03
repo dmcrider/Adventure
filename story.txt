@@ -1,0 +1,58 @@
+*************** INTRODUCTION ***************
+An old man approaches you as you head to enter the local tavern, asking for your help. You decide to indulge the old man and listen to him.
+    A nearby town has been overrun with Orcs and he would like you, a strong-looking << RACE >> to go check on his family that lives there.
+
+You agree and head to the market to pick up some supplies.
+    On the way there, a seller whose poor reputation preceedes him, approaches you.
+    If you give him << 60 >> gold, he'll give you a scroll that he claims will aid you later in your adventure
+
+You continue on to the market and purchase some supplies
+
+You leave the market and head towards the overrun city
+
+As you approach the outskirts, you see two Orcs that seem to be patrolling the area
+    What do you do?
+        1 Find a way around
+        2 Wait for nightfall
+        3 (Ranger / Mage) Attack from a distance
+        3 (Warrior / Defender) Rush them and strike the first blow
+        3 (Thief) Sneak up behind them and attack
+
+1 & 2 -> GoTo: PART 1 - Forest
+3 -> Continue
+
+<< Description of attack on Orcs >>
+
+You gain 10 EXP! Congradulations!
+
+As you begin to search the city, you realize dusk is upon you and you don't want to stay here overnight.
+	What do you decide to focus on?
+		1 Look for supplies (only available if player has space to carry more)
+		2 Search for survivors
+		3 Find any remaining Orcs
+		
+1 -> GoTo Supply Run
+2 -> GoTo Find Survivors
+3 -> GoTo Battle Orcs
+
+** Supply Run **
+<< Describe searching for supplies >>
+You found 3 1-day rations and a scroll in a language that you can't read. You earned 10 EXP!
+GoTo: PART 1 - Forest
+
+** Find Survivors **
+<< Describe searching or survivors >>
+<< Listen to story of Orc attack >>
+You earned 15 EXP!
+GoTo: PART 1 - Forest
+
+** Battle Orcs **
+<< Describe searching city for Orcs >>
+<< Battle Orc 1/4 >> You earned 5 EXP!
+<< Battle Orc 2/4 >> You earned 5 EXP!
+<< Battle Orc 3/4 >> You earned 5 EXP!
+<< Battle Orc 4/4 >> You earned 5 EXP!
+GoTo: PART 1 - Forest
+
+
+*************** PART 1 - Forest ***************
