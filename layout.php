@@ -18,5 +18,15 @@
             <p>Adventure</p>
         </div>
     </div>
+    <!-- Body -->
+    <div class="row">
+        <?php require_once('routes.php'); ?>
+    </div>
+    <!-- Footer -->
+    <div class="row">
+        <footer>
+            <p class="text-muted">Copyright &copy 2018 Daylon Crider</p>
+        </footer>
+    </div>
 </body>
 </html>
