@@ -1,6 +1,6 @@
 <?php
     if(!isset($_SESSION['logged-in'])){
-        header('Location: /pages/login.php');
+        header('Location: pages/login.php');
         die();
     }
 ?>
