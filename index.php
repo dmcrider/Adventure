@@ -1,3 +1,5 @@
 <?php
-    echo "Adventure is coming soon!";
+    session_start();
+
+    require_once('layout.php');
 ?>
