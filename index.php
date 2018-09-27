@@ -15,6 +15,17 @@
 
     // Start a session
     session_start();
+
+    if(!isset($_SESSION['is-logged-in'])){
+        if(isset($_GET['action'])){
+            $action = $_GET['action'];
+            if($action != 'login' and $action != 'register'){
+                $action = 'login';
+            }
+        }else{
+            $action = "login";
+        }
+    }
     
     require_once('layout.php');
 ?>
