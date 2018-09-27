@@ -24,7 +24,7 @@
                 </button>
                 <ul class="dropdown-menu">
                     <?php if(isset($_GET['action'])) : ?>
-                        <?php if($_GET['action'] != '') :  ?>
+                        <?php if($_GET['action'] != 'home') :  ?>
                             <li class="dropdown-item"><a href="index.php?action=home"><img src="_assets/img/glyph-home.png"> Home</a></li>
                         <?php endif; ?>
                     <?php endif; ?>
