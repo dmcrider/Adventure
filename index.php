@@ -11,7 +11,7 @@
     */
 
     // Include the database connection
-    require_once('_controllers/connection.php')
+    require_once('_controllers/connection.php');
 
     // Start a session
     session_start();
