@@ -15,7 +15,7 @@
                 <div class="col-md-4 user">
                     <button type="button" class="btn btn-primary outline dropdown-toggle" data-toggle="dropdown">
                         <img src="_assets/img/glyph-user.png">
-                        <?php echo $_SESSION['current-user']->firstname ?>
+                        <?php echo $_SESSION['current-user']->FirstName ?>
                     </button>
                     <ul class="dropdown-menu">
                         <?php if(isset($_GET['action'])) : ?>
