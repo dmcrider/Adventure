@@ -15,6 +15,10 @@ class User{
         $this->username = $username;
     }
 
+    public function FirstName(){
+        return $this->firstname;
+    }
+
     public static function Login(){
         try{
             // Set up the Database connection
