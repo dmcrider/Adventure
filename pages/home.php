@@ -4,6 +4,5 @@
         die();
     }
     echo "You'll be able to see the homepage soon enough!";
-    echo var_dump($_SESSION['current-user']);
     die();
 ?>
