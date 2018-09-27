@@ -22,6 +22,9 @@
 	<h2 class="form-sign-in-header">Login</h2>
 
 	<?php
+		if(isset($_GET["message"])){
+			echo "<p id='success-message'>" . $_GET["message"] . "</p>";
+		}
 		if(isset($_SESSION['login-error'])){
 			echo "<div id='error-message'>" . $_SESSION['login-error'] . "</div>";
 			unset($_SESSION['login-error']);

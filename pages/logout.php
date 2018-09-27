@@ -1,8 +1,12 @@
 <?php
-    if(!isset($_SESSION['is-logged-in'])){
-        header('Location: pages/login.php');
-        die();
-    }
-    echo "You'll be able to logout soon enough!";
-    die();
+	session_start();
+	// Save any messages before logging out - ie password update success messages
+	if(isset($_SESSION['update_message'])){
+		$message = $_SESSION['update_message'];
+		$header = "Location: index.php?action=login&message=$message";
+	}else{
+		$header = "Location: index.php?action=login";
+	}
+	session_destroy();
+	header($header);
 ?>
