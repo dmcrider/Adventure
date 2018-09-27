@@ -3,23 +3,19 @@
 	 * Once the user clicks the 'Login' button, verify they entered information
 	 * and attempt to login using the appropriate class.
 	 */
-	$debugOutput = fopen("debug.info","w");
 	if(isset($_POST['loginname']) and isset($_POST['password'])){
 		// Check the database for a match
 		if(User::Login()){
 			$_SESSION['is-logged-in'] = TRUE;
-			fwrite($debugOutput, "User was logged in (login.php)");
 			header('Location: index.php?action=home');
 			die();
 
 		}else{
-			fwrite($debugOutput, "User was NOT logged in (login.php)");
 			header('Location: index.php?action=login');
 			die();
 		}
 		return;
 	}
-	fclose($debugOutput);
 ?>
 <!-- Login Form -->
 <form class="form-sign-in" method="POST" action="">
