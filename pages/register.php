@@ -12,10 +12,10 @@
 <form class="form-sign-in" method="POST" action="">
 	<h2 class="form-sign-in-header">Registration</h2>
 
-	<?php if(isset($_SESSION['register_error'])) : ?>
-		<div id="error-message"><?php echo $_SESSION['register_error'] ?></div>
+	<?php if(isset($_SESSION['register-error'])) : ?>
+		<div id="error-message"><?php echo $_SESSION['register-error'] ?></div>
 	<?php endif; ?>
-	<?php unset($_SESSION['register_error']); ?>
+	<?php unset($_SESSION['register-error']); ?>
 	
 	<input type="text" name="firstname" class="form-control" placeholder="First name" required>
 	<input type="text" name="lastname" class="form-control" placeholder="Last name" required>
