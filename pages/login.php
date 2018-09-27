@@ -28,9 +28,13 @@
 		}
 		if(isset($_SESSION['is-logged-in'])){
 			echo "<div id='error-message'>" . $_SESSION['is-logged-in'] . "</div>";
+		}else{
+			echo "Not logged in";
 		}
 		if(isset($_SESSION['current-user'])){
 			echo "<div id='error-message'>" . $_SESSION['current-user'] . "</div>";
+		}else{
+			echo "No user.";
 		}
 	?>
 
