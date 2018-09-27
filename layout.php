@@ -2,8 +2,11 @@
 <html>
 <head>
     <title>Adventure</title>
-    <link rel="stylesheet" href="css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/custom.css">
+    <link rel="stylesheet" href="_assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="_assets/css/custom.css">
+    <script src="_assets/js/jquery.min.js"></script>
+    <script src="_assets/js/popper.min.js"></script>
+    <script src="_assets/js/bootstrap.min.js"></script>
 </head>
 <body class="container-fluid">
     <!-- Header -->
