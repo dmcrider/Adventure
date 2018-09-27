@@ -15,35 +15,37 @@ class User{
         $this->username = $username;
     }
 
-    public static function login($db, $command){
+    public static function Login(){
         try{
-            $stmt = $db->prepare($command);
-            $query = $stmt->execute(array($_POST['email']));
+            // Set up the Database connection
+            $db = DB::getInstance();
+            $stmt = $db->prepare("SELECT * FROM users WHERE LoginName = ?");
+            $query = $stmt->execute(array($_POST['loginname']));
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            // Determine if the login was succesfull
             if($result !== FALSE){
                 $storedPassword = $result['password'];
                 $hash = password_verify($_POST['password'], $storedPassword);
 
                 if($hash){
                     // Successfull login
-                    // Return the fields common to all users as well as the $result from the query
-                    // so that the Agent and Client classes can get the other values unique to them
-                    if($result['profile'] === NULL){
-                        $result['profile'] = '_public/img/profile/default_profile.jpeg';
-                    }
+                    // Set the session variables we need
+                    $_SESSION['current-user'] = new User($result['UserID'], $result['FirstName'], $result['LastName'], $result['Email'], $result['LoginName']);
 
-                    return array(array($result['id'], $result['firstname'], $result['lastname'], $result['email'], $result['username']), $result);
+                    return TRUE;
+
                 }else{
-                    $_SESSION['login_error'] = "Invalid password";
+                    $_SESSION['login-error'] = "Invalid email or password.";
                     return FALSE;
                 }
             }else{
-                $_SESSION['login_error'] = "Invalid email";
+                $_SESSION['login-error'] = "Invalid email or password. Do you need to register?";
                 return FALSE;
             }
         } catch(PDOException $e){
             // Database error
-            $_SESSION['db_error'] = "PDO Error: " . $e;
+            $_SESSION['db-error'] = "PDO Error: " . $e;
             return FALSE;
         } 
     }

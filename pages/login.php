@@ -1,38 +1,32 @@
 <?php
-    echo "You'll be able to login soon enough!";
-    die();
+    //echo "You'll be able to login soon enough!";
+    //die();
 	/**
 	 * Once the user clicks the 'Login' button, verify they entered information
 	 * and attempt to login using the appropriate class.
 	 */
 	if(isset($_POST['email']) and isset($_POST['password'])){
 		// Check the database for a match
-		return;
-	}
+		if(User::Login()){
+			$_SESSION['is-logged-in'] = TRUE;
+			header('Location: index.php?action=home');
+			die();
 
-	// Add the message from password update
-	if(isset($_GET['message'])){
-		$_SESSION['update_message'] = $_GET['message'];
-	}
-?>
-<?php
-	/**
-	 * Display the update message if the user successfully
-	 * updated their password
-	 */
-	if(isset($_SESSION["update_message"])){
-		echo "<p id='success-message'>" . $_SESSION["update_message"] . "</p>";
-		unset($_SESSION['update_message']);
+		}else{
+			header('Location: index.php?action=login');
+			die();
+		}
+		return;
 	}
 ?>
 <!-- Login Form -->
 <form class="form-sign-in" method="POST" action="">
 	<h2 class="form-sign-in-header">Login</h2>
 
-	<?php if(isset($_SESSION['login_error'])) : ?>
-		<div id="error-message"><?php echo $_SESSION['login_error'] ?></div>
+	<?php if(isset($_SESSION['login-error'])) : ?>
+		<div id="error-message"><?php echo $_SESSION['login-error'] ?></div>
 	<?php endif; ?>
-	<?php unset($_SESSION['login_error']); ?>
+	<?php unset($_SESSION['login-error']); ?>
 
 	<input type="text" name="loginname" class="form-control" placeholder="Username" required>
 	
