@@ -26,6 +26,12 @@
 			echo "<div id='error-message'>" . $_SESSION['login-error'] . "</div>";
 			unset($_SESSION['login-error']);
 		}
+		if(isset($_SESSION['is-logged-in'])){
+			echo "<div id='error-message'>" . $_SESSION['is-logged-in'] . "</div>";
+		}
+		if(isset($_SESSION['current-user'])){
+			echo "<div id='error-message'>" . $_SESSION['current-user'] . "</div>";
+		}
 	?>
 
 	<input type="text" name="loginname" class="form-control" autocomplete="off" placeholder="Username" required>
