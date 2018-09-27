@@ -1,3 +1,4 @@
 *.log
 *.info
 test/*
+db_connection.php
