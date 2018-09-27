@@ -9,8 +9,8 @@ class User{
 
     public function __construct($id, $firstname, $lastname, $email, $username){
         $this->id = $id;
-        $this->firstname = $fname;
-        $this->lastname = $lname;
+        $this->firstname = $firstname;
+        $this->lastname = $lastname;
         $this->email = $email;
         $this->username = $username;
     }
