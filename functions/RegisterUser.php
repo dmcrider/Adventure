@@ -44,7 +44,7 @@
 	function doesUserExist(){
 		try{
 			$db = DB::getInstance();
-			$command = "SELECT * FROM agent WHERE LoginName = ?";
+			$command = "SELECT * FROM users WHERE LoginName = ?";
 			$stmt = $db->prepare($command);
 			$result = $stmt->execute([$_POST['loginname']]);
 			if($result){
