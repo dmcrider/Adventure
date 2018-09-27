@@ -1,6 +1,4 @@
 <?php
-    //echo "You'll be able to login soon enough!";
-    //die();
 	/**
 	 * Once the user clicks the 'Login' button, verify they entered information
 	 * and attempt to login using the appropriate class.
