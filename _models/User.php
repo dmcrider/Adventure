@@ -17,6 +17,7 @@ class User{
 
     public static function Login(){
         try{
+            $debugOutput = fopen("debug.info","w");
             // Set up the Database connection
             $db = DB::getInstance();
             $stmt = $db->prepare("SELECT * FROM users WHERE LoginName = ?");
@@ -30,6 +31,7 @@ class User{
 
                 if($hash){
                     // Successfull login
+                    fwrite($debugOutput, "Login was successful. There was a database match.");
                     // Set the session variables we need
                     $_SESSION['current-user'] = new User($result['UserID'], $result['FirstName'], $result['LastName'], $result['Email'], $result['LoginName']);
 
@@ -43,6 +45,7 @@ class User{
                 $_SESSION['login-error'] = "Invalid email or password. Do you need to register?";
                 return FALSE;
             }
+            fclose($debugOutput);
         } catch(PDOException $e){
             // Database error
             $_SESSION['db-error'] = "PDO Error: " . $e;
