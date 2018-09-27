@@ -45,7 +45,7 @@ class User{
             }
         } catch(PDOException $e){
             // Database error
-            $_SESSION['db-error'] = "PDO Error: " . $e;
+            $_SESSION['login-error'] = "PDO Error: " . $e;
             return FALSE;
         } 
     }

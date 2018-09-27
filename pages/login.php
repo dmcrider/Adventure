@@ -11,7 +11,7 @@
 			die();
 
 		}else{
-			header('Location: index.php?action=login&debug=FAILED');
+			header('Location: index.php?action=login');
 			die();
 		}
 		return;
@@ -25,12 +25,6 @@
 		if(isset($_SESSION['login-error'])){
 			echo "<div id='error-message'>" . $_SESSION['login-error'] . "</div>";
 			unset($_SESSION['login-error']);
-		}
-		if(isset($_SESSION['is-logged-in'])){
-			echo "<div id='error-message'>" . $_SESSION['is-logged-in'] . "</div>";
-		}
-		if(isset($_SESSION['current-user'])){
-			echo "<div id='error-message'>" . $_SESSION['current-user'] . "</div>";
 		}
 	?>
 
