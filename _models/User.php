@@ -15,18 +15,18 @@ class User{
         $this->username = $username;
     }
 
-    public static function Login(){
+    public static function Login($name, $pass){
         try{
             // Set up the Database connection
             $db = DB::getInstance();
             $stmt = $db->prepare("SELECT * FROM users WHERE LoginName = ?");
-            $query = $stmt->execute(array($_POST['loginname']));
+            $query = $stmt->execute(array($name));
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
             // Determine if the login was succesfull
             if($result !== FALSE){
                 $storedPassword = $result['UPassword'];
-                $hash = password_verify($_POST['password'], $storedPassword);
+                $hash = password_verify($pass, $storedPassword);
 
                 if($hash){
                     // Successfull login

@@ -5,7 +5,7 @@
 	 */
 	if(isset($_POST['loginname']) and isset($_POST['password'])){
 		// Check the database for a match
-		if(User::Login()){
+		if(User::Login($_POST['loginname'], $_POST['password'])){
 			$_SESSION['is-logged-in'] = TRUE;
 			header('Location: index.php?action=home');
 			die();
