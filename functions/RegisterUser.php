@@ -27,6 +27,7 @@
                         ':loginname' => $loginname,
                         ':upass' => $hash
                     ));
+                    $_SESSION['is-logged-in'] = TRUE;
 					header('Location: index.php?action=home');
 					die();
 				} catch (PDOException $e){
