@@ -1,11 +1,11 @@
 <?php
 
 class User{
-    private $id;
-    private $firstname;
-    private $lastname;
-    private $email;
-    private $username;
+    public $id;
+    public $firstname;
+    public $lastname;
+    public $email;
+    public $username;
 
     public function __construct($id, $firstname, $lastname, $email, $username){
         $this->id = $id;
@@ -13,10 +13,6 @@ class User{
         $this->lastname = $lname;
         $this->email = $email;
         $this->username = $username;
-    }
-
-    public function FirstName(){
-        return $this->firstname;
     }
 
     public static function Login(){
