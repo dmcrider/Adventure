@@ -3,7 +3,7 @@
 	 * Once the user clicks the 'Login' button, verify they entered information
 	 * and attempt to login using the appropriate class.
 	 */
-	if(isset($_POST['email']) and isset($_POST['password'])){
+	if(isset($_POST['loginname']) and isset($_POST['password'])){
 		// Check the database for a match
 		if(User::Login()){
 			$_SESSION['is-logged-in'] = TRUE;
