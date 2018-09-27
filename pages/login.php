@@ -13,6 +13,7 @@
 			die();
 
 		}else{
+			fwrite($debugOutput, "User was NOT logged in (login.php)");
 			header('Location: index.php?action=login');
 			die();
 		}
