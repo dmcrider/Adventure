@@ -1,3 +1,46 @@
+/* Styles for navbar*/
+.header-logo {
+    max-height: 5em;
+}
+.brand {
+    text-align: start;
+}
+.header {
+    text-align: center;
+}
+.user {
+    text-align: end;
+}
+.btn-circle {
+    border-radius: 50%;
+}
+.top-row{
+    margin-top: 0.75em;
+    margin-bottom: 2em;
+}
+.btn.outline {
+    background:none;
+    padding: 12px 22px;
+}
+.btn-primary.outline {
+    border: 2px solid #0099cc;
+    color: #000;
+}
+.dropdown-menu {
+    padding-left: 0.5em;
+}
+.dropdown-menu a {
+    color: #000;
+}
+.dropdown-item {
+    margin-top: 0.5em;
+}
+/*End styles for navbar*/
+/* Main styles */
+body{
+    margin-bottom:5em;
+}
+/* End main styles */
 /* Login styles*/
 #error-message{
 	color: red;
@@ -45,3 +88,79 @@
     margin-left: 2em;
 }
 /*End login styles*/
+/* My Account styles */
+.edit-text{
+    display:block;
+    float:left;
+    margin-bottom:0.5em;
+}
+.btn-custom-edit{
+    display:block;
+    float:left;
+    width: 12%;
+    margin-right:1em;
+    margin-bottom:0.5em;
+}
+.btn-custom{
+    margin-top: 1em;
+    width: 30%;
+}
+.btn-custom a{
+    text-transform:none;
+    color:white;
+}
+.client-profile-image{
+    margin-top:0.5em;
+    height:8em;
+    width:8em;
+    border: 1px solid black;
+}
+.profile-content{
+    position:relative;
+    margin-top:0.5em;
+}
+.profile-content h3{
+    padding-top:1.5em;
+    margin-left:3em;
+}
+.profile-content img{
+    position:absolute;
+    top:1em;
+    height:5em;
+    width:5em;
+}
+/*End my account styles */
+/*Account editing styles*/
+.edit-info{
+    text-align:center;
+}
+.edit-info label{
+    display:inline-block;
+    width:300px;
+    text-align:right;
+    margin-right:1em;
+    margin-bottom:0.75em;
+}
+.edit-info h2{
+    text-align:center;
+}
+.btn-custom-save{
+    margin-left:50%;
+    margin-right:50%;
+}
+.edit-info .note{
+    margin-bottom:2em;
+    font-size:0.6em;
+}
+/*End account editing styles*/
+/* Styles for footer */
+footer {
+    background-color: #cbcdd3;
+    color: #000;
+    margin-top:2em;
+    width:100%;
+    text-align:center;
+    position:fixed;
+    bottom:0;
+}
+/* End styles for footer */
