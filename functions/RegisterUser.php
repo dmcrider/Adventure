@@ -27,7 +27,7 @@
                         ':loginname' => $loginname,
                         ':upass' => $hash
                     ));
-                    $_SESSION['current-user'] = User::Login($loginname, $password);
+                    User::Login($loginname, $password);
                     $_SESSION['is-logged-in'] = TRUE;
 					header('Location: index.php?action=home');
 					die();
