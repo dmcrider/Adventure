@@ -9,7 +9,7 @@
         }
     }
 
-    $controllers = array('pages' => ['home','login','logout','register','error']);
+    $controllers = array('pages' => ['home','login','logout','register','error', 'account']);
 
     if(in_array($action, $controllers['pages'])){
         call($action);
