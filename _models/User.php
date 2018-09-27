@@ -7,7 +7,7 @@ class User{
     private $email;
     private $username;
 
-    public funtion __construct($id, $firstname, $lastname, $email, $username){
+    public function __construct($id, $firstname, $lastname, $email, $username){
         $this->id = $id;
         $this->firstname = $fname;
         $this->lastname = $lname;

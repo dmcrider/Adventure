@@ -23,15 +23,17 @@
 <form class="form-sign-in" method="POST" action="">
 	<h2 class="form-sign-in-header">Login</h2>
 
-	<?php if(isset($_SESSION['login-error'])) : ?>
-		<div id="error-message"><?php echo $_SESSION['login-error'] ?></div>
-	<?php endif; ?>
-	<?php unset($_SESSION['login-error']); ?>
+	<?php
+		if(isset($_SESSION['login-error'])){
+			echo "<div id='error-message'>" . $_SESSION['login-error'] . "</div>";
+			unset($_SESSION['login-error']);
+		}
+	?>
 
-	<input type="text" name="loginname" class="form-control" placeholder="Username" required>
+	<input type="text" name="loginname" class="form-control" autocomplete="off" placeholder="Username" required>
 	
 	<label for="inputPassword" class="sr-only">Password</label>
-	<input type="password" name="password" id="inputPassword" class="form-control" placeholder="Password" required>
+	<input type="password" name="password" id="inputPassword" class="form-control" autocomplete="off" placeholder="Password" required>
 
 	<button class="btn btn-lg btn-primary btn-block" type="submit">Login</button>
 	<a class="btn btn-lg btn-primary btn-block" href="index.php?action=register">Register</a>
