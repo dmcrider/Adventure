@@ -19,5 +19,9 @@
         public function register(){
             require_once('pages/register.php');
         }
+
+        public function account(){
+            require_once('pages/account.php');
+        }
     }
 ?>
