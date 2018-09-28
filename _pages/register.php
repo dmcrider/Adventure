@@ -1,5 +1,5 @@
 <?php
-	require("functions/RegisterUser.php");
+	require("_functions/RegisterUser.php");
 
 	if(isset($_POST['loginname'])){
 		if(doesUserExist()){
