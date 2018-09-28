@@ -40,6 +40,10 @@
 body{
     margin-bottom:5em;
 }
+.outline-content{
+    outline-style: solid;
+    padding: 2em;
+}
 /* End main styles */
 /* Login styles*/
 #error-message{
