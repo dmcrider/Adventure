@@ -3,7 +3,7 @@
     ini_set('display_errors',1);
     error_reporting(E_ALL);
     
-    // require_once all the models
+    // Include all the models
     require_once('_models/User.php');
     /*
     require_once('_models/Character.php');
@@ -16,6 +16,10 @@
 
     // Include the database connection
     require_once('_controllers/db_connection.php');
+
+    // Include the other controllers
+    require_once('_controllers/game_controller.php');
+    require_once('_controllers/login_controller.php');
 
     // Start a session
     session_start();

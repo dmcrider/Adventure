@@ -1,0 +1,179 @@
+Here are the classes we'll start with:
+    Fighter
+    Ranger
+    Rogue
+    Wizard
+
+#Fighter #HP
+1d10 per level
+1st level = 10 + constitution modifier
+
+#Fighter #Proficiencies
+Armor: All armor, shields
+Weapons: Simple weapons, martial weapons
+Saving throw: constitution
+
+#Fighter #Skills
+Choose 2:
+    Acrobatics
+    Animal Handling
+    Athletics
+    History
+    Insight
+    Intimidation
+    Perecption
+    Survival
+
+#Fighter #Starting #Equipment
+Chain mail OR leather, longbow, 20 arrows
+Martial weapon and shield OR two martial weapons
+Light crossbow and 20 bolts OR two handaxes
+Dungeoneer's pack OR Explorer's pack
+5d4 x 10 Gold
+
+#Fighter #Style
+Archery: +2 bonus with ranged weapons
+Defense: +1 AC while wearing Armor
+Dueling: +2 bonus when holding only 1 melee weapon and nothing in the other hand
+
+#Fighter #Abilities
+L1 Second Wind: Use bonus action to regain 1d10 + level; recharge with short rest
+L2 Action Surge: Take one additional action on top of regular action; recharge with short rest
+L3 Martial Archetype: Choose Champion, Eldrich Knight
+    Champion: 19 or 20 are critical hits
+    Eldritch Knight: Gain 2 cantrips, 2 learned spells
+L4 Ability Score Improvement: Increase 1 ability by 2, or 2 abilities by 1
+L5 Extra Attack: Take 2 attacks instead of 1
+
+#Ranger #HP
+1d10 per level
+1st level = 10 + constitution modifier
+
+#Ranger #Proficiencies
+Armor: Light/Medium armor, shields
+Weapons: Simple weapons, martial weapons
+Saving throw: Strength, Dexterity
+
+#Ranger #Skills
+Choose 3:
+    Animal Handling
+    Athletics
+    Insight
+    Investigation
+    Nature
+    Perecption
+    Stealth
+    Survival
+
+#Ranger #Starting #Equipment
+Scale mail OR leather armor
+Two shortswords OR two simple melee weapons
+Dungeoneer's pack OR Explorer's pack
+Longbow and 20 arrows
+5d4 x 10 Gold
+
+#Ranger #Abilities
+2L:
+    Archery: +2 bonus with ranged weapons
+    Defense: +1 AC while wearing Armor
+    Dueling: +2 bonus when holding only 1 melee weapon and nothing in the other hand
+L4 Ability Score Improvement: Increase 1 ability by 2, or 2 abilities by 1
+L5 Extra Attack: Take 2 attacks instead of 1
+
+#Ranger #Spells
+2nd level: 2 1st level spells
+3rd level: 3 1st level spells
+4th level: 3 1st level spells
+5th level: 4 max, up to 4 1st level, up to 2 2nd level
+
+#Rogue #HP
+1d8 per level
+1st level = 8 + constitution modifier
+
+#Rogue #Proficiencies
+Armor: Light armor
+Weapons: Simple weapons, hand crossbows, longswords, rapiers, shortswords
+Saving throw: Dexterity, Intelligence
+
+#Rogue #Skills
+Choose 4:
+    Acrobatics
+    Athletics
+    Deception
+    Insight
+    Intimidation
+    Investigation
+    Perecption
+    Performance
+    Persuasion
+    Sleight of Hand
+    Stealth
+
+#Rogue #Starting #Equipment
+Rapier OR shortsword
+Shortbow and 20 arrows OR shortsword
+Burglar's pack OR Dungeoneer's pack OR Explorer's pack
+Leather armor, two daggers, thieve's tools
+4d4 x 10 Gold
+
+#Rogue #Abilities
+L1 Sneak Attack: Deal extra 1d6 damage with ranged weapon AND advantage on attack roll OR if enemy is engaged
+L1 Thieves' Cant: Known language
+L2 Cunning Action: Gain bonus action on each turn, but only to use Dash, Disengage, or Hide
+L3 Roguish Archtype: Choose 
+    Thief:
+        Fast Hands: Use bonus action to make Sleight of Hand check (Dexterity)
+        Second-story work: Climbing no longer costs an extra movement
+    Assassin:
+        Assassinate: Advantage against enemies that haven't take a combat turn yet; Any hit against surprised enemy is critial hit
+    Arcane Trickster:
+        Has 3 cantrips and up to 2 1st-level spells
+        L4 Has 3 cantrips and up to 3 1st-level spells
+        L5 Has 3 cantrips and up to 3 1st-level spells
+        Mage Hand:
+            Can hide or retrieve an object
+            Can disarm traps at a distance (using thieves' tools)
+L4 Ability Score Improvement: Increase 1 ability by 2, or 2 abilities by 1
+L5 Uncanny Dodge: When an attacker you see attacks, use reaction to halve damage
+
+#Wizard #HP
+1d6 per level
+1st level = 6 + constitution modifier
+
+#Wizard #Proficiencies
+Armor: None
+Weapons: Daggers, darts, slings, quarterstaffs, light crossbows
+Saving Throw: Intelliegenc, Wisdom
+
+#Wizard #Skills
+Choose 2:
+    Arcana
+    History
+    Insight
+    Investigation
+    Medicine
+    Religion
+
+#Wizard #Starting #Equipment
+Quarterstaff OR Dagger
+Component pouch OR Arcane focus
+Scholar's pack OR Explorer's pack
+Spellbook (with 6 spells of choice)
+4d4 x 10 Gold
+
+#Wizardd #Skills
+L1 Arcane Recovery: After short rest, recover 1 spell slot (of level up to half yours. L1-3 recover 1 spell slot)
+L2 Arcane Tradition:
+    Abjuration:
+        L2 Abjuration Savant: Gold and time to copy a spell is halved
+        L2 Arcane Ward: When casting a spell, can also create protection with HP = 2 * level + INT modifier; You take any remaining damage once ward is gone; Recharge with long rest
+    Conjuration:
+        L2 Conjuration Savant: Gold and time to copy a spell is halved
+        L2 Minor Conjuration: Can create innanimate object that you've seen before
+    Illusion:
+        L2 Illusion Savant: Gold and time to copy a spell is halved
+        L2 Minor Illusion: Learn cantrip Minor Illusion
+L4 Ability Score Improvement: Increase 1 ability by 2, or 2 abilities by 1
+
+#Wizard #Spells
+L1 = 3 Cantrips
