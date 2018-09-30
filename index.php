@@ -5,8 +5,8 @@
     
     // Include all the models
     require_once('_models/User.php');
-    /*
     require_once('_models/Character.php');
+    /*
     require_once('_models/Backpack.php');
     require_once('_models/Item.php');
     require_once('_models/Spell.php');
