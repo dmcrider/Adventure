@@ -4,10 +4,11 @@
     }
 ?>
 <div class="col-md-4 brand">
-<h1>Adventure</h1>
+    <h1>Adventure</h1>
 </div>
 <div class="col-md-4">
-    
+    <p id="current-stage" style="display:none;">select-race</p>
+    <p id="stage-title" class="header"></p>
 </div>
 <?php  // Only show the naviagation menu if the user is logged in ?>
 <?php if(isset($_SESSION['current-user'])) : ?>

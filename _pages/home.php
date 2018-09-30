@@ -6,9 +6,9 @@
 ?>
 <!-- Left Panel - Game -->
 <div class="col-md-9">
-    <p id="game-text"></p>
+    <div id="game-area" class="container-fluid"></div>
     <hr>
-    <p id="player-text"></p>
+    <div id="player-area" class="container-fluid"></div>
 </div>
 <!-- Right Panel - Character information -->
 <div class="col-md-3 outline-content">
@@ -25,43 +25,8 @@
         </div>
     </div>
 </div>
-<script type="text/javascript">
-// Start a new game
-function StartNewGame(){
-    /**
-        Set the visibility of the Save button
-    */
-    var saveButton = document.getElementById("save-button");
-    var newButton = document.getElementById("new-button");
-
-    saveButton.style.display = "inline";
-    newButton.style.display = "none";
-
-    /**
-        Update the Game and Player text.
-        PHP takes care of some other things behind the scenes
-    */
-    $.ajax({
-        url: '_controllers/game_controller.php',
-        dataType: 'json',
-        data: ({function: 'newgame'}),
-        success: function(data) {
-            $("#game-text").text(data.game);
-            $("#player-text").text(data.player);
-        }
-    });
-
-// This is not currently working
-    $.ajax({
-        url:'_models/Character.php',
-        dataType: 'json',
-        data: ({newchar: 'setnew'}),
-        success: function(data){
-            console.log(data);
-            var characterName = document.getElementById("character-name");
-            characterName.text = data.name;
-        }
-    });
-}
-/* */
-</script>
+<!-- Include all the scripts that help with functionality -->
+<script src="_functions/NewGame.js"></script>
+<script src="_functions/SaveGame.js"></script>
+<script src="_functions/NextStage.js"></script>
+<script src="_functions/ShowDescriptions.js"></script>
