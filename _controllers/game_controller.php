@@ -12,6 +12,9 @@
             case 'nextstage':
                 NextStage();
                 break;
+            case 'race':
+                SaveRace();
+                break;
         }
     }
 
@@ -42,6 +45,8 @@
      * Start a new game
      */
     function NewGame(){
+        // Create an empty Character
+        
         $gameHTML = "
             <div class='row'>
                 <div class='col-md-4'>
@@ -64,7 +69,7 @@
                 </div>
             </div>
         ";
-        $playerHTML = "<button class='btn btn-primary' onclick='MoveToNextStage()'>Save & Select Class</button>";
+        $playerHTML = "<button class='btn btn-primary' onclick='MoveToNextStage()'>Save &amp; Select Class</button>";
         // Set the game text
         $returnArray = array(
             "game" => $gameHTML,

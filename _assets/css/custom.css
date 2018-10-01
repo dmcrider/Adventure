@@ -51,6 +51,10 @@ body{
     margin-bottom:1.5em;
     margin-right: 1em;
 }
+.options:focus{
+    background-color:#DCDCDC;
+    color:#000000;
+}
 /* End main styles */
 /* Login styles*/
 #error-message{

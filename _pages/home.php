@@ -26,6 +26,9 @@
     </div>
 </div>
 <!-- Include all the scripts that help with functionality -->
+<script>
+    var currentSelection = "";
+</script>
 <script src="_functions/NewGame.js"></script>
 <script src="_functions/SaveGame.js"></script>
 <script src="_functions/NextStage.js"></script>
