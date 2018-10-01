@@ -12,9 +12,18 @@
             case 'nextstage':
                 NextStage();
                 break;
-            case 'race':
-                SaveRace();
-                break;
+        }
+    }
+
+    if(isset($_GET['save'])){
+        TempSave($_GET['save']);
+    }
+
+    function TempSave($data){
+        if(!isset($_SESSION['race'])){
+            $_SESSION['race'] = $data;
+        }elseif(!isset($_SESSION['class'])){
+            $_SESSION['class'] = $data;
         }
     }
 

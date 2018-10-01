@@ -25,10 +25,10 @@ Choose 2:
     Survival
 
 #Fighter #Starting #Equipment
-Chain mail OR leather, longbow, 20 arrows
-Martial weapon and shield OR two martial weapons
-Light crossbow and 20 bolts OR two handaxes
-Dungeoneer's pack OR Explorer's pack
+Chain mail
+Martial weapon and shield
+Light crossbow and 20 bolts
+Explorer's pack
 5d4 x 10 Gold
 
 #Fighter #Style
@@ -66,9 +66,9 @@ Choose 3:
     Survival
 
 #Ranger #Starting #Equipment
-Scale mail OR leather armor
-Two shortswords OR two simple melee weapons
-Dungeoneer's pack OR Explorer's pack
+leather armor
+Two shortswords
+Explorer's pack
 Longbow and 20 arrows
 5d4 x 10 Gold
 
@@ -110,9 +110,9 @@ Choose 4:
     Stealth
 
 #Rogue #Starting #Equipment
-Rapier OR shortsword
-Shortbow and 20 arrows OR shortsword
-Burglar's pack OR Dungeoneer's pack OR Explorer's pack
+shortsword
+Shortbow and 20 arrows
+Explorer's pack
 Leather armor, two daggers, thieve's tools
 4d4 x 10 Gold
 
@@ -155,9 +155,9 @@ Choose 2:
     Religion
 
 #Wizard #Starting #Equipment
-Quarterstaff OR Dagger
-Component pouch OR Arcane focus
-Scholar's pack OR Explorer's pack
+Quarterstaff
+Arcane focus
+Explorer's pack
 Spellbook (with 6 spells of choice)
 4d4 x 10 Gold
 

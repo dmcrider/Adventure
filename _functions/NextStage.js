@@ -16,10 +16,12 @@ function MoveToNextStage(){
         $.ajax({
             url: '_controllers/game_controller.php',
             dataType:'json',
-            data:({race:currentSelection}),
+            data:({save:currentSelection}),
             success:function(data){
                 console.log("Race saved successfully");
             }
         });
+
+        ShowRaces();
     }
 }
