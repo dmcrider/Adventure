@@ -90,16 +90,13 @@ namespace Adventure
         private bool CheckNewUser(string u)
         {
             bool returnValue = true;
-            int uniqueMax = (int)Properties.Settings.Default["MaxUsers"];
 
-            for (int i = 0; i < uniqueMax; i++)
+            if (Properties.Settings.Default[$"id_{u}"] == null)
             {
-                if (u.Equals(Properties.Settings.Default[$"Username{i}"]))
-                {
-                    // We found a match, so the user is already registered
-                    returnValue = false;
-                    break;
-                }
+                // TODO: Create user in database and populate
+                Properties.Settings.Default[$"id_{u}"] = "x";
+
+                Properties.Settings.Default.Save();
             }
 
             return returnValue;

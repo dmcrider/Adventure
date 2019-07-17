@@ -4,6 +4,8 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Security;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,7 +16,7 @@ namespace Adventure
     public partial class FormLogin : Form
     {
         Player loggedInPlayer;
-        int uniqueID;
+        HttpClient client = new HttpClient();
 
         // Create an alert label
         Label invalidLoginLabel = new Label
@@ -30,20 +32,10 @@ namespace Adventure
         
         private void BtnLogin_Click(object sender, EventArgs e)
         {
-            // Check the local storage first
             string username = txtUsername.Text;
             string pwd = txtPassword.Text;
 
-            if(username.Length != 0 && pwd.Length != 0 && ValidateLogin(username, pwd))
-            {
-                loggedInPlayer = new Player(username, uniqueID);
-                this.Close();
-            }
-            else
-            {
-                ClearForm();
-                AlertInvalidLogin();
-            }
+            ValidateLogin(username, pwd);
         }
 
         private void ClearForm()
@@ -58,28 +50,24 @@ namespace Adventure
         {
             // Add the label to the form
             invalidLoginLabel.Width = this.Width;
-            this.Controls.Add(invalidLoginLabel);
+            Controls.Add(invalidLoginLabel);
         }
 
-        private bool ValidateLogin(string u, string p)
+        private async void ValidateLogin(string u, string p)
         {
-            bool returnValue = false;
-            int uniqueMax = (int)Properties.Settings.Default["MaxUsers"];
+            loggedInPlayer = new Player(u, p);
 
-            for (int i = 0; i < uniqueMax; i++)
+            client.BaseAddress = new Uri(Properties.Settings.Default.APIBaseAddress);
+            client.DefaultRequestHeaders.Accept.Clear();
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+            HttpResponseMessage response = await client.PostAsJsonAsync(Properties.Settings.Default.ReadAPI,"");
+
+            if (response.IsSuccessStatusCode)
             {
-                // Check if the username is a match
-                if (u.Equals(Properties.Settings.Default[$"Username{i}"]))
-                {
-                    // Check if the password matches
-                    if (p.Equals(Properties.Settings.Default[$"Password{i}"]))
-                    {
-                        uniqueID = i;
-                        returnValue = true;
-                    }
-                }
+                // Read the JSON and get the id
+                //Console.WriteLine(response.Content.ReadAsStringAsync());
             }
-            return returnValue;
         }
 
         private void FormLogin_Load(object sender, EventArgs e)

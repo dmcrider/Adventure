@@ -5,35 +5,17 @@
     <Setting Name="Version" Type="System.String" Scope="Application">
       <Value Profile="(Default)">0.1.0</Value>
     </Setting>
-    <Setting Name="Username0" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
+    <Setting Name="LoginAPI" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">api/adventure/users/login.php</Value>
     </Setting>
-    <Setting Name="Password0" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
+    <Setting Name="RegisterAPI" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">api/adventure/users/register.php</Value>
     </Setting>
-    <Setting Name="Username1" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
+    <Setting Name="APIBaseAddress" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">https://dayloncrider.com/dev/</Value>
     </Setting>
-    <Setting Name="Password1" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="Username2" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="Password2" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="MaxUsers" Type="System.Int32" Scope="Application">
-      <Value Profile="(Default)">3</Value>
-    </Setting>
-    <Setting Name="Character0" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="Character1" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="Character2" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
+    <Setting Name="ReadAPI" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">api/adventure/users/read.php</Value>
     </Setting>
   </Settings>
 </SettingsFile>

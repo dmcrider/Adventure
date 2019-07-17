@@ -9,6 +9,7 @@ namespace Adventure
     public class Player
     {
         public string username;
+        public string password;
         public Character character;
         public int uniqueID;
 
@@ -16,13 +17,19 @@ namespace Adventure
         {
             this.username = username;
             this.character = character;
-            this.uniqueID = id;
+            uniqueID = id;
         }
 
         public Player(string username, int id)
         {
             this.username = username;
-            this.uniqueID = id;
+            uniqueID = id;
+        }
+
+        public Player(string username, string password)
+        {
+            this.username = username;
+            this.password = password;
         }
     }
 }

@@ -32,120 +32,39 @@ namespace Adventure.Properties {
             }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string Username0 {
+        [global::System.Configuration.DefaultSettingValueAttribute("api/adventure/users/login.php")]
+        public string LoginAPI {
             get {
-                return ((string)(this["Username0"]));
-            }
-            set {
-                this["Username0"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string Password0 {
-            get {
-                return ((string)(this["Password0"]));
-            }
-            set {
-                this["Password0"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string Username1 {
-            get {
-                return ((string)(this["Username1"]));
-            }
-            set {
-                this["Username1"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string Password1 {
-            get {
-                return ((string)(this["Password1"]));
-            }
-            set {
-                this["Password1"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string Username2 {
-            get {
-                return ((string)(this["Username2"]));
-            }
-            set {
-                this["Username2"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string Password2 {
-            get {
-                return ((string)(this["Password2"]));
-            }
-            set {
-                this["Password2"] = value;
+                return ((string)(this["LoginAPI"]));
             }
         }
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("3")]
-        public int MaxUsers {
+        [global::System.Configuration.DefaultSettingValueAttribute("api/adventure/users/register.php")]
+        public string RegisterAPI {
             get {
-                return ((int)(this["MaxUsers"]));
+                return ((string)(this["RegisterAPI"]));
             }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string Character0 {
+        [global::System.Configuration.DefaultSettingValueAttribute("https://dayloncrider.com/dev/")]
+        public string APIBaseAddress {
             get {
-                return ((string)(this["Character0"]));
-            }
-            set {
-                this["Character0"] = value;
+                return ((string)(this["APIBaseAddress"]));
             }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string Character1 {
+        [global::System.Configuration.DefaultSettingValueAttribute("api/adventure/users/read.php")]
+        public string ReadAPI {
             get {
-                return ((string)(this["Character1"]));
-            }
-            set {
-                this["Character1"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string Character2 {
-            get {
-                return ((string)(this["Character2"]));
-            }
-            set {
-                this["Character2"] = value;
+                return ((string)(this["ReadAPI"]));
             }
         }
     }
