@@ -45,7 +45,7 @@ namespace Adventure
 
                     for (int i = 0; i <= uniqueMax; i++)
                     {
-                        if (Properties.Settings.Default[$"Username{i}"].Equals(String.Empty))
+                        if (Properties.Settings.Default[$"Username{i}"].Equals(string.Empty))
                         {
                             SaveValidCredentials(username, pwd, i);
                             break;

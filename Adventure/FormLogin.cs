@@ -13,6 +13,9 @@ namespace Adventure
 {
     public partial class FormLogin : Form
     {
+        Player loggedInPlayer;
+        int uniqueID;
+
         // Create an alert label
         Label invalidLoginLabel = new Label
         {
@@ -33,7 +36,8 @@ namespace Adventure
 
             if(username.Length != 0 && pwd.Length != 0 && ValidateLogin(username, pwd))
             {
-                MessageBox.Show("Yay! Now we can play!");
+                loggedInPlayer = new Player(username, uniqueID);
+                this.Close();
             }
             else
             {
@@ -44,8 +48,8 @@ namespace Adventure
 
         private void ClearForm()
         {
-            txtUsername.Text = String.Empty;
-            txtPassword.Text = String.Empty;
+            txtUsername.Text = string.Empty;
+            txtPassword.Text = string.Empty;
 
             txtUsername.Focus();
         }
@@ -70,6 +74,7 @@ namespace Adventure
                     // Check if the password matches
                     if (p.Equals(Properties.Settings.Default[$"Password{i}"]))
                     {
+                        uniqueID = i;
                         returnValue = true;
                     }
                 }
@@ -85,14 +90,24 @@ namespace Adventure
         private void BtnRegister_Click(object sender, EventArgs e)
         {
             // Clear any error messages so they don't show when the user comes back
-            if (invalidLoginLabel.Text != String.Empty)
+            if (invalidLoginLabel.Text != string.Empty)
             {
-                invalidLoginLabel.Text = String.Empty;
+                invalidLoginLabel.Text = string.Empty;
             }
 
             FormRegister frmRegister = new FormRegister();
 
             frmRegister.ShowDialog();
+        }
+
+        public Player GetLoggedInPlayer()
+        {
+            if(loggedInPlayer != null)
+            {
+                return loggedInPlayer;
+            }
+
+            return null;
         }
     }
 }

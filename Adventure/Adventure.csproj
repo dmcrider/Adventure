@@ -62,6 +62,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Character.cs" />
+    <Compile Include="ControllerGame.cs" />
     <Compile Include="FormLogin.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -80,6 +81,12 @@
     <Compile Include="FormRegister.Designer.cs">
       <DependentUpon>FormRegister.cs</DependentUpon>
     </Compile>
+    <Compile Include="FormSupport.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormSupport.Designer.cs">
+      <DependentUpon>FormSupport.cs</DependentUpon>
+    </Compile>
     <Compile Include="FormWelcome.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -97,6 +104,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FormRegister.resx">
       <DependentUpon>FormRegister.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormSupport.resx">
+      <DependentUpon>FormSupport.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FormWelcome.resx">
       <DependentUpon>FormWelcome.cs</DependentUpon>

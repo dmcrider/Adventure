@@ -112,5 +112,41 @@ namespace Adventure.Properties {
                 return ((int)(this["MaxUsers"]));
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string Character0 {
+            get {
+                return ((string)(this["Character0"]));
+            }
+            set {
+                this["Character0"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string Character1 {
+            get {
+                return ((string)(this["Character1"]));
+            }
+            set {
+                this["Character1"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string Character2 {
+            get {
+                return ((string)(this["Character2"]));
+            }
+            set {
+                this["Character2"] = value;
+            }
+        }
     }
 }

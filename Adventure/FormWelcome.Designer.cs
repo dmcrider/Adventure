@@ -34,7 +34,7 @@
             // 
             // btnClose
             // 
-            this.btnClose.Location = new System.Drawing.Point(166, 529);
+            this.btnClose.Location = new System.Drawing.Point(108, 440);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(130, 52);
             this.btnClose.TabIndex = 0;
@@ -47,14 +47,14 @@
             this.lblWelcomeText.AutoSize = true;
             this.lblWelcomeText.Location = new System.Drawing.Point(48, 52);
             this.lblWelcomeText.Name = "lblWelcomeText";
-            this.lblWelcomeText.Size = new System.Drawing.Size(0, 44);
+            this.lblWelcomeText.Size = new System.Drawing.Size(0, 20);
             this.lblWelcomeText.TabIndex = 1;
             // 
             // FormWelcome
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(14F, 29F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(468, 615);
+            this.ClientSize = new System.Drawing.Size(370, 516);
             this.ControlBox = false;
             this.Controls.Add(this.lblWelcomeText);
             this.Controls.Add(this.btnClose);
