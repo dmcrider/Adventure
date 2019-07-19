@@ -1,9 +1,12 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Security;
@@ -16,7 +19,6 @@ namespace Adventure
     public partial class FormLogin : Form
     {
         Player loggedInPlayer;
-        HttpClient client = new HttpClient();
 
         // Create an alert label
         Label invalidLoginLabel = new Label
@@ -35,7 +37,15 @@ namespace Adventure
             string username = txtUsername.Text;
             string pwd = txtPassword.Text;
 
-            ValidateLogin(username, pwd);
+            if(ValidateLogin(username, pwd))
+            {
+                this.Close();
+            }
+            else
+            {
+                ClearForm();
+                AlertInvalidLogin();
+            }
         }
 
         private void ClearForm()
@@ -53,21 +63,69 @@ namespace Adventure
             Controls.Add(invalidLoginLabel);
         }
 
-        private async void ValidateLogin(string u, string p)
+        private bool ValidateLogin(string u, string p)
         {
+            bool isValidLogin = false;
             loggedInPlayer = new Player(u, p);
+            int id = 0;
 
-            client.BaseAddress = new Uri(Properties.Settings.Default.APIBaseAddress);
-            client.DefaultRequestHeaders.Accept.Clear();
-            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-            HttpResponseMessage response = await client.PostAsJsonAsync(Properties.Settings.Default.ReadAPI,"");
-
-            if (response.IsSuccessStatusCode)
+            using (WebClient wc = new WebClient())
             {
-                // Read the JSON and get the id
-                //Console.WriteLine(response.Content.ReadAsStringAsync());
+                string response = wc.DownloadString(Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.ReadAPI);
+                // Get the ID for the username entered so we can verify the password
+                string[] responseJSON = response.Split('}');
+                foreach(string obj in responseJSON)
+                {
+                    if(obj.Length > 2 && obj[2] == 'I')
+                    {
+                        string output = obj + "}";
+                        JObject convertedJSON = JObject.Parse(output);
+                        foreach (var item in convertedJSON)
+                        {
+                            if (item.Key == "ID")
+                            {
+                                id = (int)item.Value;
+                            }
+                            if (item.Key == "Username")
+                            {
+                                if((string)item.Value == u && id != 0)
+                                {
+                                    loggedInPlayer.uniqueID = id;
+                                    isValidLogin = VerifyPassword();
+                                }
+                            }
+                        }
+                    }
+                }
+                
             }
+
+            return isValidLogin;
+        }
+
+        private bool VerifyPassword()
+        {
+            bool isValidPassword = false;
+            string apiJSON = $"{{\"Username\":\"{loggedInPlayer.username}\",\"Password\":\"{loggedInPlayer.password}\",\"ID\":\"{loggedInPlayer.uniqueID}\"}}";
+
+            using (WebClient wc = new WebClient())
+            {
+                string response = wc.UploadString(Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.LoginAPI, apiJSON);
+                JObject convertedJSON = JObject.Parse(response);
+
+                foreach(var item in convertedJSON)
+                {
+                    if(item.Key == "login_success")
+                    {
+                        if((int)item.Value == 1)
+                        {
+                            isValidPassword = true;
+                        }
+                    }
+                }
+            }
+
+            return isValidPassword;
         }
 
         private void FormLogin_Load(object sender, EventArgs e)

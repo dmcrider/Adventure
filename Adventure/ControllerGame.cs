@@ -25,11 +25,11 @@ namespace Adventure
                 menuName.Text = player.username;
 
                 // Populate Character data
-                if (!Properties.Settings.Default[$"Character{player.uniqueID}"].Equals(string.Empty))
-                {
-                    // Get the character
-                    //character = Properties.Settings.Default[$"Character{player.uniqueID}"];
-                }
+                //if (!Properties.Settings.Default[$"Character{player.uniqueID}"].Equals(string.Empty))
+                //{
+                //    // Get the character
+                //    //character = Properties.Settings.Default[$"Character{player.uniqueID}"];
+                //}
             }
         }
     }
