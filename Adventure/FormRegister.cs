@@ -1,9 +1,11 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -38,25 +40,10 @@ namespace Adventure
             if (pwd.Equals(pwd2))
             {
                 // Check if the user already exists
-                if (CheckNewUser(username))
+                if (IsNewUser(username))
                 {
                     // Save the name & pwd and let the user login
-                    int uniqueMax = (int)Properties.Settings.Default["MaxUsers"];
-
-                    for (int i = 0; i <= uniqueMax; i++)
-                    {
-                        if (Properties.Settings.Default[$"Username{i}"].Equals(string.Empty))
-                        {
-                            SaveValidCredentials(username, pwd, i);
-                            break;
-                        }
-
-                        if(i == 3)
-                        {
-                            MessageBox.Show("No more users can play here. Sorry!");
-                        }
-                        
-                    }
+                    SaveValidCredentials(username, pwd);
 
                     // Close this form so users can login
                     this.Close();
@@ -87,19 +74,37 @@ namespace Adventure
             txtUsername.Focus();
         }
 
-        private bool CheckNewUser(string u)
+        private bool IsNewUser(string u)
         {
-            bool returnValue = true;
+            bool isNew = true;
 
-            if (Properties.Settings.Default[$"id_{u}"] == null)
+            // Connect to database and check if username already exists
+            using (WebClient wc = new WebClient())
             {
-                // TODO: Create user in database and populate
-                Properties.Settings.Default[$"id_{u}"] = "x";
-
-                Properties.Settings.Default.Save();
+                string response = wc.DownloadString(Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.ReadAPI);
+                // Get the ID for the username entered so we can verify the password
+                string[] responseJSON = response.Split('}');
+                foreach (string obj in responseJSON)
+                {
+                    if (obj.Length > 2 && obj[2] == 'I')
+                    {
+                        string output = obj + "}";
+                        JObject convertedJSON = JObject.Parse(output);
+                        foreach (var item in convertedJSON)
+                        {
+                            if (item.Key == "Username")
+                            {
+                                if((string)item.Value == u)
+                                {
+                                    isNew = false;
+                                }
+                            }
+                        }
+                    }
+                }
             }
 
-            return returnValue;
+            return isNew;
         }
 
         private void AlertInvalidRegister()
@@ -109,14 +114,23 @@ namespace Adventure
             this.Controls.Add(invalidRegisterLabel);
         }
 
-        private void SaveValidCredentials(string u, string p, int uniqueID)
+        private void SaveValidCredentials(string u, string p)
         {
-            Properties.Settings.Default[$"Username{uniqueID}"] = u;
-            Properties.Settings.Default[$"Password{uniqueID}"] = p;
+            string apiJSON = $"{{\"Username\":\"{u}\",\"Password\":\"{p}\"}}";
 
-            Properties.Settings.Default.Save();
+            using (WebClient wc = new WebClient())
+            {
+                string response = wc.UploadString(Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.RegisterAPI, apiJSON);
+                JObject convertedJSON = JObject.Parse(response);
 
-            MessageBox.Show("You have been successfully registered. Please login.");
+                foreach (var item in convertedJSON)
+                {
+                    if((string)item.Value == Properties.Resources.APIRegisterSuccess)
+                    {
+                        MessageBox.Show(Properties.Resources.RegisterSuccessMessage);
+                    }
+                }
+            }
         }
     }
 }

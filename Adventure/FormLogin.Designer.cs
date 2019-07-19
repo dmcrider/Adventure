@@ -42,7 +42,7 @@
             this.lblUsername.Location = new System.Drawing.Point(42, 52);
             this.lblUsername.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
             this.lblUsername.Name = "lblUsername";
-            this.lblUsername.Size = new System.Drawing.Size(83, 20);
+            this.lblUsername.Size = new System.Drawing.Size(124, 29);
             this.lblUsername.TabIndex = 0;
             this.lblUsername.Text = "Username";
             // 
@@ -51,7 +51,7 @@
             this.lblPassword.AutoSize = true;
             this.lblPassword.Location = new System.Drawing.Point(49, 130);
             this.lblPassword.Name = "lblPassword";
-            this.lblPassword.Size = new System.Drawing.Size(78, 20);
+            this.lblPassword.Size = new System.Drawing.Size(120, 29);
             this.lblPassword.TabIndex = 1;
             this.lblPassword.Text = "Password";
             // 
@@ -59,7 +59,7 @@
             // 
             this.txtUsername.Location = new System.Drawing.Point(133, 49);
             this.txtUsername.Name = "txtUsername";
-            this.txtUsername.Size = new System.Drawing.Size(230, 26);
+            this.txtUsername.Size = new System.Drawing.Size(230, 35);
             this.txtUsername.TabIndex = 2;
             // 
             // txtPassword
@@ -67,7 +67,7 @@
             this.txtPassword.Location = new System.Drawing.Point(133, 127);
             this.txtPassword.Name = "txtPassword";
             this.txtPassword.PasswordChar = '*';
-            this.txtPassword.Size = new System.Drawing.Size(230, 26);
+            this.txtPassword.Size = new System.Drawing.Size(230, 35);
             this.txtPassword.TabIndex = 3;
             // 
             // btnLogin
@@ -92,7 +92,7 @@
             // 
             // FormLogin
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(14F, 29F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(446, 454);
             this.Controls.Add(this.btnRegister);
@@ -106,7 +106,7 @@
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "FormLogin";
-            this.Text = "FormLogin";
+            this.Text = "Login";
             this.Load += new System.EventHandler(this.FormLogin_Load);
             this.ResumeLayout(false);
             this.PerformLayout();

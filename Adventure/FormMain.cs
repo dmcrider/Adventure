@@ -29,6 +29,9 @@ namespace Adventure
             // Center to screen
             this.CenterToScreen();
 
+            // Hide Panels until user logs in
+            panelCharacter.Visible = false;
+
             // Clear defaults
             lblCharacterName.Text = string.Empty;
         }
@@ -53,6 +56,7 @@ namespace Adventure
                 // Check if the have a character
                 if (HasCharacter())
                 {
+                    panelCharacter.Visible = true;
                     ControllerGame ctrlGame = new ControllerGame(player, currentCharacter);
                     ctrlGame.PopulateInitialData(playerToolStripMenuItem, panelCharacter);
                 }
@@ -68,7 +72,7 @@ namespace Adventure
         {
             if (player == null)
             {
-                MessageBox.Show("There was an error getting your information. Please start the applicaiton again.");
+                MessageBox.Show(Properties.Resources.ErrorGeneral);
                 ExitApplication();
             }
 
@@ -90,7 +94,7 @@ namespace Adventure
         private void ExitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             
-            if (MessageBox.Show("Are you sure you want to quit without saving?","Confirm Exit Without Save",MessageBoxButtons.YesNo) == DialogResult.Yes)
+            if (MessageBox.Show(Properties.Resources.ConfirmNoSaveMessage, Properties.Resources.ConfirmNoSaveTitle, MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
                 // User does not want to save
                 ExitApplication();

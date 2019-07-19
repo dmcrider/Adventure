@@ -52,7 +52,7 @@
             this.lblUsername.AutoSize = true;
             this.lblUsername.Location = new System.Drawing.Point(74, 36);
             this.lblUsername.Name = "lblUsername";
-            this.lblUsername.Size = new System.Drawing.Size(83, 20);
+            this.lblUsername.Size = new System.Drawing.Size(124, 29);
             this.lblUsername.TabIndex = 1;
             this.lblUsername.Text = "Username";
             // 
@@ -61,7 +61,7 @@
             this.lblPassword.AutoSize = true;
             this.lblPassword.Location = new System.Drawing.Point(79, 103);
             this.lblPassword.Name = "lblPassword";
-            this.lblPassword.Size = new System.Drawing.Size(78, 20);
+            this.lblPassword.Size = new System.Drawing.Size(120, 29);
             this.lblPassword.TabIndex = 2;
             this.lblPassword.Text = "Password";
             // 
@@ -70,7 +70,7 @@
             this.lblConfirmPwd.AutoSize = true;
             this.lblConfirmPwd.Location = new System.Drawing.Point(20, 170);
             this.lblConfirmPwd.Name = "lblConfirmPwd";
-            this.lblConfirmPwd.Size = new System.Drawing.Size(137, 20);
+            this.lblConfirmPwd.Size = new System.Drawing.Size(210, 29);
             this.lblConfirmPwd.TabIndex = 3;
             this.lblConfirmPwd.Text = "Confirm Password";
             // 
@@ -78,7 +78,7 @@
             // 
             this.txtUsername.Location = new System.Drawing.Point(163, 33);
             this.txtUsername.Name = "txtUsername";
-            this.txtUsername.Size = new System.Drawing.Size(213, 26);
+            this.txtUsername.Size = new System.Drawing.Size(213, 35);
             this.txtUsername.TabIndex = 4;
             // 
             // txtPassword
@@ -86,7 +86,7 @@
             this.txtPassword.Location = new System.Drawing.Point(163, 100);
             this.txtPassword.Name = "txtPassword";
             this.txtPassword.PasswordChar = '*';
-            this.txtPassword.Size = new System.Drawing.Size(213, 26);
+            this.txtPassword.Size = new System.Drawing.Size(213, 35);
             this.txtPassword.TabIndex = 5;
             // 
             // txtConfirmPwd
@@ -94,12 +94,12 @@
             this.txtConfirmPwd.Location = new System.Drawing.Point(163, 167);
             this.txtConfirmPwd.Name = "txtConfirmPwd";
             this.txtConfirmPwd.PasswordChar = '*';
-            this.txtConfirmPwd.Size = new System.Drawing.Size(213, 26);
+            this.txtConfirmPwd.Size = new System.Drawing.Size(213, 35);
             this.txtConfirmPwd.TabIndex = 6;
             // 
             // FormRegister
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(14F, 29F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(423, 368);
             this.Controls.Add(this.txtConfirmPwd);
@@ -114,7 +114,7 @@
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "FormRegister";
-            this.Text = "FormRegister";
+            this.Text = "Register";
             this.Load += new System.EventHandler(this.FormRegister_Load);
             this.ResumeLayout(false);
             this.PerformLayout();

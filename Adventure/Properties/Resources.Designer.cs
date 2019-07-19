@@ -61,6 +61,42 @@ namespace Adventure.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to User registered successfully.
+        /// </summary>
+        internal static string APIRegisterSuccess {
+            get {
+                return ResourceManager.GetString("APIRegisterSuccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Are you sure you want to quit without saving?.
+        /// </summary>
+        internal static string ConfirmNoSaveMessage {
+            get {
+                return ResourceManager.GetString("ConfirmNoSaveMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Confirm Exit Without Save.
+        /// </summary>
+        internal static string ConfirmNoSaveTitle {
+            get {
+                return ResourceManager.GetString("ConfirmNoSaveTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to There was an error getting your information. Please start the applicaiton again..
+        /// </summary>
+        internal static string ErrorGeneral {
+            get {
+                return ResourceManager.GetString("ErrorGeneral", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Your username or password is incorrect. Please try again..
         /// </summary>
         internal static string InvalidLoginMessage {
@@ -84,6 +120,15 @@ namespace Adventure.Properties {
         internal static string InvalidRegisterMessage2 {
             get {
                 return ResourceManager.GetString("InvalidRegisterMessage2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You have been successfully registered. Please login..
+        /// </summary>
+        internal static string RegisterSuccessMessage {
+            get {
+                return ResourceManager.GetString("RegisterSuccessMessage", resourceCulture);
             }
         }
         
