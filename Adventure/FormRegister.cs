@@ -81,7 +81,7 @@ namespace Adventure
             // Connect to database and check if username already exists
             using (WebClient wc = new WebClient())
             {
-                string response = wc.DownloadString(Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.ReadAPI);
+                string response = wc.DownloadString(Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.UserReadAPI);
                 // Get the ID for the username entered so we can verify the password
                 string[] responseJSON = response.Split('}');
                 foreach (string obj in responseJSON)

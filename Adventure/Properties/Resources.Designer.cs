@@ -124,6 +124,16 @@ namespace Adventure.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Item_Shield {
+            get {
+                object obj = ResourceManager.GetObject("Item_Shield", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to You have been successfully registered. Please login..
         /// </summary>
         internal static string RegisterSuccessMessage {

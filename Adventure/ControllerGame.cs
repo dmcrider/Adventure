@@ -9,27 +9,43 @@ namespace Adventure
 {
     public class ControllerGame
     {
-        private Player player;
-        private Character character;
-        public ControllerGame(Player player, Character character)
+        private Player currentPlayer;
+        private Character currentCharacter;
+        private FormMain frmMain;
+        private PictureBox pboxLeft;
+        private PictureBox pboxRight;
+        public ControllerGame(FormMain m, Player player)
         {
-            this.player = player;
-            this.character = character;
+            this.currentPlayer = player;
+            currentCharacter = player.character;
+            frmMain = m;
         }
 
-        public void PopulateInitialData(ToolStripMenuItem menuName, Panel charaterPanel)
+        public void PopulateInitialData()
         {
             // Populate Player data
-            if(player != null)
+            if(currentPlayer != null)
             {
-                menuName.Text = player.username;
+                frmMain.MainMenuStrip.Items["playerToolStripMenuItem"].Text = currentPlayer.username;
+                Panel panelCharacter = (Panel)frmMain.Controls["panelCharacter"];
 
-                // Populate Character data
-                //if (!Properties.Settings.Default[$"Character{player.uniqueID}"].Equals(string.Empty))
-                //{
-                //    // Get the character
-                //    //character = Properties.Settings.Default[$"Character{player.uniqueID}"];
-                //}
+                panelCharacter.Controls["lblCharacterName"].Text = currentCharacter.Name;
+
+                panelCharacter.Controls["lblHPValue"].Text = $"{currentCharacter.CurrentHP}/{currentCharacter.MaxHP}";
+                panelCharacter.Controls["lblMagicValue"].Text = $"{currentCharacter.CurrentMagic}/{currentCharacter.MaxMagic}";
+
+                panelCharacter.Controls["txtSTRValue"].Text = currentCharacter.Strength.ToString();
+                panelCharacter.Controls["txtINTValue"].Text = currentCharacter.Intelligence.ToString();
+                panelCharacter.Controls["txtCONValue"].Text = currentCharacter.Constitution.ToString();
+
+                pboxLeft = (PictureBox)panelCharacter.Controls["picLeftHand"];
+                pboxRight = (PictureBox)panelCharacter.Controls["picRightHand"];
+
+                if(currentCharacter.LeftHand == "Shield")
+                {
+                    pboxLeft.Image = Properties.Resources.Item_Shield;
+                    pboxLeft.Update();
+                }
             }
         }
     }
