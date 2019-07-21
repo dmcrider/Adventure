@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -41,10 +43,46 @@ namespace Adventure
                 pboxLeft = (PictureBox)panelCharacter.Controls["picLeftHand"];
                 pboxRight = (PictureBox)panelCharacter.Controls["picRightHand"];
 
-                if(currentCharacter.LeftHand == "Shield")
+                if(currentCharacter.LeftHand != 0)
                 {
-                    pboxLeft.Image = Properties.Resources.Item_Shield;
+                    LoadImage(currentCharacter.LeftHand, pboxLeft, 'a');
+                    pboxLeft.Image = (System.Drawing.Image)Properties.Resources.ResourceManager.GetObject(currentCharacter.LeftItem.AssetName);
                     pboxLeft.Update();
+                }
+
+                if (currentCharacter.RightHand != 0)
+                {
+                    LoadImage(currentCharacter.RightHand, pboxRight, 'b');
+                    pboxRight.Image = (System.Drawing.Image)Properties.Resources.ResourceManager.GetObject(currentCharacter.RightItem.AssetName);
+                    pboxRight.Update();
+                }
+            }
+        }
+
+        public void LoadImage(int imageIndex, PictureBox pbox, Char hand)
+        {
+            using (WebClient wc = new WebClient())
+            {
+                string response = wc.DownloadString(Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.ItemReadAPI);
+
+                JObject convertedJSON = JObject.Parse(response);
+
+                foreach (var item in convertedJSON)
+                {
+                    foreach (JObject obj in item.Value)
+                    {
+                        // Create an item object so we can reference it later if needed
+                        Item tmpItem = new Item((int)obj.GetValue("UniqueID"),(string)obj.GetValue("DisplayName"),(string)obj.GetValue("AssetName"),(int)obj.GetValue("Hand"),(int)obj.GetValue("AttackBonus"), (int)obj.GetValue("DefenseBonus"), (int)obj.GetValue("HPHealed"), (int)obj.GetValue("MagicHealed"), (int)obj.GetValue("IsActive"));
+                        if(hand == 'a' && imageIndex == tmpItem.UniqueID)
+                        {
+                            currentCharacter.LeftItem = tmpItem;
+                            return;
+                        }else if(hand == 'b' && imageIndex == tmpItem.UniqueID)
+                        {
+                            currentCharacter.RightItem = tmpItem;
+                            return;
+                        }
+                    }
                 }
             }
         }

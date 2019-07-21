@@ -21,12 +21,14 @@ namespace Adventure
         private int strength;
         private int intelligence;
         private int constitution;
-        private string rightHand;
-        private string leftHand;
+        private int rightHand;
+        private int leftHand;
         private int gold;
         private int level;
         private int expPoints;
         private int active;
+        private Item rightItem;
+        private Item leftItem;
 
         public int UniqueID { get => uniqueID; set => uniqueID = value; }
         public int UserID { get => userID; set => userID = value; }
@@ -38,15 +40,17 @@ namespace Adventure
         public int Strength { get => strength; set => strength = value; }
         public int Intelligence { get => intelligence; set => intelligence = value; }
         public int Constitution { get => constitution; set => constitution = value; }
-        public string RightHand { get => rightHand; set => rightHand = value; }
-        public string LeftHand { get => leftHand; set => leftHand = value; }
+        public int RightHand { get => rightHand; set => rightHand = value; }
+        public int LeftHand { get => leftHand; set => leftHand = value; }
         public int Gold { get => gold; set => gold = value; }
         public int Level { get => level; set => level = value; }
         public int ExpPoints { get => expPoints; set => expPoints = value; }
         public int Active { get => active; set => active = value; }
+        internal Item RightItem { get => rightItem; set => rightItem = value; }
+        internal Item LeftItem { get => leftItem; set => leftItem = value; }
 
-        private const string DEFAULT_RIGHTHAND = "None";
-        private const string DEFAULT_LEFTHAND = "None";
+        private const int DEFAULT_RIGHTHAND = 0;
+        private const int DEFAULT_LEFTHAND = 0;
         private const int DEFAULT_GOLD = 0;
         private const int DEFAULT_LEVEL = 1;
         private const int DEFAULT_EXPPOINTS = 0;
@@ -75,7 +79,7 @@ namespace Adventure
             ExpPoints = DEFAULT_EXPPOINTS;
             Active = DEFAULT_ACTIVE;
         }
-        public Character(int unique, int user, string name, int maxHP, int currentHP, int maxMagic, int currentMagic, int strength, int intel, int con, string rightHand, string leftHand, int gold, int level, int expPoints, int active)
+        public Character(int unique, int user, string name, int maxHP, int currentHP, int maxMagic, int currentMagic, int strength, int intel, int con, int rightHand, int leftHand, int gold, int level, int expPoints, int active)
         {
             UniqueID = unique;
             UserID = user;

@@ -142,6 +142,9 @@
   <data name="Item_Shield" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Item_Shield.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="Item_ShortSword" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Item_ShortSword.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="RegisterSuccessMessage" xml:space="preserve">
     <value>You have been successfully registered. Please login.</value>
   </data>

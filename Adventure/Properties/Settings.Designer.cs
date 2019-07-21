@@ -76,5 +76,14 @@ namespace Adventure.Properties {
                 return ((string)(this["CharacterReadAPI"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("api/adventure/items/read.php")]
+        public string ItemReadAPI {
+            get {
+                return ((string)(this["ItemReadAPI"]));
+            }
+        }
     }
 }

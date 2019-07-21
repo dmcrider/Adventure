@@ -20,5 +20,8 @@
     <Setting Name="CharacterReadAPI" Type="System.String" Scope="Application">
       <Value Profile="(Default)">api/adventure/characters/read.php</Value>
     </Setting>
+    <Setting Name="ItemReadAPI" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">api/adventure/items/read.php</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

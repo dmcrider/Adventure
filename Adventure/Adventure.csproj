@@ -105,6 +105,7 @@
     <Compile Include="FormWelcome.Designer.cs">
       <DependentUpon>FormWelcome.cs</DependentUpon>
     </Compile>
+    <Compile Include="Item.cs" />
     <Compile Include="Items.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -176,6 +177,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Item_Shield.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Item_ShortSword.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
