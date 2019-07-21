@@ -85,5 +85,14 @@ namespace Adventure.Properties {
                 return ((string)(this["ItemReadAPI"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("apiadventure/characters/create.php")]
+        public string CharacterCreateAPI {
+            get {
+                return ((string)(this["CharacterCreateAPI"]));
+            }
+        }
     }
 }

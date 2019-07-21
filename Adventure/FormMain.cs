@@ -65,6 +65,7 @@ namespace Adventure
                 else
                 {
                     // Show the character creation screen
+                    frmCharacterCreation.player = player;
                     frmCharacterCreation.ShowDialog();
                 }
             }
