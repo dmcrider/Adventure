@@ -62,9 +62,36 @@ namespace Adventure.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("api/adventure/users/read.php")]
-        public string ReadAPI {
+        public string UserReadAPI {
             get {
-                return ((string)(this["ReadAPI"]));
+                return ((string)(this["UserReadAPI"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("api/adventure/characters/read.php")]
+        public string CharacterReadAPI {
+            get {
+                return ((string)(this["CharacterReadAPI"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("api/adventure/items/read.php")]
+        public string ItemReadAPI {
+            get {
+                return ((string)(this["ItemReadAPI"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("apiadventure/characters/create.php")]
+        public string CharacterCreateAPI {
+            get {
+                return ((string)(this["CharacterCreateAPI"]));
             }
         }
     }

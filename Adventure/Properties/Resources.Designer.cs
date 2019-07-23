@@ -61,6 +61,15 @@ namespace Adventure.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Character created successfully..
+        /// </summary>
+        internal static string APICharacterSuccess {
+            get {
+                return ResourceManager.GetString("APICharacterSuccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to User registered successfully.
         /// </summary>
         internal static string APIRegisterSuccess {
@@ -120,6 +129,36 @@ namespace Adventure.Properties {
         internal static string InvalidRegisterMessage2 {
             get {
                 return ResourceManager.GetString("InvalidRegisterMessage2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Item_Gold {
+            get {
+                object obj = ResourceManager.GetObject("Item_Gold", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Item_Shield {
+            get {
+                object obj = ResourceManager.GetObject("Item_Shield", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Item_ShortSword {
+            get {
+                object obj = ResourceManager.GetObject("Item_ShortSword", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
         

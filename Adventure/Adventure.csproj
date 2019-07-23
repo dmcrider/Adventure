@@ -69,6 +69,12 @@
   <ItemGroup>
     <Compile Include="Character.cs" />
     <Compile Include="ControllerGame.cs" />
+    <Compile Include="FormCharacterCreation.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormCharacterCreation.Designer.cs">
+      <DependentUpon>FormCharacterCreation.cs</DependentUpon>
+    </Compile>
     <Compile Include="FormLogin.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -99,9 +105,18 @@
     <Compile Include="FormWelcome.Designer.cs">
       <DependentUpon>FormWelcome.cs</DependentUpon>
     </Compile>
+    <Compile Include="Item.cs" />
+    <Compile Include="Items.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Items.resx</DependentUpon>
+    </Compile>
     <Compile Include="Player.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="FormCharacterCreation.resx">
+      <DependentUpon>FormCharacterCreation.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FormLogin.resx">
       <DependentUpon>FormLogin.cs</DependentUpon>
     </EmbeddedResource>
@@ -116,6 +131,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FormWelcome.resx">
       <DependentUpon>FormWelcome.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Items.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Items.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -152,6 +171,18 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\#1 - Transparent Icons.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Item_Shield.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Item_ShortSword.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Item_Gold.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

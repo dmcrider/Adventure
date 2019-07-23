@@ -1,9 +1,11 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -16,8 +18,8 @@ namespace Adventure
         readonly FormWelcome frmWelcome = new FormWelcome();
         readonly FormLogin frmLogin = new FormLogin();
         readonly FormSupport frmSupport = new FormSupport();
+        readonly FormCharacterCreation frmCharacterCreation = new FormCharacterCreation();
         Player player;
-        Character currentCharacter;
 
         public FormMain()
         {
@@ -57,15 +59,48 @@ namespace Adventure
                 if (HasCharacter())
                 {
                     panelCharacter.Visible = true;
-                    ControllerGame ctrlGame = new ControllerGame(player, currentCharacter);
-                    ctrlGame.PopulateInitialData(playerToolStripMenuItem, panelCharacter);
+                    ControllerGame ctrlGame = new ControllerGame(this, player);
+                    ctrlGame.PopulateInitialData();
+                }
+                else
+                {
+                    // Show the character creation screen
+                    frmCharacterCreation.player = player;
+                    frmCharacterCreation.ShowDialog();
                 }
             }
         }
 
         private bool HasCharacter()
         {
-            return true;
+            bool hasCharacter = false;
+
+            // See if there's a character associated with the player
+            // Verify the player has an ID - it's necessary for the API call
+            if(player.uniqueID != 0)
+            {
+                // Call the API to read the characters
+                using (WebClient wc = new WebClient())
+                {
+                    string response = wc.DownloadString(Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.CharacterReadAPI);
+
+                    JObject convertedJSON = JObject.Parse(response);
+
+                    foreach(var item in convertedJSON)
+                    {
+                        foreach(JObject character in item.Value)
+                        {
+                            if(player.uniqueID == (int)character.SelectToken("UserID"))
+                            {
+                                hasCharacter = true;
+                                player.character = new Character((int)character.GetValue("UniqueID"), (int)character.GetValue("UserID"), (string)character.GetValue("Name"), (int)character.GetValue("MaxHP"), (int)character.GetValue("CurrentHP"), (int)character.GetValue("MaxMagic"), (int)character.GetValue("CurrentMagic"), (int)character.GetValue("Strength"), (int)character.GetValue("Intelligence"), (int)character.GetValue("Constitution"), (int)character.GetValue("RightHand"), (int)character.GetValue("LeftHand"), (int)character.GetValue("Gold"), (int)character.GetValue("Level"), (int)character.GetValue("ExpPoints"), (int)character.GetValue("IsActive"));
+                            }
+                        }
+                    }
+                }
+            }
+
+            return hasCharacter;
         }
 
         private bool CheckForNullPlayer()
