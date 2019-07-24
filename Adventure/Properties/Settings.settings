@@ -6,25 +6,49 @@
       <Value Profile="(Default)">0.1.0</Value>
     </Setting>
     <Setting Name="LoginAPI" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">api/adventure/users/login.php</Value>
+      <Value Profile="(Default)">users/login.php</Value>
     </Setting>
     <Setting Name="RegisterAPI" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">api/adventure/users/register.php</Value>
+      <Value Profile="(Default)">users/register.php</Value>
     </Setting>
     <Setting Name="APIBaseAddress" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">https://dayloncrider.com/dev/</Value>
+      <Value Profile="(Default)">https://dayloncrider.com/dev/api/adventure/</Value>
     </Setting>
     <Setting Name="UserReadAPI" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">api/adventure/users/read.php</Value>
+      <Value Profile="(Default)">users/read.php</Value>
     </Setting>
     <Setting Name="CharacterReadAPI" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">api/adventure/characters/read.php</Value>
+      <Value Profile="(Default)">characters/read.php</Value>
     </Setting>
     <Setting Name="ItemReadAPI" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">api/adventure/items/read.php</Value>
+      <Value Profile="(Default)">items/read.php</Value>
     </Setting>
     <Setting Name="CharacterCreateAPI" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">apiadventure/characters/create.php</Value>
+      <Value Profile="(Default)">characters/create.php</Value>
+    </Setting>
+    <Setting Name="QuestReadAPI" Type="System.String" Scope="User">
+      <Value Profile="(Default)">quests/read.php</Value>
+    </Setting>
+    <Setting Name="SpellReadAPI" Type="System.String" Scope="User">
+      <Value Profile="(Default)">spells/read.php</Value>
+    </Setting>
+    <Setting Name="StatReadAPI" Type="System.String" Scope="User">
+      <Value Profile="(Default)">stats/read.php</Value>
+    </Setting>
+    <Setting Name="StateReadAPI" Type="System.String" Scope="User">
+      <Value Profile="(Default)">states/read.php</Value>
+    </Setting>
+    <Setting Name="RaceReadAPI" Type="System.String" Scope="User">
+      <Value Profile="(Default)">races/read.php</Value>
+    </Setting>
+    <Setting Name="NPCReadAPI" Type="System.String" Scope="User">
+      <Value Profile="(Default)">npcs/read.php</Value>
+    </Setting>
+    <Setting Name="QuestRewardReadAPI" Type="System.String" Scope="User">
+      <Value Profile="(Default)">questrewards/read.php</Value>
+    </Setting>
+    <Setting Name="VersionAPI" Type="System.String" Scope="User">
+      <Value Profile="(Default)">version.php</Value>
     </Setting>
   </Settings>
 </SettingsFile>

@@ -34,7 +34,7 @@ namespace Adventure.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("api/adventure/users/login.php")]
+        [global::System.Configuration.DefaultSettingValueAttribute("users/login.php")]
         public string LoginAPI {
             get {
                 return ((string)(this["LoginAPI"]));
@@ -43,7 +43,7 @@ namespace Adventure.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("api/adventure/users/register.php")]
+        [global::System.Configuration.DefaultSettingValueAttribute("users/register.php")]
         public string RegisterAPI {
             get {
                 return ((string)(this["RegisterAPI"]));
@@ -52,7 +52,7 @@ namespace Adventure.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://dayloncrider.com/dev/")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://dayloncrider.com/dev/api/adventure/")]
         public string APIBaseAddress {
             get {
                 return ((string)(this["APIBaseAddress"]));
@@ -61,7 +61,7 @@ namespace Adventure.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("api/adventure/users/read.php")]
+        [global::System.Configuration.DefaultSettingValueAttribute("users/read.php")]
         public string UserReadAPI {
             get {
                 return ((string)(this["UserReadAPI"]));
@@ -70,7 +70,7 @@ namespace Adventure.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("api/adventure/characters/read.php")]
+        [global::System.Configuration.DefaultSettingValueAttribute("characters/read.php")]
         public string CharacterReadAPI {
             get {
                 return ((string)(this["CharacterReadAPI"]));
@@ -79,7 +79,7 @@ namespace Adventure.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("api/adventure/items/read.php")]
+        [global::System.Configuration.DefaultSettingValueAttribute("items/read.php")]
         public string ItemReadAPI {
             get {
                 return ((string)(this["ItemReadAPI"]));
@@ -88,10 +88,106 @@ namespace Adventure.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("apiadventure/characters/create.php")]
+        [global::System.Configuration.DefaultSettingValueAttribute("characters/create.php")]
         public string CharacterCreateAPI {
             get {
                 return ((string)(this["CharacterCreateAPI"]));
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("quests/read.php")]
+        public string QuestReadAPI {
+            get {
+                return ((string)(this["QuestReadAPI"]));
+            }
+            set {
+                this["QuestReadAPI"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("spells/read.php")]
+        public string SpellReadAPI {
+            get {
+                return ((string)(this["SpellReadAPI"]));
+            }
+            set {
+                this["SpellReadAPI"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("stats/read.php")]
+        public string StatReadAPI {
+            get {
+                return ((string)(this["StatReadAPI"]));
+            }
+            set {
+                this["StatReadAPI"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("states/read.php")]
+        public string StateReadAPI {
+            get {
+                return ((string)(this["StateReadAPI"]));
+            }
+            set {
+                this["StateReadAPI"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("races/read.php")]
+        public string RaceReadAPI {
+            get {
+                return ((string)(this["RaceReadAPI"]));
+            }
+            set {
+                this["RaceReadAPI"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("npcs/read.php")]
+        public string NPCReadAPI {
+            get {
+                return ((string)(this["NPCReadAPI"]));
+            }
+            set {
+                this["NPCReadAPI"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("questrewards/read.php")]
+        public string QuestRewardReadAPI {
+            get {
+                return ((string)(this["QuestRewardReadAPI"]));
+            }
+            set {
+                this["QuestRewardReadAPI"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("version.php")]
+        public string VersionAPI {
+            get {
+                return ((string)(this["VersionAPI"]));
+            }
+            set {
+                this["VersionAPI"] = value;
             }
         }
     }
