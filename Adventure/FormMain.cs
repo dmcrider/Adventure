@@ -21,14 +21,6 @@ namespace Adventure
         readonly FormSupport frmSupport = new FormSupport();
         readonly FormCharacterCreation frmCharacterCreation = new FormCharacterCreation();
         Player player;
-        public List<Item> itemsList = new List<Item>();
-        public List<Quest> questsList = new List<Quest>();
-        public List<Spell> spellsList = new List<Spell>();
-        public List<Stat> statsList = new List<Stat>();
-        public List<Race> racesList = new List<Race>();
-        public List<State> statesList = new List<State>();
-        public List<Npc> npcsList = new List<Npc>();
-        public List<QuestReward> questrewardsList = new List<QuestReward>();
 
         public FormMain()
         {
@@ -59,13 +51,16 @@ namespace Adventure
             // Check the current version
             if (!API.CheckVersion(convertedJSON))
             {
-                API.UpdateFromDatabase(itemsList, questsList, spellsList, statsList, racesList, statesList, npcsList, questrewardsList);
+                // Load remote data
+                API.UpdateFromDatabase();
             }
             else
             {
-                // Load the data
-                API.LoadData(itemsList, questsList, spellsList, statsList, racesList, statesList, npcsList, questrewardsList);
+                // Load local data
+                API.LoadData();
             }
+
+            Console.WriteLine("Everything is loaded");
         }
 
         private void FormMain_Shown(object sender, EventArgs e)
@@ -95,7 +90,7 @@ namespace Adventure
                 else
                 {
                     // Show the character creation screen
-                    frmCharacterCreation.player = player;
+                    frmCharacterCreation.LoggedInPlayer(ref player);
                     frmCharacterCreation.ShowDialog();
                 }
             }
@@ -109,24 +104,16 @@ namespace Adventure
             // Verify the player has an ID - it's necessary for the API call
             if(player.uniqueID != 0)
             {
-                // Call the API to read the characters
-                using (WebClient wc = new WebClient())
+                Character character = API.GetCharacter(player.uniqueID);
+
+                if(character != null)
                 {
-                    string response = wc.DownloadString(Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.CharacterReadAPI);
-
-                    JObject convertedJSON = JObject.Parse(response);
-
-                    foreach(var item in convertedJSON)
-                    {
-                        foreach(JObject character in item.Value)
-                        {
-                            if(player.uniqueID == (int)character.SelectToken("UserID"))
-                            {
-                                hasCharacter = true;
-                                player.character = new Character((int)character.GetValue("UniqueID"), (int)character.GetValue("UserID"), (string)character.GetValue("Name"), (int)character.GetValue("MaxHP"), (int)character.GetValue("CurrentHP"), (int)character.GetValue("MaxMagic"), (int)character.GetValue("CurrentMagic"), (int)character.GetValue("Strength"), (int)character.GetValue("Intelligence"), (int)character.GetValue("Constitution"), (int)character.GetValue("RightHand"), (int)character.GetValue("LeftHand"), (int)character.GetValue("Gold"), (int)character.GetValue("Level"), (int)character.GetValue("ExpPoints"), (int)character.GetValue("IsActive"));
-                            }
-                        }
-                    }
+                    hasCharacter = true;
+                    player.character = character;
+                }
+                else
+                {
+                    Console.WriteLine("Error getting player's character (PlayerID: " + player.uniqueID + ")");
                 }
             }
 

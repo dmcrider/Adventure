@@ -61,24 +61,6 @@ namespace Adventure.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Character created successfully..
-        /// </summary>
-        internal static string APICharacterSuccess {
-            get {
-                return ResourceManager.GetString("APICharacterSuccess", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to User registered successfully.
-        /// </summary>
-        internal static string APIRegisterSuccess {
-            get {
-                return ResourceManager.GetString("APIRegisterSuccess", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Are you sure you want to quit without saving?.
         /// </summary>
         internal static string ConfirmNoSaveMessage {
@@ -106,7 +88,7 @@ namespace Adventure.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Your username or password is incorrect. Please try again..
+        ///   Looks up a localized string similar to Your username or password is incorrect. Please try again. Do you need to register?.
         /// </summary>
         internal static string InvalidLoginMessage {
             get {
@@ -117,18 +99,18 @@ namespace Adventure.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Your passwords do not match. Please try again..
         /// </summary>
-        internal static string InvalidRegisterMessage {
+        internal static string InvalidRegisterPasswordNoMatch {
             get {
-                return ResourceManager.GetString("InvalidRegisterMessage", resourceCulture);
+                return ResourceManager.GetString("InvalidRegisterPasswordNoMatch", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to That username is already taken. Please try a different one..
+        ///   Looks up a localized string similar to That username is already taken. Please try a different one, or login..
         /// </summary>
-        internal static string InvalidRegisterMessage2 {
+        internal static string InvalidRegisterUsernameTaken {
             get {
-                return ResourceManager.GetString("InvalidRegisterMessage2", resourceCulture);
+                return ResourceManager.GetString("InvalidRegisterUsernameTaken", resourceCulture);
             }
         }
         

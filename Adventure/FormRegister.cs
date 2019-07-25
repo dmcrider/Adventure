@@ -19,7 +19,7 @@ namespace Adventure
         {
             Location = new Point(0, 0),
             ForeColor = Color.Red,
-            Text = Properties.Resources.InvalidRegisterMessage
+            Text = Properties.Resources.InvalidRegisterPasswordNoMatch
         };
         public FormRegister()
         {
@@ -39,18 +39,13 @@ namespace Adventure
 
             if (pwd.Equals(pwd2))
             {
-                // Check if the user already exists
-                if (IsNewUser(username))
+                if (API.Register(username, pwd))
                 {
-                    // Save the name & pwd and let the user login
-                    SaveValidCredentials(username, pwd);
-
-                    // Close this form so users can login
+                    // Close the form so user can login
                     this.Close();
                 }
                 else
                 {
-                    // Already Registered
                     AlertAlreadyRegistered();
                 }
             }
@@ -63,7 +58,7 @@ namespace Adventure
 
         private void AlertAlreadyRegistered()
         {
-            invalidRegisterLabel.Text = Properties.Resources.InvalidRegisterMessage2;
+            invalidRegisterLabel.Text = Properties.Resources.InvalidRegisterUsernameTaken;
             invalidRegisterLabel.Width = this.Width;
             if(this.Controls.IndexOf(invalidRegisterLabel) == -1)
             {
@@ -74,63 +69,11 @@ namespace Adventure
             txtUsername.Focus();
         }
 
-        private bool IsNewUser(string u)
-        {
-            bool isNew = true;
-
-            // Connect to database and check if username already exists
-            using (WebClient wc = new WebClient())
-            {
-                string response = wc.DownloadString(Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.UserReadAPI);
-                // Get the ID for the username entered so we can verify the password
-                string[] responseJSON = response.Split('}');
-                foreach (string obj in responseJSON)
-                {
-                    if (obj.Length > 2 && obj[2] == 'I')
-                    {
-                        string output = obj + "}";
-                        JObject convertedJSON = JObject.Parse(output);
-                        foreach (var item in convertedJSON)
-                        {
-                            if (item.Key == "Username")
-                            {
-                                if((string)item.Value == u)
-                                {
-                                    isNew = false;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            return isNew;
-        }
-
         private void AlertInvalidRegister()
         {
             invalidRegisterLabel.Width = this.Width;
             // Add the label to the form
             this.Controls.Add(invalidRegisterLabel);
-        }
-
-        private void SaveValidCredentials(string u, string p)
-        {
-            string apiJSON = $"{{\"Username\":\"{u}\",\"Password\":\"{p}\"}}";
-
-            using (WebClient wc = new WebClient())
-            {
-                string response = wc.UploadString(Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.RegisterAPI, apiJSON);
-                JObject convertedJSON = JObject.Parse(response);
-
-                foreach (var item in convertedJSON)
-                {
-                    if((string)item.Value == Properties.Resources.APIRegisterSuccess)
-                    {
-                        MessageBox.Show(Properties.Resources.RegisterSuccessMessage);
-                    }
-                }
-            }
         }
     }
 }

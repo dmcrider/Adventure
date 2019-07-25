@@ -43,6 +43,7 @@ namespace Adventure
                 pboxLeft = (PictureBox)panelCharacter.Controls["picLeftHand"];
                 pboxRight = (PictureBox)panelCharacter.Controls["picRightHand"];
 
+                /*
                 if(currentCharacter.LeftHand != 0)
                 {
                     LoadImage(currentCharacter.LeftHand, pboxLeft, 'a');
@@ -56,9 +57,10 @@ namespace Adventure
                     pboxRight.Image = (System.Drawing.Image)Properties.Resources.ResourceManager.GetObject(currentCharacter.RightItem.AssetName);
                     pboxRight.Update();
                 }
+                */
             }
         }
-
+        /*
         public void LoadImage(int imageIndex, PictureBox pbox, Char hand)
         {
             using (WebClient wc = new WebClient())
@@ -85,6 +87,6 @@ namespace Adventure
                     }
                 }
             }
-        }
+        }*/
     }
 }

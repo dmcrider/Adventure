@@ -14,25 +14,17 @@ namespace Adventure
 {
     public partial class FormCharacterCreation : Form
     {
-        private const int DEFAULT_STR = 10;
-        private const int DEFAULT_INT = 10;
-        private const int DEFAULT_CON = 10;
-
-        private const int ELF_STR = 8;
-        private const int ELF_INT = 12;
-
-        private const int DWARF_STR = 12;
-        private const int DWARF_INT = 8;
-
-        private string selectedRace;
-        private int selectedSTR;
-        private int selectedINT;
-        private int selectedCON;
+        private int selectedRace;
         private int selectedWeapon1;
         private int selectedWeapon2;
         private int selectedGold;
 
-        public Player player;
+        private Player player;
+
+        public void LoggedInPlayer(ref Player player)
+        {
+            this.player = player;
+        }
 
         public FormCharacterCreation()
         {
@@ -83,40 +75,15 @@ namespace Adventure
             {
                 RadioButton tmpRadio = (RadioButton)sender;
 
-                if (tmpRadio.Text == "Human")
-                {
-                    txtSTR.Text = DEFAULT_STR.ToString();
-                    txtINT.Text = DEFAULT_INT.ToString();
-                    txtCON.Text = DEFAULT_CON.ToString();
 
-                    selectedRace = "Human";
-                    selectedSTR = DEFAULT_STR;
-                    selectedINT = DEFAULT_INT;
-                    selectedCON = DEFAULT_CON;
-                }
-                else if (tmpRadio.Text == "Elf")
-                {
-                    txtSTR.Text = ELF_STR.ToString();
-                    txtINT.Text = ELF_INT.ToString();
-                    txtCON.Text = DEFAULT_CON.ToString();
+                int raceID = int.Parse(tmpRadio.Tag.ToString());
+                raceID -= 1; // List indices start at 0, but our values start at 1
 
-                    selectedRace = "Elf";
-                    selectedSTR = ELF_STR;
-                    selectedINT = ELF_INT;
-                    selectedCON = DEFAULT_CON;
-                }
-                else if (tmpRadio.Text == "Dwarf")
-                {
-                    txtSTR.Text = DWARF_STR.ToString();
-                    txtINT.Text = DWARF_INT.ToString();
-                    txtCON.Text = DEFAULT_CON.ToString();
+                txtSTR.Text = Race.GetStrength(raceID).ToString();
+                txtINT.Text = Race.GetIntelligence(raceID).ToString();
+                txtCON.Text = Race.GetConstitution(raceID).ToString();
 
-                    selectedRace = "Dwarf";
-
-                    selectedSTR = DWARF_STR;
-                    selectedINT = DWARF_INT;
-                    selectedCON = DEFAULT_CON;
-                }
+                selectedRace = raceID;
             }
             catch(Exception exception)
             {
@@ -127,24 +94,22 @@ namespace Adventure
 
         private void BtnSave_Click(object sender, EventArgs e)
         {
-            //`UserID`, `Name`, `Race`, `MaxHP`, `CurrentHP`, `MaxMagic`, `CurrentMagic`, `Strength`, `Intelligence`, `Constitution`, `RightHand`, `LeftHand`, `Gold`, `Level`, `ExperiencePoints`
-            //string apiJSON = $"{{\"Username\":\"{u}\",\"Password\":\"{p}\"}}";
-
-            string apiJSON = $"{{\"UserID\":{player.uniqueID},\"Name\":\"{txtCharacterName.Text}\",\"Race\":\"{selectedRace}\",\"MaxHP\":20,\"CurrentHP\":20,\"MaxMagic\":20,\"CurrentMagic\":20,\"Strength\":{selectedSTR},\"Intelligence\":{selectedINT},\"Constitution\":{selectedCON},\"RightHand\":{selectedWeapon1},\"LeftHand\":{selectedWeapon2},\"Gold\":{selectedGold},\"Level\":1,\"ExperiencePoints\":0}}";
-
-            // API call to save the character
-            using (WebClient wc = new WebClient())
+            // Create and save the character
+            Character newCharacter = new Character(player.uniqueID,txtCharacterName.Text,selectedRace);
+            if (!API.CreateCharacter(ref newCharacter, newCharacter.UserID))
             {
-                string response = wc.UploadString(Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.CharacterCreateAPI, apiJSON);
-                JObject convertedJSON = JObject.Parse(response);
+                // There was a problem
+                MessageBox.Show(Properties.Resources.ErrorGeneral, "Error");
+            }
+            // Create and save the inventory
+            if(selectedWeapon1 != 0)
+            {
+                API.AddInventoryItem(newCharacter.UniqueID,selectedWeapon1);
+            }
 
-                foreach (var item in convertedJSON)
-                {
-                    if ((string)item.Value == Properties.Resources.APIRegisterSuccess)
-                    {
-                        MessageBox.Show(Properties.Resources.RegisterSuccessMessage);
-                    }
-                }
+            if (selectedWeapon2 != 0)
+            {
+                API.AddInventoryItem(newCharacter.UniqueID, selectedWeapon2);
             }
         }
     }

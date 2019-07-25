@@ -85,6 +85,7 @@
             this.radioRaceDwarf.Size = new System.Drawing.Size(69, 24);
             this.radioRaceDwarf.TabIndex = 2;
             this.radioRaceDwarf.TabStop = true;
+            this.radioRaceDwarf.Tag = "3";
             this.radioRaceDwarf.Text = "Dwarf";
             this.radioRaceDwarf.UseVisualStyleBackColor = true;
             this.radioRaceDwarf.CheckedChanged += new System.EventHandler(this.RadioButtonRace_CheckedChanged);
@@ -99,6 +100,7 @@
             this.radioRaceElf.Size = new System.Drawing.Size(46, 24);
             this.radioRaceElf.TabIndex = 1;
             this.radioRaceElf.TabStop = true;
+            this.radioRaceElf.Tag = "2";
             this.radioRaceElf.Text = "Elf";
             this.radioRaceElf.UseVisualStyleBackColor = true;
             this.radioRaceElf.CheckedChanged += new System.EventHandler(this.RadioButtonRace_CheckedChanged);
@@ -113,6 +115,7 @@
             this.radioRaceHuman.Size = new System.Drawing.Size(79, 24);
             this.radioRaceHuman.TabIndex = 0;
             this.radioRaceHuman.TabStop = true;
+            this.radioRaceHuman.Tag = "1";
             this.radioRaceHuman.Text = "Human";
             this.radioRaceHuman.UseVisualStyleBackColor = true;
             this.radioRaceHuman.CheckedChanged += new System.EventHandler(this.RadioButtonRace_CheckedChanged);

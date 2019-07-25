@@ -25,7 +25,8 @@ namespace Adventure
         {
             Location = new Point(0, 0),
             ForeColor = Color.Red,
-            Text = Properties.Resources.InvalidLoginMessage
+            Text = Properties.Resources.InvalidLoginMessage,
+            Height = 40
         };
         public FormLogin()
         {
@@ -39,7 +40,7 @@ namespace Adventure
 
             loggedInPlayer = new Player(username, pwd);
 
-            int loginType = API.Login(loggedInPlayer);
+            int loginType = API.Login(ref loggedInPlayer);
 
             if (loginType == 1)
             {
@@ -49,6 +50,7 @@ namespace Adventure
             else if(loginType == 0)
             {
                 // Bad credentials
+                loggedInPlayer = null;
                 ClearForm();
                 AlertInvalidLogin();
             }
@@ -95,6 +97,14 @@ namespace Adventure
             }
 
             return null;
+        }
+
+        private void BtnLogin_KeyDown(object sender, KeyEventArgs e)
+        {
+            if(e.KeyCode == Keys.Enter)
+            {
+                BtnLogin_Click(this, EventArgs.Empty);
+            }
         }
     }
 }
