@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Adventure
 {
-    class QuestReward
+    public class QuestReward
     {
         private int uniqueID;
         private int isItem;

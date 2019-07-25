@@ -37,12 +37,18 @@ namespace Adventure
             string username = txtUsername.Text;
             string pwd = txtPassword.Text;
 
-            if(ValidateLogin(username, pwd))
+            loggedInPlayer = new Player(username, pwd);
+
+            int loginType = API.Login(loggedInPlayer);
+
+            if (loginType == 1)
             {
+                // Successful login
                 this.Close();
             }
-            else
+            else if(loginType == 0)
             {
+                // Bad credentials
                 ClearForm();
                 AlertInvalidLogin();
             }
@@ -61,71 +67,6 @@ namespace Adventure
             // Add the label to the form
             invalidLoginLabel.Width = this.Width;
             Controls.Add(invalidLoginLabel);
-        }
-
-        private bool ValidateLogin(string u, string p)
-        {
-            bool isValidLogin = false;
-            loggedInPlayer = new Player(u, p);
-            int id = 0;
-
-            using (WebClient wc = new WebClient())
-            {
-                string response = wc.DownloadString(Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.UserReadAPI);
-                // Get the ID for the username entered so we can verify the password
-                string[] responseJSON = response.Split('}');
-                foreach(string obj in responseJSON)
-                {
-                    if(obj.Length > 2 && obj[2] == 'I')
-                    {
-                        string output = obj + "}";
-                        JObject convertedJSON = JObject.Parse(output);
-                        foreach (var item in convertedJSON)
-                        {
-                            if (item.Key == "ID")
-                            {
-                                id = (int)item.Value;
-                            }
-                            if (item.Key == "Username")
-                            {
-                                if((string)item.Value == u && id != 0)
-                                {
-                                    loggedInPlayer.uniqueID = id;
-                                    isValidLogin = VerifyPassword();
-                                }
-                            }
-                        }
-                    }
-                }
-                
-            }
-
-            return isValidLogin;
-        }
-
-        private bool VerifyPassword()
-        {
-            bool isValidPassword = false;
-            string apiJSON = $"{{\"Username\":\"{loggedInPlayer.username}\",\"Password\":\"{loggedInPlayer.password}\",\"ID\":\"{loggedInPlayer.uniqueID}\"}}";
-
-            using (WebClient wc = new WebClient())
-            {
-                string response = wc.UploadString(Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.LoginAPI, apiJSON);
-                JObject convertedJSON = JObject.Parse(response);
-
-                foreach(var item in convertedJSON)
-                {
-                    if(item.Key == "login_success")
-                    {
-                        if((int)item.Value == 1)
-                        {
-                            isValidPassword = true;
-                        }
-                    }
-                }
-            }
-
-            return isValidPassword;
         }
 
         private void FormLogin_Load(object sender, EventArgs e)

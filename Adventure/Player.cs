@@ -31,5 +31,10 @@ namespace Adventure
             this.username = username;
             this.password = password;
         }
+
+        public bool HasID()
+        {
+            return uniqueID != 0;
+        }
     }
 }

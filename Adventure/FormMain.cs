@@ -8,6 +8,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace Adventure
@@ -20,6 +21,14 @@ namespace Adventure
         readonly FormSupport frmSupport = new FormSupport();
         readonly FormCharacterCreation frmCharacterCreation = new FormCharacterCreation();
         Player player;
+        public List<Item> itemsList = new List<Item>();
+        public List<Quest> questsList = new List<Quest>();
+        public List<Spell> spellsList = new List<Spell>();
+        public List<Stat> statsList = new List<Stat>();
+        public List<Race> racesList = new List<Race>();
+        public List<State> statesList = new List<State>();
+        public List<Npc> npcsList = new List<Npc>();
+        public List<QuestReward> questrewardsList = new List<QuestReward>();
 
         public FormMain()
         {
@@ -36,6 +45,27 @@ namespace Adventure
 
             // Clear defaults
             lblCharacterName.Text = string.Empty;
+
+            // Throw this in a Thread so we can still let the user login
+            Thread apiThread = new Thread(new ThreadStart(APIChecks));
+            apiThread.Start();
+        }
+
+        private void APIChecks()
+        {
+            string response = new WebClient().DownloadString(Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.VersionAPI);
+            JObject convertedJSON = JObject.Parse(response);
+
+            // Check the current version
+            if (!API.CheckVersion(convertedJSON))
+            {
+                API.UpdateFromDatabase(itemsList, questsList, spellsList, statsList, racesList, statesList, npcsList, questrewardsList);
+            }
+            else
+            {
+                // Load the data
+                API.LoadData(itemsList, questsList, spellsList, statsList, racesList, statesList, npcsList, questrewardsList);
+            }
         }
 
         private void FormMain_Shown(object sender, EventArgs e)

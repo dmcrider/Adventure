@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Adventure
 {
-    class Npc
+    public class Npc
     {
         private int uniqueID;
         private string name;

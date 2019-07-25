@@ -13,14 +13,10 @@ namespace Adventure
     {
         private static WebClient client = new WebClient();
 
-        public static bool CheckVersion()
+        public static bool CheckVersion(JObject convertedJSON)
         {
             try
             {
-                string response = client.DownloadString(Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.VersionAPI);
-
-                JObject convertedJSON = JObject.Parse(response);
-
                 foreach (var obj in convertedJSON)
                 {
                     if (obj.Key == "api_version")
@@ -34,53 +30,151 @@ namespace Adventure
                             Properties.Settings.Default["Version"] = cloudVersion;
                             Properties.Settings.Default.Save();
 
-                            UpdateFromDatabase(convertedJSON);
+                            return false;
+                        }
+                        else
+                        {
+                            return true;
                         }
                     }
                 }
-
-                return true;
             }
             catch (Exception e)
             {
                 Console.WriteLine("Error checking the database version\n\t" + e);
                 return false;
             }
+
+            return false;
             
         }
 
-        public static bool LoadData()
+        public static void LoadData(List<Item>itemsList, List<Quest>questsList, List<Spell>spellsList, List<Stat>statsList, List<Race>racesList, List<State> statesList, List<Npc>npcsList, List<QuestReward>questrewardsList)
         {
-            // Check if the file exists and load it if it does
             try
             {
-                //Movie movie1 = JsonConvert.DeserializeObject<Movie>(File.ReadAllText(@"c:\movie.json"));
                 string[] filesArray = {"items.json","quests.json","spells.json","stats.json","races.json","states.json","npcs.json","questrewards.json"};
+                
 
                 foreach (string file in filesArray)
                 {
                     string path = Environment.SpecialFolder.ApplicationData.ToString() + file;
-                    // Read the file in and create an object that the main class can use
-                }
+                    string type = file.Split('.')[0];
+                    // Read the file in and add an appropriate object to the arrays we got from the main class
+                    using(System.IO.StreamReader inputFile = System.IO.File.OpenText(path))
+                    {
+                        JsonSerializer serializer = new JsonSerializer();
+                        JObject response = (JObject)serializer.Deserialize(inputFile, typeof(JObject));
 
-                return true;
+                        foreach(var obj in response)
+                        {
+                            foreach(var input in obj.Value)
+                            {
+                                JObject jsonInput = (JObject)input;
+                                switch (type)
+                                {
+                                    case "items":
+                                        itemsList.Add((Item)jsonInput.ToObject(typeof(Item)));
+                                        break;
+                                    case "quests":
+                                        questsList.Add((Quest)jsonInput.ToObject(typeof(Quest)));
+                                        break;
+                                    case "spells":
+                                        spellsList.Add((Spell)jsonInput.ToObject(typeof(Spell)));
+                                        break;
+                                    case "stats":
+                                        statsList.Add((Stat)jsonInput.ToObject(typeof(Stat)));
+                                        break;
+                                    case "races":
+                                        racesList.Add((Race)jsonInput.ToObject(typeof(Race)));
+                                        break;
+                                    case "states":
+                                        statesList.Add((State)jsonInput.ToObject(typeof(State)));
+                                        break;
+                                    case "npcs":
+                                        npcsList.Add((Npc)jsonInput.ToObject(typeof(Npc)));
+                                        break;
+                                    case "questrewards":
+                                        questrewardsList.Add((QuestReward)jsonInput.ToObject(typeof(QuestReward)));
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            }
+                        }
+                    }
+                }
             }catch(Exception e)
             {
                 Console.WriteLine("Error loading local data\n\t" + e);
-                return false;
+                return;
             }
         }
 
-        private static void UpdateFromDatabase(JObject json)
+        private static bool PlayerExistsLocally(Player player)
         {
-            List<Item> itemList = new List<Item>();
-            List<Quest> questList = new List<Quest>();
-            List<Spell> spellList = new List<Spell>();
-            List<Stat> statList = new List<Stat>();
-            List<Race> raceList = new List<Race>();
-            List<State> stateList = new List<State>();
-            List<Npc> npcList = new List<Npc>();
-            List<QuestReward> questRewardList = new List<QuestReward>();
+            string path = Environment.SpecialFolder.ApplicationData.ToString() + "player.json";
+
+            if (System.IO.File.Exists(path))
+            {
+                using (System.IO.StreamReader inputFile = System.IO.File.OpenText(path))
+                {
+                    JsonSerializer serializer = new JsonSerializer();
+                    JObject response = (JObject)serializer.Deserialize(inputFile, typeof(JObject));
+
+                    foreach (var obj in response)
+                    {
+                        foreach (var input in obj.Value)
+                        {
+                            JObject jsonInput = (JObject)input;
+                            player = (Player)jsonInput.ToObject(typeof(Player));
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+
+        public static int Login(Player player)
+        {
+            string credentials;
+            if (player.HasID())
+            {
+                credentials = $"{{\"Username\":\"{player.username}\",\"Password\":\"{player.password}\",\"ID\":\"{player.uniqueID}\"}}";
+            }
+            else
+            {
+                if (PlayerExistsLocally(player))
+                {
+                    credentials = $"{{\"Username\":\"{player.username}\",\"Password\":\"{player.password}\",\"ID\":\"{player.uniqueID}\"}}";
+                }
+                else
+                {
+                    credentials = $"{{\"Username\":\"{player.username}\",\"Password\":\"{player.password}\"}}";
+                }
+            }
+            
+            string response = client.UploadString(Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.LoginAPI, credentials);
+            JObject convertedJSON = JObject.Parse(response);
+
+            foreach(var obj in convertedJSON)
+            {
+                if(obj.Key == "fail")
+                {
+                    return 0; // Bad login attempt
+                }
+                else if (obj.Key == "success")
+                {
+                    return 1;
+                }
+            }
+
+            return 0; // Bad login attempt
+        }
+
+        public static void UpdateFromDatabase(List<Item> itemsList, List<Quest> questsList, List<Spell> spellsList, List<Stat> statsList, List<Race> racesList, List<State> statesList, List<Npc> npcsList, List<QuestReward> questrewardsList)
+        {
 
             string[] apiStrings = new string[8];
             apiStrings[0] = Properties.Settings.Default.ItemReadAPI;
@@ -98,35 +192,35 @@ namespace Adventure
                 string response = client.DownloadString(fullAPI);
                 JObject convertedJSON = JObject.Parse(response);
 
-                foreach(var obj in json)
+                foreach(var obj in convertedJSON)
                 {
                     foreach(var item in obj.Value)
                     {
                         switch (Array.IndexOf(apiStrings,apiName))
                         {
                             case 0: // Items
-                                itemList.Add(new Item((int)item.SelectToken("UniqueID"), (string)item.SelectToken("DisplayName"), (string)item.SelectToken("AssetName"), (int)item.SelectToken("AttackBonus"), (int)item.SelectToken("DefenseBonus"), (int)item.SelectToken("HPHealed"), (int)item.SelectToken("MagicHealed"), (int)item.SelectToken("MaxStackQuantity"), (int)item.SelectToken("ValueInGold"), (int)item.SelectToken("CanBuySell"), (int)item.SelectToken("IsActive")));
+                                itemsList.Add(new Item((int)item.SelectToken("UniqueID"), (string)item.SelectToken("DisplayName"), (string)item.SelectToken("AssetName"), (int)item.SelectToken("AttackBonus"), (int)item.SelectToken("DefenseBonus"), (int)item.SelectToken("HPHealed"), (int)item.SelectToken("MagicHealed"), (int)item.SelectToken("MaxStackQuantity"), (int)item.SelectToken("ValueInGold"), (int)item.SelectToken("CanBuySell"), (int)item.SelectToken("IsActive")));
                                 break;
                             case 1: // Quests
-                                questList.Add(new Quest((int)item.SelectToken("UniqueID"),(string)item.SelectToken("Name"), (int)item.SelectToken("ExpAwarded"), (int)item.SelectToken("QuestRewardID"), (int)item.SelectToken("MinCharacterLevel"), (int)item.SelectToken("MaxCharacterID"), (int)item.SelectToken("NPC_ID"), (string)item.SelectToken("Description")));
+                                questsList.Add(new Quest((int)item.SelectToken("UniqueID"),(string)item.SelectToken("Name"), (int)item.SelectToken("ExpAwarded"), (int)item.SelectToken("QuestRewardID"), (int)item.SelectToken("MinCharacterLevel"), (int)item.SelectToken("MaxCharacterID"), (int)item.SelectToken("NPC_ID"), (string)item.SelectToken("Description")));
                                 break;
                             case 2: // Spells
-                                spellList.Add(new Spell((int)item.SelectToken("UniqueID"), (string)item.SelectToken("Name"), (int)item.SelectToken("HealAmount"), (int)item.SelectToken("DamageAmount"), (int)item.SelectToken("Bonus"), (int)item.SelectToken("MagicCost"), (int)item.SelectToken("MinLevel")));
+                                spellsList.Add(new Spell((int)item.SelectToken("UniqueID"), (string)item.SelectToken("Name"), (int)item.SelectToken("HealAmount"), (int)item.SelectToken("DamageAmount"), (int)item.SelectToken("Bonus"), (int)item.SelectToken("MagicCost"), (int)item.SelectToken("MinLevel")));
                                 break;
                             case 3: // Stats
-                                statList.Add(new Stat((int)item.SelectToken("UniqueID"), (string)item.SelectToken("Name")));
+                                statsList.Add(new Stat((int)item.SelectToken("UniqueID"), (string)item.SelectToken("Name")));
                                 break;
                             case 4: // Races
-                                raceList.Add(new Race((int)item.SelectToken("UniqueID"), (string)item.SelectToken("Name"), (int)item.SelectToken("BaseSTR"), (int)item.SelectToken("BaseINT"), (int)item.SelectToken("BaseCON"), (int)item.SelectToken("IsActive")));
+                                racesList.Add(new Race((int)item.SelectToken("UniqueID"), (string)item.SelectToken("Name"), (int)item.SelectToken("BaseSTR"), (int)item.SelectToken("BaseINT"), (int)item.SelectToken("BaseCON"), (int)item.SelectToken("IsActive")));
                                 break;
                             case 5: // States
-                                stateList.Add(new State((int)item.SelectToken("UniqueID"), (string)item.SelectToken("Name")));
+                                statesList.Add(new State((int)item.SelectToken("UniqueID"), (string)item.SelectToken("Name")));
                                 break;
                             case 6: // NPCs
-                                npcList.Add(new Npc((int)item.SelectToken("UniqueID"), (string)item.SelectToken("Name")));
+                                npcsList.Add(new Npc((int)item.SelectToken("UniqueID"), (string)item.SelectToken("Name")));
                                 break;
                             case 7: // QuestRewards
-                                questRewardList.Add(new QuestReward((int)item.SelectToken("UniqueID"), (int)item.SelectToken("IsItem"), (int)item.SelectToken("ItemID"), (int)item.SelectToken("Gold")));
+                                questrewardsList.Add(new QuestReward((int)item.SelectToken("UniqueID"), (int)item.SelectToken("IsItem"), (int)item.SelectToken("ItemID"), (int)item.SelectToken("Gold")));
                                 break;
                             default: // Shouldn't ever happen
                                 break;
@@ -135,7 +229,7 @@ namespace Adventure
                 }
             }
 
-            SaveData(itemList,questList,spellList,statList,raceList,stateList,npcList,questRewardList);
+            SaveData(itemsList,questsList,spellsList,statsList,racesList,statesList,npcsList,questrewardsList);
         }
 
         private static void SaveData(List<Item> items, List<Quest> quests, List<Spell> spells, List<Stat> stats, List<Race> races, List<State> states, List<Npc> npcs, List<QuestReward> questRewards)
