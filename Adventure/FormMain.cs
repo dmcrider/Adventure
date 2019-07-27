@@ -52,11 +52,13 @@ namespace Adventure
             if (!API.CheckVersion(convertedJSON))
             {
                 // Load remote data
+                Console.WriteLine("Loading data from the cloud");
                 API.UpdateFromDatabase();
             }
             else
             {
                 // Load local data
+                Console.WriteLine("Loading local data");
                 API.LoadData();
             }
 
