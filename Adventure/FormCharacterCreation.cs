@@ -64,7 +64,7 @@ namespace Adventure
             }
             catch (Exception exception)
             {
-                Console.WriteLine("Something that wasn't a RadioButton called the RadioButtonChanged function.\n\t" + exception);
+                LogWriter.Write("Something that wasn't a RadioButton called the RadioButtonChanged function.\n\t" + exception);
                 return;
             }
         }
@@ -87,7 +87,7 @@ namespace Adventure
             }
             catch(Exception exception)
             {
-                Console.WriteLine("Something that wasn't a RadioButton called the RadioButtonChanged function.\n\t" + exception);
+                LogWriter.Write("Something that wasn't a RadioButton called the RadioButtonChanged function.\n\t" + exception);
                 return;
             }
         }

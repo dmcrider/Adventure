@@ -52,17 +52,17 @@ namespace Adventure
             if (!API.CheckVersion(convertedJSON))
             {
                 // Load remote data
-                Console.WriteLine("Loading data from the cloud");
+                LogWriter.Write("Loading data from the cloud");
                 API.UpdateFromDatabase();
             }
             else
             {
                 // Load local data
-                Console.WriteLine("Loading local data");
+                LogWriter.Write("Loading local data");
                 API.LoadData();
             }
 
-            Console.WriteLine("Everything is loaded");
+            LogWriter.Write("Everything is loaded");
         }
 
         private void FormMain_Shown(object sender, EventArgs e)
@@ -104,7 +104,7 @@ namespace Adventure
 
             // See if there's a character associated with the player
             // Verify the player has an ID - it's necessary for the API call
-            if(player.uniqueID != 0)
+            if(player != null && player.uniqueID != 0)
             {
                 Character character = API.GetCharacter(player.uniqueID);
 
@@ -115,7 +115,7 @@ namespace Adventure
                 }
                 else
                 {
-                    Console.WriteLine("Error getting player's character (PlayerID: " + player.uniqueID + ")");
+                    LogWriter.Write("Error getting player's character (PlayerID: " + player.uniqueID + ")");
                 }
             }
 

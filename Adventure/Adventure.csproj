@@ -112,6 +112,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Items.resx</DependentUpon>
     </Compile>
+    <Compile Include="LogWriter.cs" />
     <Compile Include="Npc.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Program.cs" />

@@ -2,8 +2,8 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Adventure.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
-    <Setting Name="Version" Type="System.Double" Scope="Application">
-      <Value Profile="(Default)">0.1</Value>
+    <Setting Name="Version" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">1.7</Value>
     </Setting>
     <Setting Name="LoginAPI" Type="System.String" Scope="Application">
       <Value Profile="(Default)">users/login.php</Value>
@@ -26,28 +26,28 @@
     <Setting Name="CharacterCreateAPI" Type="System.String" Scope="Application">
       <Value Profile="(Default)">characters/create.php</Value>
     </Setting>
-    <Setting Name="QuestReadAPI" Type="System.String" Scope="User">
+    <Setting Name="QuestReadAPI" Type="System.String" Scope="Application">
       <Value Profile="(Default)">quests/read.php</Value>
     </Setting>
-    <Setting Name="SpellReadAPI" Type="System.String" Scope="User">
+    <Setting Name="SpellReadAPI" Type="System.String" Scope="Application">
       <Value Profile="(Default)">spells/read.php</Value>
     </Setting>
-    <Setting Name="StatReadAPI" Type="System.String" Scope="User">
+    <Setting Name="StatReadAPI" Type="System.String" Scope="Application">
       <Value Profile="(Default)">stats/read.php</Value>
     </Setting>
-    <Setting Name="StateReadAPI" Type="System.String" Scope="User">
+    <Setting Name="StateReadAPI" Type="System.String" Scope="Application">
       <Value Profile="(Default)">states/read.php</Value>
     </Setting>
-    <Setting Name="RaceReadAPI" Type="System.String" Scope="User">
+    <Setting Name="RaceReadAPI" Type="System.String" Scope="Application">
       <Value Profile="(Default)">races/read.php</Value>
     </Setting>
-    <Setting Name="NPCReadAPI" Type="System.String" Scope="User">
+    <Setting Name="NPCReadAPI" Type="System.String" Scope="Application">
       <Value Profile="(Default)">npcs/read.php</Value>
     </Setting>
-    <Setting Name="QuestRewardReadAPI" Type="System.String" Scope="User">
+    <Setting Name="QuestRewardReadAPI" Type="System.String" Scope="Application">
       <Value Profile="(Default)">questrewards/read.php</Value>
     </Setting>
-    <Setting Name="VersionAPI" Type="System.String" Scope="User">
+    <Setting Name="VersionAPI" Type="System.String" Scope="Application">
       <Value Profile="(Default)">version.php</Value>
     </Setting>
   </Settings>
