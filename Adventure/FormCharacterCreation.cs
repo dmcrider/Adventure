@@ -52,14 +52,14 @@ namespace Adventure
                     // Set the explorer defaults
                     selectedWeapon1 = 2; // Short Sword
                     selectedWeapon2 = 0; // Null
-                    selectedGold = 40;
+                    selectedGold = int.Parse(txtEquipExplorerGold.Text);
                 }
                 else if (tmpRadio.Tag.Equals("adventurer"))
                 {
                     // Set the explorer defaults
                     selectedWeapon1 = 2; // Short Sword
                     selectedWeapon2 = 1; // Shield
-                    selectedGold = 25;
+                    selectedGold = int.Parse(txtEquipAdventureGold.Text);
                 }
             }
             catch (Exception exception)
@@ -95,21 +95,34 @@ namespace Adventure
         private void BtnSave_Click(object sender, EventArgs e)
         {
             // Create and save the character
-            Character newCharacter = new Character(player.uniqueID,txtCharacterName.Text,selectedRace);
-            if (!API.CreateCharacter(ref newCharacter, newCharacter.UserID))
+            player.character = new Character(player.uniqueID,txtCharacterName.Text,selectedRace);
+            bool creationSuccess = false;
+            try
+            {
+                creationSuccess = API.CreateCharacter(ref player.character, player.uniqueID);
+            }
+            catch (Exception ex)
+            {
+                LogWriter.Write("Error creating character\n\t" + ex);
+            }
+            if (!creationSuccess)
             {
                 // There was a problem
                 MessageBox.Show(Properties.Resources.ErrorGeneral, "Error");
             }
-            // Create and save the inventory
-            if(selectedWeapon1 != 0)
+            else
             {
-                API.AddInventoryItem(newCharacter.UniqueID,selectedWeapon1);
-            }
+                // Character saved successfully - we have a UniqueID we can use now
+                // Create and save the inventory
+                if (selectedWeapon1 != 0)
+                {
+                    API.AddInventoryItem(player.character.UniqueID, selectedWeapon1);
+                }
 
-            if (selectedWeapon2 != 0)
-            {
-                API.AddInventoryItem(newCharacter.UniqueID, selectedWeapon2);
+                if (selectedWeapon2 != 0)
+                {
+                    API.AddInventoryItem(player.character.UniqueID, selectedWeapon2);
+                }
             }
         }
     }

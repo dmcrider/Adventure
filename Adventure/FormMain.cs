@@ -83,18 +83,19 @@ namespace Adventure
                 this.Enabled = true;
 
                 // Check if the have a character
-                if (HasCharacter())
-                {
-                    panelCharacter.Visible = true;
-                    ControllerGame ctrlGame = new ControllerGame(this, player);
-                    ctrlGame.PopulateInitialData();
-                }
-                else
+                if (!HasCharacter())
                 {
                     // Show the character creation screen
+                    LogWriter.Write("Player needs to create a character");
                     frmCharacterCreation.LoggedInPlayer(ref player);
                     frmCharacterCreation.ShowDialog();
                 }
+
+                // Start the game
+                LogWriter.Write("Starting the game");
+                panelCharacter.Visible = true;
+                ControllerGame ctrlGame = new ControllerGame(this, player);
+                ctrlGame.PopulateInitialData();
             }
         }
 
@@ -112,10 +113,6 @@ namespace Adventure
                 {
                     hasCharacter = true;
                     player.character = character;
-                }
-                else
-                {
-                    LogWriter.Write("Error getting player's character (PlayerID: " + player.uniqueID + ")");
                 }
             }
 

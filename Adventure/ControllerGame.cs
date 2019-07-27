@@ -16,11 +16,22 @@ namespace Adventure
         private FormMain frmMain;
         private PictureBox pboxLeft;
         private PictureBox pboxRight;
+        private List<Item> inventory;
+
         public ControllerGame(FormMain m, Player player)
         {
             this.currentPlayer = player;
             currentCharacter = player.character;
             frmMain = m;
+            try
+            {
+                inventory = API.LoadInventory(player.character.UniqueID);
+            }
+            catch (Exception e)
+            {
+                LogWriter.Write("ControllerGame Constructor | Could not load inventory:\n\t" + e);
+            }
+            
         }
 
         public void PopulateInitialData()

@@ -169,5 +169,23 @@ namespace Adventure.Properties {
                 return ((string)(this["VersionAPI"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("inventory/create.php")]
+        public string InventoryAddAPI {
+            get {
+                return ((string)(this["InventoryAddAPI"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("inventory/read.php")]
+        public string InventoryReadAPI {
+            get {
+                return ((string)(this["InventoryReadAPI"]));
+            }
+        }
     }
 }

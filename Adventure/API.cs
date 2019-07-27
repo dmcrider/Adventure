@@ -161,9 +161,10 @@ namespace Adventure
             {
                 if(obj.Key == "success")
                 {
+                    player.uniqueID = (int)convertedJSON.GetValue("UniqueID");
                     return 1; // Login was successful
                 }
-                else if (obj.Key == "fail")
+                else if (obj.Key == "fail" || obj.Key == "error")
                 {
                     return 0; // Bad login attempt
                 }
@@ -263,7 +264,6 @@ namespace Adventure
         public static Character GetCharacter(int userID)
         {
             string response = client.DownloadString(Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.CharacterReadAPI);
-
             JObject convertedJSON = JObject.Parse(response);
 
             foreach (var item in convertedJSON)
@@ -280,6 +280,12 @@ namespace Adventure
             return null;
         }
 
+        /// <summary>
+        /// Saves the character to the database
+        /// </summary>
+        /// <param name="character"></param>
+        /// <param name="playerID"></param>
+        /// <returns>Returns true if database transaction was successful, false otherwise</returns>
         public static bool CreateCharacter(ref Character character, int playerID)
         {
             string charValues = $"{{\"UserID\":\"{playerID}\",\"Name\":\"{character.Name}\",\"RaceID\":\"{character.RaceID}\",\"MaxHP\":\"{character.MaxHP}\",\"CurrentHP\":\"{character.CurrentHP}\",\"MaxMagic\":\"{character.MaxMagic}\",\"CurrentMagic\":\"{character.CurrentMagic}\",\"Strength\":\"{character.Strength}\",\"Intelligence\":\"{character.Intelligence}\",\"Constitution\":\"{character.Constitution}\",\"Gold\":\"{character.Gold}\",\"Level\":\"{character.Level}\",\"ExpPoints\":\"{character.ExpPoints}\"}}";
@@ -288,18 +294,64 @@ namespace Adventure
 
             foreach(var obj in convertedJSON)
             {
+                LogWriter.Write("API.CreateCharacter() | Response from API:\n\t" + response);
                 if(obj.Key == "success")
                 {
                     character.UniqueID = (int)convertedJSON.GetValue("UniqueID");
                     return true;
+                }else if(obj.Key == "error")
+                {
+                    LogWriter.Write("Response at API.CreateCharacter(): " + obj.Value);
                 }
             }
             return false;
         }
 
-        public static void AddInventoryItem(int characterID, int itemID)
+        /// <summary>
+        /// Adds an Item to the character's inventory
+        /// </summary>
+        /// <param name="characterID"></param>
+        /// <param name="itemID"></param>
+        /// <param name="quantity"></param>
+        public static void AddInventoryItem(int characterID, int itemID, int quantity=1)
         {
-            return;
+            // CharacterID, ItemID, Quantity, IsUsing, Hand
+            string dataString = $"{{\"CharacterID\":{characterID},\"ItemID\":{itemID},\"Quantity\":{quantity}}}";
+            string response = client.UploadString(Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.InventoryAddAPI,dataString);
+            JObject convertedJSON = JObject.Parse(response);
+
+            foreach(var obj in convertedJSON)
+            {
+                if(obj.Key == "success")
+                {
+                    int inventoryID = (int)convertedJSON.GetValue("UniqueID");
+                    LogWriter.Write($"API.AddInventoryItem() | Item {convertedJSON.GetValue("DisplayName")} added successfully.");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets all inventory items for the associated Character
+        /// </summary>
+        /// <param name="characterID"></param>
+        /// <returns>Returns a List of Items</returns>
+        public static List<Item> LoadInventory(int characterID)
+        {
+            List<Item> itemsList = new List<Item>();
+
+            string dataString = $"{{\"CharacterID\":{characterID}}}";
+            string response = client.UploadString(Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.InventoryReadAPI, dataString);
+            JObject convertedJSON = JObject.Parse(response);
+
+            foreach (var obj in convertedJSON)
+            {
+                foreach (JObject item in obj.Value)
+                {
+                    itemsList.Add(GetItem((int)item.GetValue("ItemID")));
+                }
+            }
+
+            return itemsList;
         }
 
         /// <summary>
@@ -362,6 +414,33 @@ namespace Adventure
             }
 
             SaveData();
+        }
+
+        /// <summary>
+        /// Gets an item from the database based on the parameter
+        /// </summary>
+        /// <param name="itemID"></param>
+        /// <returns>Returns an Item or null if no item was found</returns>
+        private static Item GetItem(int itemID)
+        {
+            string response = client.DownloadString(Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.ItemReadAPI);
+            JObject convertedJSON = JObject.Parse(response);
+
+            foreach(var obj in convertedJSON)
+            {
+                foreach(JObject item in obj.Value)
+                {
+                    if((int)item.GetValue("UniqueID") == itemID)
+                    {
+                        Item tempItem = (Item)item.ToObject(typeof(Item));
+                        return tempItem;
+                    }
+                }
+            }
+
+            // No match was found - bad UniqueID?
+            LogWriter.Write("No matching item found for UniqueID " + itemID);
+            return null;
         }
 
         /// <summary>

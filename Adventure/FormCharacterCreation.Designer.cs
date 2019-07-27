@@ -210,63 +210,70 @@
             // txtEquipAdventureGold
             // 
             this.txtEquipAdventureGold.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.txtEquipAdventureGold.Location = new System.Drawing.Point(323, 167);
+            this.txtEquipAdventureGold.Location = new System.Drawing.Point(331, 177);
             this.txtEquipAdventureGold.Name = "txtEquipAdventureGold";
             this.txtEquipAdventureGold.ReadOnly = true;
             this.txtEquipAdventureGold.Size = new System.Drawing.Size(42, 26);
             this.txtEquipAdventureGold.TabIndex = 8;
+            this.txtEquipAdventureGold.Text = "25";
             // 
             // txtEquipExplorerGold
             // 
             this.txtEquipExplorerGold.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.txtEquipExplorerGold.Location = new System.Drawing.Point(75, 167);
+            this.txtEquipExplorerGold.Location = new System.Drawing.Point(81, 177);
             this.txtEquipExplorerGold.Name = "txtEquipExplorerGold";
             this.txtEquipExplorerGold.ReadOnly = true;
             this.txtEquipExplorerGold.Size = new System.Drawing.Size(42, 26);
             this.txtEquipExplorerGold.TabIndex = 7;
+            this.txtEquipExplorerGold.Text = "40";
             // 
             // picboxEquipAdventureGold
             // 
-            this.picboxEquipAdventureGold.InitialImage = global::Adventure.Properties.Resources.Item_Gold;
+            this.picboxEquipAdventureGold.Image = global::Adventure.Properties.Resources.Item_Gold;
+            this.picboxEquipAdventureGold.InitialImage = null;
             this.picboxEquipAdventureGold.Location = new System.Drawing.Point(275, 157);
             this.picboxEquipAdventureGold.Name = "picboxEquipAdventureGold";
-            this.picboxEquipAdventureGold.Size = new System.Drawing.Size(42, 36);
+            this.picboxEquipAdventureGold.Size = new System.Drawing.Size(50, 46);
             this.picboxEquipAdventureGold.TabIndex = 6;
             this.picboxEquipAdventureGold.TabStop = false;
             // 
             // picboxEquipExploreGold
             // 
-            this.picboxEquipExploreGold.InitialImage = global::Adventure.Properties.Resources.Item_Gold;
+            this.picboxEquipExploreGold.Image = global::Adventure.Properties.Resources.Item_Gold;
+            this.picboxEquipExploreGold.InitialImage = null;
             this.picboxEquipExploreGold.Location = new System.Drawing.Point(27, 157);
             this.picboxEquipExploreGold.Name = "picboxEquipExploreGold";
-            this.picboxEquipExploreGold.Size = new System.Drawing.Size(42, 36);
+            this.picboxEquipExploreGold.Size = new System.Drawing.Size(48, 46);
             this.picboxEquipExploreGold.TabIndex = 5;
             this.picboxEquipExploreGold.TabStop = false;
             // 
             // picboxEquipAdventureShield
             // 
-            this.picboxEquipAdventureShield.InitialImage = global::Adventure.Properties.Resources.Item_Shield;
+            this.picboxEquipAdventureShield.Image = global::Adventure.Properties.Resources.Item_Shield;
+            this.picboxEquipAdventureShield.InitialImage = null;
             this.picboxEquipAdventureShield.Location = new System.Drawing.Point(275, 79);
             this.picboxEquipAdventureShield.Name = "picboxEquipAdventureShield";
-            this.picboxEquipAdventureShield.Size = new System.Drawing.Size(56, 51);
+            this.picboxEquipAdventureShield.Size = new System.Drawing.Size(50, 51);
             this.picboxEquipAdventureShield.TabIndex = 4;
             this.picboxEquipAdventureShield.TabStop = false;
             // 
             // picboxEquipAdventureSword
             // 
-            this.picboxEquipAdventureSword.InitialImage = global::Adventure.Properties.Resources.Item_ShortSword;
+            this.picboxEquipAdventureSword.Image = global::Adventure.Properties.Resources.Item_ShortSword;
+            this.picboxEquipAdventureSword.InitialImage = null;
             this.picboxEquipAdventureSword.Location = new System.Drawing.Point(351, 79);
             this.picboxEquipAdventureSword.Name = "picboxEquipAdventureSword";
-            this.picboxEquipAdventureSword.Size = new System.Drawing.Size(56, 51);
+            this.picboxEquipAdventureSword.Size = new System.Drawing.Size(47, 51);
             this.picboxEquipAdventureSword.TabIndex = 3;
             this.picboxEquipAdventureSword.TabStop = false;
             // 
             // picboxEquipExplorerSword
             // 
-            this.picboxEquipExplorerSword.InitialImage = global::Adventure.Properties.Resources.Item_ShortSword;
+            this.picboxEquipExplorerSword.Image = global::Adventure.Properties.Resources.Item_ShortSword;
+            this.picboxEquipExplorerSword.InitialImage = null;
             this.picboxEquipExplorerSword.Location = new System.Drawing.Point(27, 79);
             this.picboxEquipExplorerSword.Name = "picboxEquipExplorerSword";
-            this.picboxEquipExplorerSword.Size = new System.Drawing.Size(56, 51);
+            this.picboxEquipExplorerSword.Size = new System.Drawing.Size(48, 51);
             this.picboxEquipExplorerSword.TabIndex = 2;
             this.picboxEquipExplorerSword.TabStop = false;
             // 
