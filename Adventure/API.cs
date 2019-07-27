@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace Adventure
 {
@@ -23,6 +24,7 @@ namespace Adventure
 
         // Single WebClient used throughout this class
         private static WebClient client = new WebClient();
+        private static string storageLocation = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Adventure\\";
 
         /// <summary>
         /// Checks the local version against the cloud version
@@ -43,7 +45,8 @@ namespace Adventure
                         if (localVersion != cloudVersion)
                         {
                             // Update the locally stored version number
-                            Properties.Settings.Default["Version"] = cloudVersion;
+                            LogWriter.Write($"Cloud Version: {cloudVersion} | Local Version: {localVersion}");
+                            Properties.Settings.Default.Version = cloudVersion;
                             Properties.Settings.Default.Save();
 
                             return false;
@@ -57,7 +60,7 @@ namespace Adventure
             }
             catch (Exception e)
             {
-                Console.WriteLine("Error checking the database version\n\t" + e);
+                LogWriter.Write("Error checking the database version\n\t" + e);
                 return false;
             }
 
@@ -77,48 +80,44 @@ namespace Adventure
 
                 foreach (string file in filesArray)
                 {
-                    string path = Environment.SpecialFolder.ApplicationData.ToString() + file;
+                    string path = storageLocation + file;
                     string type = file.Split('.')[0];
                     // Read the file in and add an appropriate object to the arrays we got from the main class
-                    using(System.IO.StreamReader inputFile = System.IO.File.OpenText(path))
+                    using(StreamReader inputFile = File.OpenText(path))
                     {
                         JsonSerializer serializer = new JsonSerializer();
-                        JObject response = (JObject)serializer.Deserialize(inputFile, typeof(JObject));
+                        JArray response = (JArray)serializer.Deserialize(inputFile, typeof(JObject));
 
-                        foreach(var obj in response)
+                        foreach(JObject obj in response)
                         {
-                            foreach(var input in obj.Value)
+                            switch (type)
                             {
-                                JObject jsonInput = (JObject)input;
-                                switch (type)
-                                {
-                                    case "items":
-                                        itemsList.Add((Item)jsonInput.ToObject(typeof(Item)));
-                                        break;
-                                    case "quests":
-                                        questsList.Add((Quest)jsonInput.ToObject(typeof(Quest)));
-                                        break;
-                                    case "spells":
-                                        spellsList.Add((Spell)jsonInput.ToObject(typeof(Spell)));
-                                        break;
-                                    case "stats":
-                                        statsList.Add((Stat)jsonInput.ToObject(typeof(Stat)));
-                                        break;
-                                    case "races":
-                                        racesList.Add((Race)jsonInput.ToObject(typeof(Race)));
-                                        break;
-                                    case "states":
-                                        statesList.Add((State)jsonInput.ToObject(typeof(State)));
-                                        break;
-                                    case "npcs":
-                                        npcsList.Add((Npc)jsonInput.ToObject(typeof(Npc)));
-                                        break;
-                                    case "questrewards":
-                                        questrewardsList.Add((QuestReward)jsonInput.ToObject(typeof(QuestReward)));
-                                        break;
-                                    default:
-                                        break;
-                                }
+                                case "items":
+                                    itemsList.Add((Item)obj.ToObject(typeof(Item)));
+                                    break;
+                                case "quests":
+                                    questsList.Add((Quest)obj.ToObject(typeof(Quest)));
+                                    break;
+                                case "spells":
+                                    spellsList.Add((Spell)obj.ToObject(typeof(Spell)));
+                                    break;
+                                case "stats":
+                                    statsList.Add((Stat)obj.ToObject(typeof(Stat)));
+                                    break;
+                                case "races":
+                                    racesList.Add((Race)obj.ToObject(typeof(Race)));
+                                    break;
+                                case "states":
+                                    statesList.Add((State)obj.ToObject(typeof(State)));
+                                    break;
+                                case "npcs":
+                                    npcsList.Add((Npc)obj.ToObject(typeof(Npc)));
+                                    break;
+                                case "questrewards":
+                                    questrewardsList.Add((QuestReward)obj.ToObject(typeof(QuestReward)));
+                                    break;
+                                default:
+                                    break;
                             }
                         }
                     }
@@ -126,7 +125,7 @@ namespace Adventure
                 return;
             }catch(Exception e)
             {
-                Console.WriteLine("Error loading local data\n\t" + e);
+                LogWriter.Write("Error loading local data\n\t" + e);
                 return;
             }
         }
@@ -196,10 +195,10 @@ namespace Adventure
                         Player player = new Player(username, (int)convertedJSON.GetValue("UniqueID"));
 
                         // Check if the file exists - we want to save all players who login with this instance
-                        string fullPath = Environment.SpecialFolder.ApplicationData.ToString() + "player.json";
-                        if (System.IO.File.Exists(fullPath))
+                        string fullPath = storageLocation + "player.json";
+                        if (File.Exists(fullPath))
                         {
-                            using (System.IO.StreamReader inputFile = System.IO.File.OpenText(fullPath))
+                            using (StreamReader inputFile = File.OpenText(fullPath))
                             {
                                 // Get out all the current info
                                 JsonSerializer serializer = new JsonSerializer();
@@ -216,7 +215,7 @@ namespace Adventure
                                         }
                                         catch (Exception e)
                                         {
-                                            Console.WriteLine("Error getting local player data\n\t" + e);
+                                            LogWriter.Write("Error getting local player data\n\t" + e);
                                         }
                                     }
                                 }
@@ -229,23 +228,23 @@ namespace Adventure
                             {
                                 // Now write to the file with all the data
                                 string playersJSON = JsonConvert.SerializeObject(playerList);
-                                System.IO.File.WriteAllText(fullPath, playersJSON);
+                                File.WriteAllText(fullPath, playersJSON);
                             }
                             catch (Exception e)
                             {
-                                Console.WriteLine("Error saving all players to file\n\t" + e);
+                                LogWriter.Write("Error saving all players to file\n\t" + e);
                             }
                         }
                         else
                         {
                             // No players currently exist, so create the file and save the newly registered user
                             string playerJSON = JsonConvert.SerializeObject(player);
-                            System.IO.File.WriteAllText(fullPath, playerJSON);
+                            File.WriteAllText(fullPath, playerJSON);
                         }
                     }
                     catch (Exception e)
                     {
-                        Console.WriteLine("There was an error saving the player locally\n\t" + e);
+                        LogWriter.Write("There was an error saving the player locally\n\t" + e);
                     }
                     // Return true because the database transaction was successful
                     // Even if saving the player locally wasn't - we can just get it from the database
@@ -380,16 +379,22 @@ namespace Adventure
             string npcsJSON = JsonConvert.SerializeObject(npcsList);
             string questRewardsJSON = JsonConvert.SerializeObject(questrewardsList);
 
+            // Make sure the path exists before we try to save there
+            if (!Directory.Exists(storageLocation))
+            {
+                Directory.CreateDirectory(storageLocation);
+            }
+
             // Save each converted json string
             // WriteAllText overwrites any existing data, if the file exists
-            System.IO.File.WriteAllText(Environment.SpecialFolder.ApplicationData.ToString() + "items.json",itemsJSON);
-            System.IO.File.WriteAllText(Environment.SpecialFolder.ApplicationData.ToString() + "quests.json",questsJSON);
-            System.IO.File.WriteAllText(Environment.SpecialFolder.ApplicationData.ToString() + "spells.json",spellsJSON);
-            System.IO.File.WriteAllText(Environment.SpecialFolder.ApplicationData.ToString() + "stats.json",statsJSON);
-            System.IO.File.WriteAllText(Environment.SpecialFolder.ApplicationData.ToString() + "races.json",racesJSON);
-            System.IO.File.WriteAllText(Environment.SpecialFolder.ApplicationData.ToString() + "states.json",statesJSON);
-            System.IO.File.WriteAllText(Environment.SpecialFolder.ApplicationData.ToString() + "npcs.json",npcsJSON);
-            System.IO.File.WriteAllText(Environment.SpecialFolder.ApplicationData.ToString() + "questrewards.json",questRewardsJSON);
+            File.WriteAllText(storageLocation + "items.json",itemsJSON);
+            File.WriteAllText(storageLocation + "quests.json", questsJSON);
+            File.WriteAllText(storageLocation + "spells.json", spellsJSON);
+            File.WriteAllText(storageLocation + "stats.json", statsJSON);
+            File.WriteAllText(storageLocation + "races.json", racesJSON);
+            File.WriteAllText(storageLocation + "states.json", statesJSON);
+            File.WriteAllText(storageLocation + "npcs.json", npcsJSON);
+            File.WriteAllText(storageLocation + "questrewards.json", questRewardsJSON);
         }
 
         /// <summary>
@@ -399,11 +404,11 @@ namespace Adventure
         /// <returns>Returns true if player information was found, false otherwise</returns>
         private static bool PlayerExistsLocally(ref Player player)
         {
-            string path = Environment.SpecialFolder.ApplicationData.ToString() + "player.json";
+            string path = storageLocation + "player.json";
 
-            if (System.IO.File.Exists(path))
+            if (File.Exists(path))
             {
-                using (System.IO.StreamReader inputFile = System.IO.File.OpenText(path))
+                using (StreamReader inputFile = File.OpenText(path))
                 {
                     JsonSerializer serializer = new JsonSerializer();
                     JObject response = (JObject)serializer.Deserialize(inputFile, typeof(JObject));
@@ -423,7 +428,7 @@ namespace Adventure
                             }
                             catch (Exception e)
                             {
-                                Console.WriteLine("Error getting local player data\n\t" + e);
+                                LogWriter.Write("Error getting local player data\n\t" + e);
                                 return false;
                             }
                         }
