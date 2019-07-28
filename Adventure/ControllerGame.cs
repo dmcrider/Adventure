@@ -16,7 +16,7 @@ namespace Adventure
         private FormMain frmMain;
         private PictureBox pboxLeft;
         private PictureBox pboxRight;
-        private List<Item> inventory;
+        private List<Inventory> inventory;
 
         public ControllerGame(FormMain m, Player player)
         {
@@ -54,50 +54,51 @@ namespace Adventure
                 pboxLeft = (PictureBox)panelCharacter.Controls["picLeftHand"];
                 pboxRight = (PictureBox)panelCharacter.Controls["picRightHand"];
 
-                /*
-                if(currentCharacter.LeftHand != 0)
+                // Show any items the character is holding
+                if(inventory.Count > 0)
                 {
-                    LoadImage(currentCharacter.LeftHand, pboxLeft, 'a');
-                    pboxLeft.Image = (System.Drawing.Image)Properties.Resources.ResourceManager.GetObject(currentCharacter.LeftItem.AssetName);
-                    pboxLeft.Update();
-                }
-
-                if (currentCharacter.RightHand != 0)
-                {
-                    LoadImage(currentCharacter.RightHand, pboxRight, 'b');
-                    pboxRight.Image = (System.Drawing.Image)Properties.Resources.ResourceManager.GetObject(currentCharacter.RightItem.AssetName);
-                    pboxRight.Update();
-                }
-                */
-            }
-        }
-        /*
-        public void LoadImage(int imageIndex, PictureBox pbox, Char hand)
-        {
-            using (WebClient wc = new WebClient())
-            {
-                string response = wc.DownloadString(Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.ItemReadAPI);
-
-                JObject convertedJSON = JObject.Parse(response);
-
-                foreach (var item in convertedJSON)
-                {
-                    foreach (JObject obj in item.Value)
+                    foreach(Inventory item in inventory)
                     {
-                        // Create an item object so we can reference it later if needed
-                        Item tmpItem = new Item((int)obj.GetValue("UniqueID"),(string)obj.GetValue("DisplayName"),(string)obj.GetValue("AssetName"),(int)obj.GetValue("Hand"),(int)obj.GetValue("AttackBonus"), (int)obj.GetValue("DefenseBonus"), (int)obj.GetValue("HPHealed"), (int)obj.GetValue("MagicHealed"), (int)obj.GetValue("IsActive"));
-                        if(hand == 'a' && imageIndex == tmpItem.UniqueID)
+                        if (item.IsUsing == 1)
                         {
-                            currentCharacter.LeftItem = tmpItem;
-                            return;
-                        }else if(hand == 'b' && imageIndex == tmpItem.UniqueID)
+                            // Determine which hand
+                            if(item.Hand == 1)
+                            {
+                                // Left Hand
+                                pboxLeft.Image = (System.Drawing.Image)Properties.Resources.ResourceManager.GetObject(GetAssetName(item.UniqueID));
+                                pboxLeft.Update();
+                            }
+                            else if(item.Hand == 2)
+                            {
+                                // Right hand
+                                pboxRight.Image = (System.Drawing.Image)Properties.Resources.ResourceManager.GetObject(GetAssetName(item.UniqueID));
+                                pboxRight.Update();
+                            }
+                        }
+                        else if(item.IsUsing == 0)
                         {
-                            currentCharacter.RightItem = tmpItem;
-                            return;
+                            // Add the item to the inventory panel
+                            
                         }
                     }
                 }
             }
-        }*/
+        }
+
+        private string GetAssetName(int itemID)
+        {
+            string assetName = "item_";
+
+            foreach(Item item in API.itemsList)
+            {
+                if(item.UniqueID == itemID)
+                {
+                    assetName += item.AssetName;
+                    return assetName;
+                }
+            }
+
+            return assetName;
+        }
     }
 }

@@ -335,9 +335,9 @@ namespace Adventure
         /// </summary>
         /// <param name="characterID"></param>
         /// <returns>Returns a List of Items</returns>
-        public static List<Item> LoadInventory(int characterID)
+        public static List<Inventory> LoadInventory(int characterID)
         {
-            List<Item> itemsList = new List<Item>();
+            List<Inventory> itemsList = new List<Inventory>();
 
             string dataString = $"{{\"CharacterID\":{characterID}}}";
             string response = client.UploadString(Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.InventoryReadAPI, dataString);
@@ -347,7 +347,7 @@ namespace Adventure
             {
                 foreach (JObject item in obj.Value)
                 {
-                    itemsList.Add(GetItem((int)item.GetValue("ItemID")));
+                    itemsList.Add((Inventory)item.ToObject(typeof(Inventory)));
                 }
             }
 
@@ -414,33 +414,6 @@ namespace Adventure
             }
 
             SaveData();
-        }
-
-        /// <summary>
-        /// Gets an item from the database based on the parameter
-        /// </summary>
-        /// <param name="itemID"></param>
-        /// <returns>Returns an Item or null if no item was found</returns>
-        private static Item GetItem(int itemID)
-        {
-            string response = client.DownloadString(Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.ItemReadAPI);
-            JObject convertedJSON = JObject.Parse(response);
-
-            foreach(var obj in convertedJSON)
-            {
-                foreach(JObject item in obj.Value)
-                {
-                    if((int)item.GetValue("UniqueID") == itemID)
-                    {
-                        Item tempItem = (Item)item.ToObject(typeof(Item));
-                        return tempItem;
-                    }
-                }
-            }
-
-            // No match was found - bad UniqueID?
-            LogWriter.Write("No matching item found for UniqueID " + itemID);
-            return null;
         }
 
         /// <summary>
