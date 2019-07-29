@@ -51,6 +51,9 @@
             this.radioEquipExplorer = new System.Windows.Forms.RadioButton();
             this.lblCharacterName = new System.Windows.Forms.Label();
             this.txtCharacterName = new System.Windows.Forms.TextBox();
+            this.grpGender = new System.Windows.Forms.GroupBox();
+            this.radioGenderMale = new System.Windows.Forms.RadioButton();
+            this.radioGenderFemale = new System.Windows.Forms.RadioButton();
             this.grpRace.SuspendLayout();
             this.grpEquipment.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picboxEquipAdventureGold)).BeginInit();
@@ -58,6 +61,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.picboxEquipAdventureShield)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picboxEquipAdventureSword)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picboxEquipExplorerSword)).BeginInit();
+            this.grpGender.SuspendLayout();
             this.SuspendLayout();
             // 
             // grpRace
@@ -124,7 +128,7 @@
             // 
             this.lblSTR.AutoSize = true;
             this.lblSTR.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblSTR.Location = new System.Drawing.Point(15, 272);
+            this.lblSTR.Location = new System.Drawing.Point(28, 248);
             this.lblSTR.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblSTR.Name = "lblSTR";
             this.lblSTR.Size = new System.Drawing.Size(41, 20);
@@ -134,7 +138,7 @@
             // lblINT
             // 
             this.lblINT.AutoSize = true;
-            this.lblINT.Location = new System.Drawing.Point(22, 317);
+            this.lblINT.Location = new System.Drawing.Point(34, 284);
             this.lblINT.Name = "lblINT";
             this.lblINT.Size = new System.Drawing.Size(34, 20);
             this.lblINT.TabIndex = 2;
@@ -143,7 +147,7 @@
             // lblCON
             // 
             this.lblCON.AutoSize = true;
-            this.lblCON.Location = new System.Drawing.Point(13, 361);
+            this.lblCON.Location = new System.Drawing.Point(25, 320);
             this.lblCON.Name = "lblCON";
             this.lblCON.Size = new System.Drawing.Size(43, 20);
             this.lblCON.TabIndex = 3;
@@ -153,35 +157,35 @@
             // 
             this.txtSTR.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.txtSTR.Enabled = false;
-            this.txtSTR.Location = new System.Drawing.Point(63, 269);
+            this.txtSTR.Location = new System.Drawing.Point(76, 245);
             this.txtSTR.Name = "txtSTR";
             this.txtSTR.ReadOnly = true;
-            this.txtSTR.Size = new System.Drawing.Size(100, 26);
+            this.txtSTR.Size = new System.Drawing.Size(51, 26);
             this.txtSTR.TabIndex = 4;
             // 
             // txtINT
             // 
             this.txtINT.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.txtINT.Enabled = false;
-            this.txtINT.Location = new System.Drawing.Point(64, 314);
+            this.txtINT.Location = new System.Drawing.Point(76, 281);
             this.txtINT.Name = "txtINT";
             this.txtINT.ReadOnly = true;
-            this.txtINT.Size = new System.Drawing.Size(100, 26);
+            this.txtINT.Size = new System.Drawing.Size(51, 26);
             this.txtINT.TabIndex = 5;
             // 
             // txtCON
             // 
             this.txtCON.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.txtCON.Enabled = false;
-            this.txtCON.Location = new System.Drawing.Point(64, 358);
+            this.txtCON.Location = new System.Drawing.Point(76, 317);
             this.txtCON.Name = "txtCON";
             this.txtCON.ReadOnly = true;
-            this.txtCON.Size = new System.Drawing.Size(100, 26);
+            this.txtCON.Size = new System.Drawing.Size(51, 26);
             this.txtCON.TabIndex = 6;
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(486, 417);
+            this.btnSave.Location = new System.Drawing.Point(345, 417);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(164, 46);
             this.btnSave.TabIndex = 7;
@@ -200,9 +204,9 @@
             this.grpEquipment.Controls.Add(this.picboxEquipExplorerSword);
             this.grpEquipment.Controls.Add(this.radioEquipAdventure);
             this.grpEquipment.Controls.Add(this.radioEquipExplorer);
-            this.grpEquipment.Location = new System.Drawing.Point(217, 14);
+            this.grpEquipment.Location = new System.Drawing.Point(170, 160);
             this.grpEquipment.Name = "grpEquipment";
-            this.grpEquipment.Size = new System.Drawing.Size(433, 223);
+            this.grpEquipment.Size = new System.Drawing.Size(342, 223);
             this.grpEquipment.TabIndex = 8;
             this.grpEquipment.TabStop = false;
             this.grpEquipment.Text = "Starting Equipment";
@@ -210,7 +214,7 @@
             // txtEquipAdventureGold
             // 
             this.txtEquipAdventureGold.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.txtEquipAdventureGold.Location = new System.Drawing.Point(331, 177);
+            this.txtEquipAdventureGold.Location = new System.Drawing.Point(254, 172);
             this.txtEquipAdventureGold.Name = "txtEquipAdventureGold";
             this.txtEquipAdventureGold.ReadOnly = true;
             this.txtEquipAdventureGold.Size = new System.Drawing.Size(42, 26);
@@ -220,7 +224,7 @@
             // txtEquipExplorerGold
             // 
             this.txtEquipExplorerGold.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.txtEquipExplorerGold.Location = new System.Drawing.Point(81, 177);
+            this.txtEquipExplorerGold.Location = new System.Drawing.Point(86, 172);
             this.txtEquipExplorerGold.Name = "txtEquipExplorerGold";
             this.txtEquipExplorerGold.ReadOnly = true;
             this.txtEquipExplorerGold.Size = new System.Drawing.Size(42, 26);
@@ -231,7 +235,7 @@
             // 
             this.picboxEquipAdventureGold.Image = global::Adventure.Properties.Resources.Item_Gold;
             this.picboxEquipAdventureGold.InitialImage = null;
-            this.picboxEquipAdventureGold.Location = new System.Drawing.Point(275, 157);
+            this.picboxEquipAdventureGold.Location = new System.Drawing.Point(198, 152);
             this.picboxEquipAdventureGold.Name = "picboxEquipAdventureGold";
             this.picboxEquipAdventureGold.Size = new System.Drawing.Size(50, 46);
             this.picboxEquipAdventureGold.TabIndex = 6;
@@ -241,7 +245,7 @@
             // 
             this.picboxEquipExploreGold.Image = global::Adventure.Properties.Resources.Item_Gold;
             this.picboxEquipExploreGold.InitialImage = null;
-            this.picboxEquipExploreGold.Location = new System.Drawing.Point(27, 157);
+            this.picboxEquipExploreGold.Location = new System.Drawing.Point(32, 152);
             this.picboxEquipExploreGold.Name = "picboxEquipExploreGold";
             this.picboxEquipExploreGold.Size = new System.Drawing.Size(48, 46);
             this.picboxEquipExploreGold.TabIndex = 5;
@@ -251,7 +255,7 @@
             // 
             this.picboxEquipAdventureShield.Image = global::Adventure.Properties.Resources.Item_Shield;
             this.picboxEquipAdventureShield.InitialImage = null;
-            this.picboxEquipAdventureShield.Location = new System.Drawing.Point(275, 79);
+            this.picboxEquipAdventureShield.Location = new System.Drawing.Point(198, 74);
             this.picboxEquipAdventureShield.Name = "picboxEquipAdventureShield";
             this.picboxEquipAdventureShield.Size = new System.Drawing.Size(50, 51);
             this.picboxEquipAdventureShield.TabIndex = 4;
@@ -261,7 +265,7 @@
             // 
             this.picboxEquipAdventureSword.Image = global::Adventure.Properties.Resources.Item_ShortSword;
             this.picboxEquipAdventureSword.InitialImage = null;
-            this.picboxEquipAdventureSword.Location = new System.Drawing.Point(351, 79);
+            this.picboxEquipAdventureSword.Location = new System.Drawing.Point(274, 74);
             this.picboxEquipAdventureSword.Name = "picboxEquipAdventureSword";
             this.picboxEquipAdventureSword.Size = new System.Drawing.Size(47, 51);
             this.picboxEquipAdventureSword.TabIndex = 3;
@@ -271,7 +275,7 @@
             // 
             this.picboxEquipExplorerSword.Image = global::Adventure.Properties.Resources.Item_ShortSword;
             this.picboxEquipExplorerSword.InitialImage = null;
-            this.picboxEquipExplorerSword.Location = new System.Drawing.Point(27, 79);
+            this.picboxEquipExplorerSword.Location = new System.Drawing.Point(32, 74);
             this.picboxEquipExplorerSword.Name = "picboxEquipExplorerSword";
             this.picboxEquipExplorerSword.Size = new System.Drawing.Size(48, 51);
             this.picboxEquipExplorerSword.TabIndex = 2;
@@ -280,7 +284,7 @@
             // radioEquipAdventure
             // 
             this.radioEquipAdventure.AutoSize = true;
-            this.radioEquipAdventure.Location = new System.Drawing.Point(252, 49);
+            this.radioEquipAdventure.Location = new System.Drawing.Point(175, 44);
             this.radioEquipAdventure.Name = "radioEquipAdventure";
             this.radioEquipAdventure.Size = new System.Drawing.Size(155, 24);
             this.radioEquipAdventure.TabIndex = 1;
@@ -293,7 +297,7 @@
             // radioEquipExplorer
             // 
             this.radioEquipExplorer.AutoSize = true;
-            this.radioEquipExplorer.Location = new System.Drawing.Point(6, 49);
+            this.radioEquipExplorer.Location = new System.Drawing.Point(11, 44);
             this.radioEquipExplorer.Name = "radioEquipExplorer";
             this.radioEquipExplorer.Size = new System.Drawing.Size(135, 24);
             this.radioEquipExplorer.TabIndex = 0;
@@ -306,7 +310,7 @@
             // lblCharacterName
             // 
             this.lblCharacterName.AutoSize = true;
-            this.lblCharacterName.Location = new System.Drawing.Point(223, 269);
+            this.lblCharacterName.Location = new System.Drawing.Point(341, 17);
             this.lblCharacterName.Name = "lblCharacterName";
             this.lblCharacterName.Size = new System.Drawing.Size(140, 20);
             this.lblCharacterName.TabIndex = 9;
@@ -314,17 +318,55 @@
             // 
             // txtCharacterName
             // 
-            this.txtCharacterName.Location = new System.Drawing.Point(378, 266);
+            this.txtCharacterName.Location = new System.Drawing.Point(341, 51);
             this.txtCharacterName.MaxLength = 25;
             this.txtCharacterName.Name = "txtCharacterName";
-            this.txtCharacterName.Size = new System.Drawing.Size(246, 26);
+            this.txtCharacterName.Size = new System.Drawing.Size(140, 26);
             this.txtCharacterName.TabIndex = 10;
+            // 
+            // grpGender
+            // 
+            this.grpGender.Controls.Add(this.radioGenderFemale);
+            this.grpGender.Controls.Add(this.radioGenderMale);
+            this.grpGender.Location = new System.Drawing.Point(170, 14);
+            this.grpGender.Name = "grpGender";
+            this.grpGender.Size = new System.Drawing.Size(150, 129);
+            this.grpGender.TabIndex = 11;
+            this.grpGender.TabStop = false;
+            this.grpGender.Text = "Gender";
+            // 
+            // radioGenderMale
+            // 
+            this.radioGenderMale.AutoSize = true;
+            this.radioGenderMale.Location = new System.Drawing.Point(26, 39);
+            this.radioGenderMale.Name = "radioGenderMale";
+            this.radioGenderMale.Size = new System.Drawing.Size(61, 24);
+            this.radioGenderMale.TabIndex = 0;
+            this.radioGenderMale.TabStop = true;
+            this.radioGenderMale.Tag = "0";
+            this.radioGenderMale.Text = "Male";
+            this.radioGenderMale.UseVisualStyleBackColor = true;
+            this.radioGenderMale.CheckedChanged += new System.EventHandler(this.RadioButtonGender_CheckedChanged);
+            // 
+            // radioGenderFemale
+            // 
+            this.radioGenderFemale.AutoSize = true;
+            this.radioGenderFemale.Location = new System.Drawing.Point(26, 70);
+            this.radioGenderFemale.Name = "radioGenderFemale";
+            this.radioGenderFemale.Size = new System.Drawing.Size(80, 24);
+            this.radioGenderFemale.TabIndex = 1;
+            this.radioGenderFemale.TabStop = true;
+            this.radioGenderFemale.Tag = "1";
+            this.radioGenderFemale.Text = "Female";
+            this.radioGenderFemale.UseVisualStyleBackColor = true;
+            this.radioGenderFemale.CheckedChanged += new System.EventHandler(this.RadioButtonGender_CheckedChanged);
             // 
             // FormCharacterCreation
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(674, 475);
+            this.ClientSize = new System.Drawing.Size(529, 475);
+            this.Controls.Add(this.grpGender);
             this.Controls.Add(this.txtCharacterName);
             this.Controls.Add(this.lblCharacterName);
             this.Controls.Add(this.grpEquipment);
@@ -352,6 +394,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.picboxEquipAdventureShield)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picboxEquipAdventureSword)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picboxEquipExplorerSword)).EndInit();
+            this.grpGender.ResumeLayout(false);
+            this.grpGender.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -382,5 +426,8 @@
         private System.Windows.Forms.TextBox txtEquipExplorerGold;
         private System.Windows.Forms.Label lblCharacterName;
         private System.Windows.Forms.TextBox txtCharacterName;
+        private System.Windows.Forms.GroupBox grpGender;
+        private System.Windows.Forms.RadioButton radioGenderFemale;
+        private System.Windows.Forms.RadioButton radioGenderMale;
     }
 }

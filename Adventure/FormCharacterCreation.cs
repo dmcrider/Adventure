@@ -15,6 +15,7 @@ namespace Adventure
     public partial class FormCharacterCreation : Form
     {
         private int selectedRace;
+        private int selectedGender;
         private int selectedWeapon1;
         private int selectedWeapon2;
         private int selectedGold;
@@ -39,6 +40,7 @@ namespace Adventure
             // Set the defaults
             radioRaceHuman.Checked = true;
             radioEquipExplorer.Checked = true;
+            radioGenderMale.Checked = true;
         }
 
         private void RadioButtonEquipment_CheckedChanged(object sender, EventArgs e)
@@ -92,11 +94,26 @@ namespace Adventure
             }
         }
 
+        private void RadioButtonGender_CheckedChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                RadioButton tmpRadio = (RadioButton)sender;
+
+                selectedGender = int.Parse(tmpRadio.Tag.ToString());
+            }
+            catch (Exception exception)
+            {
+                LogWriter.Write("Something that wasn't a RadioButton called the RadioButtonChanged function.\n\t" + exception);
+            }
+        }
+
         private void BtnSave_Click(object sender, EventArgs e)
         {
             // Create and save the character
             player.character = new Character(player.uniqueID,txtCharacterName.Text,selectedRace);
             player.character.Gold = selectedGold;
+            player.character.Gender = selectedGender;
             bool creationSuccess = false;
             try
             {

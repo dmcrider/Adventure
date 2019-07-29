@@ -14,6 +14,7 @@ namespace Adventure
         private int userID;
         private string name;
         private int raceID;
+        private int gender;
         private int maxHP;
         private int currentHP;
         private int maxMagic;
@@ -85,5 +86,6 @@ namespace Adventure
         public int Level { get => level; set => level = value; }
         public int ExpPoints { get => expPoints; set => expPoints = value; }
         public int Active { get => active; set => active = value; }
+        public int Gender { get => gender; set => gender = value; }
     }
 }
