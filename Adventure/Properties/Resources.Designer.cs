@@ -127,6 +127,26 @@ namespace Adventure.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Item_PotionHPSmall {
+            get {
+                object obj = ResourceManager.GetObject("Item_PotionHPSmall", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Item_PotionMagicSmall {
+            get {
+                object obj = ResourceManager.GetObject("Item_PotionMagicSmall", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Item_Shield {
             get {
                 object obj = ResourceManager.GetObject("Item_Shield", resourceCulture);

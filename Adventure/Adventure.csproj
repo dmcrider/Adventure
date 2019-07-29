@@ -194,5 +194,11 @@
   <ItemGroup>
     <None Include="Resources\Item_Gold.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Item_PotionHPSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Item_PotionMagicSmall.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

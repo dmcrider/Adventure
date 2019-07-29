@@ -139,6 +139,12 @@
   <data name="Item_Gold" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Item_Gold.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="Item_PotionHPSmall" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Item_PotionHPSmall.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Item_PotionMagicSmall" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Item_PotionMagicSmall.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="Item_Shield" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Item_Shield.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>

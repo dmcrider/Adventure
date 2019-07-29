@@ -96,6 +96,7 @@ namespace Adventure
         {
             // Create and save the character
             player.character = new Character(player.uniqueID,txtCharacterName.Text,selectedRace);
+            player.character.Gold = selectedGold;
             bool creationSuccess = false;
             try
             {

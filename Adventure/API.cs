@@ -315,18 +315,26 @@ namespace Adventure
         /// <param name="quantity"></param>
         public static void AddInventoryItem(int characterID, int itemID, int quantity=1)
         {
-            // CharacterID, ItemID, Quantity, IsUsing, Hand
-            string dataString = $"{{\"CharacterID\":{characterID},\"ItemID\":{itemID},\"Quantity\":{quantity}}}";
-            string response = client.UploadString(Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.InventoryAddAPI,dataString);
-            JObject convertedJSON = JObject.Parse(response);
-
-            foreach(var obj in convertedJSON)
+            // Check that the character has space left
+            if (HasInventorySpace(characterID))
             {
-                if(obj.Key == "success")
+                string dataString = $"{{\"CharacterID\":{characterID},\"ItemID\":{itemID},\"Quantity\":{quantity}}}";
+                string response = client.UploadString(Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.InventoryAddAPI, dataString);
+                JObject convertedJSON = JObject.Parse(response);
+
+                foreach (var obj in convertedJSON)
                 {
-                    int inventoryID = (int)convertedJSON.GetValue("UniqueID");
-                    LogWriter.Write($"API.AddInventoryItem() | Item {convertedJSON.GetValue("DisplayName")} added successfully.");
+                    if (obj.Key == "success")
+                    {
+                        int inventoryID = (int)convertedJSON.GetValue("UniqueID");
+                        LogWriter.Write($"API.AddInventoryItem() | Item {convertedJSON.GetValue("DisplayName")} added successfully.");
+                    }
                 }
+            }
+            else
+            {
+                LogWriter.Write("Inventory full for Character: " + characterID);
+                FormMain.InventoryFullMessageBox();
             }
         }
 
@@ -350,7 +358,6 @@ namespace Adventure
                     itemsList.Add((Inventory)item.ToObject(typeof(Inventory)));
                 }
             }
-
             return itemsList;
         }
 
@@ -414,6 +421,26 @@ namespace Adventure
             }
 
             SaveData();
+        }
+
+        public static bool HasQuestLog(int characterID)
+        {
+            // Need to add API functionality on server first!!
+            return false;
+        }
+
+        public static bool HasSpellbook(int characterID)
+        {
+            // Need to add API functionality on server first!!
+            return false;
+        }
+
+        private static bool HasInventorySpace(int characterID)
+        {
+            // call check.php
+            // if count >= 10, return false
+            // else return true
+            return true;
         }
 
         /// <summary>

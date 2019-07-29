@@ -34,6 +34,10 @@ namespace Adventure
 
             // Hide Panels until user logs in
             panelCharacter.Visible = false;
+            panelInventory.Visible = false;
+            panelQuest.Visible = false;
+            panelGame.Visible = false;
+            panelSpells.Visible = false;
 
             // Clear defaults
             lblCharacterName.Text = string.Empty;
@@ -93,7 +97,6 @@ namespace Adventure
 
                 // Start the game
                 LogWriter.Write("Starting the game");
-                panelCharacter.Visible = true;
                 ControllerGame ctrlGame = new ControllerGame(this, player);
                 ctrlGame.PopulateInitialData();
             }
@@ -171,6 +174,12 @@ namespace Adventure
         private void BtnTest_Click(object sender, EventArgs e)
         {
             panelHP.Width -= 1;
+        }
+
+        public static void InventoryFullMessageBox()
+        {
+            // Show a popup that says the users inventory is full
+            // Take them to a "manage inventory" screen
         }
     }
 }
