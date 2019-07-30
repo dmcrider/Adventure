@@ -435,6 +435,31 @@ namespace Adventure
             return false;
         }
 
+        public static void SaveProgress(Player player)
+        {
+            UpdateCharacter(player.character, player.uniqueID);
+        }
+
+        private static void UpdateCharacter(Character character, int playerID)
+        {
+            string charValues = $"{{\"UserID\":\"{playerID}\",\"Name\":\"{character.Name}\",\"RaceID\":\"{character.RaceID}\",\"Gender\":\"{character.Gender}\",\"MaxHP\":\"{character.MaxHP}\",\"CurrentHP\":\"{character.CurrentHP}\",\"MaxMagic\":\"{character.MaxMagic}\",\"CurrentMagic\":\"{character.CurrentMagic}\",\"Strength\":\"{character.Strength}\",\"Intelligence\":\"{character.Intelligence}\",\"Constitution\":\"{character.Constitution}\",\"Gold\":\"{character.Gold}\",\"Level\":\"{character.Level}\",\"ExpPoints\":\"{character.ExpPoints}\"}}";
+            string response = client.UploadString(Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.CharacterUpdateAPI, charValues);
+            JObject convertedJSON = JObject.Parse(response);
+
+            foreach (var obj in convertedJSON)
+            {
+                LogWriter.Write("API.CreateCharacter() | Response from API:\n\t" + response);
+                if (obj.Key == "success")
+                {
+                    return;
+                }
+                else if (obj.Key == "error")
+                {
+                    LogWriter.Write("Response at API.UpdateCharacter(): " + obj.Value);
+                }
+            }
+        }
+
         private static bool HasInventorySpace(int characterID)
         {
             // call check.php

@@ -181,5 +181,32 @@ namespace Adventure
             // Show a popup that says the users inventory is full
             // Take them to a "manage inventory" screen
         }
+
+        public void Save_Click(object sender, EventArgs e)
+        {
+            API.SaveProgress(player);
+        }
+
+        public void Logout_Click(object sender, EventArgs e)
+        {
+            // Nullify the current user
+            player = null;
+
+            // "Reload" the application by calling the methods we need
+            FormMain_Load(this, EventArgs.Empty);
+            FormMain_Shown(this, EventArgs.Empty);
+        }
+
+        public void SaveAndExit_Click(object sender, EventArgs e)
+        {
+            Save_Click(this, EventArgs.Empty);
+            ExitApplication();
+        }
+
+        public void SaveAndLogout_Click(object sender, EventArgs e)
+        {
+            Save_Click(this, EventArgs.Empty);
+            Logout_Click(this, EventArgs.Empty);
+        }
     }
 }

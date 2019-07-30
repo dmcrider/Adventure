@@ -58,34 +58,37 @@
             this.lblSTRName = new System.Windows.Forms.Label();
             this.lblCharacterName = new System.Windows.Forms.Label();
             this.panelInventory = new System.Windows.Forms.Panel();
-            this.lblInventoryPanelTitle = new System.Windows.Forms.Label();
-            this.picboxInventory1 = new System.Windows.Forms.PictureBox();
-            this.picboxInventory2 = new System.Windows.Forms.PictureBox();
-            this.picboxInventory3 = new System.Windows.Forms.PictureBox();
-            this.picboxInventory4 = new System.Windows.Forms.PictureBox();
-            this.picboxInventory5 = new System.Windows.Forms.PictureBox();
-            this.picboxInventory6 = new System.Windows.Forms.PictureBox();
-            this.picboxInventory7 = new System.Windows.Forms.PictureBox();
             this.picboxInventory8 = new System.Windows.Forms.PictureBox();
+            this.picboxInventory7 = new System.Windows.Forms.PictureBox();
+            this.picboxInventory6 = new System.Windows.Forms.PictureBox();
+            this.picboxInventory5 = new System.Windows.Forms.PictureBox();
+            this.picboxInventory4 = new System.Windows.Forms.PictureBox();
+            this.picboxInventory3 = new System.Windows.Forms.PictureBox();
+            this.picboxInventory2 = new System.Windows.Forms.PictureBox();
+            this.picboxInventory1 = new System.Windows.Forms.PictureBox();
+            this.lblInventoryPanelTitle = new System.Windows.Forms.Label();
             this.panelQuest = new System.Windows.Forms.Panel();
             this.lblQuestPanelTitle = new System.Windows.Forms.Label();
             this.panelGame = new System.Windows.Forms.Panel();
             this.panelSpells = new System.Windows.Forms.Panel();
             this.lblSpellsPanelTitle = new System.Windows.Forms.Label();
+            this.gameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.logoutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveAndLogoutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.panelCharacter.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picboxGold)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picRightHand)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picLeftHand)).BeginInit();
             this.panelInventory.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.picboxInventory1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.picboxInventory2)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.picboxInventory3)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.picboxInventory4)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.picboxInventory5)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.picboxInventory6)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.picboxInventory7)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picboxInventory8)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picboxInventory7)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picboxInventory6)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picboxInventory5)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picboxInventory4)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picboxInventory3)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picboxInventory2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picboxInventory1)).BeginInit();
             this.panelQuest.SuspendLayout();
             this.panelSpells.SuspendLayout();
             this.SuspendLayout();
@@ -94,6 +97,7 @@
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
+            this.gameToolStripMenuItem,
             this.aboutToolStripMenuItem,
             this.playerToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
@@ -115,19 +119,21 @@
             // saveToolStripMenuItem
             // 
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.saveToolStripMenuItem.Text = "&Save";
+            this.saveToolStripMenuItem.Click += new System.EventHandler(this.Save_Click);
             // 
             // saveAndExitToolStripMenuItem
             // 
             this.saveAndExitToolStripMenuItem.Name = "saveAndExitToolStripMenuItem";
-            this.saveAndExitToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
+            this.saveAndExitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.saveAndExitToolStripMenuItem.Text = "Save and E&xit";
+            this.saveAndExitToolStripMenuItem.Click += new System.EventHandler(this.SaveAndExit_Click);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.exitToolStripMenuItem.Text = "&Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.ExitToolStripMenuItem_Click);
             // 
@@ -143,14 +149,14 @@
             // aboutToolStripMenuItem1
             // 
             this.aboutToolStripMenuItem1.Name = "aboutToolStripMenuItem1";
-            this.aboutToolStripMenuItem1.Size = new System.Drawing.Size(116, 22);
+            this.aboutToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
             this.aboutToolStripMenuItem1.Text = "&About";
             this.aboutToolStripMenuItem1.Click += new System.EventHandler(this.AboutToolStripMenuItem1_Click);
             // 
             // supportToolStripMenuItem
             // 
             this.supportToolStripMenuItem.Name = "supportToolStripMenuItem";
-            this.supportToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
+            this.supportToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.supportToolStripMenuItem.Text = "&Support";
             this.supportToolStripMenuItem.Click += new System.EventHandler(this.SupportToolStripMenuItem_Click);
             // 
@@ -379,62 +385,13 @@
             this.panelInventory.Size = new System.Drawing.Size(176, 300);
             this.panelInventory.TabIndex = 4;
             // 
-            // lblInventoryPanelTitle
+            // picboxInventory8
             // 
-            this.lblInventoryPanelTitle.AutoSize = true;
-            this.lblInventoryPanelTitle.Location = new System.Drawing.Point(56, 5);
-            this.lblInventoryPanelTitle.Name = "lblInventoryPanelTitle";
-            this.lblInventoryPanelTitle.Size = new System.Drawing.Size(74, 20);
-            this.lblInventoryPanelTitle.TabIndex = 0;
-            this.lblInventoryPanelTitle.Text = "Inventory";
-            // 
-            // picboxInventory1
-            // 
-            this.picboxInventory1.Location = new System.Drawing.Point(13, 39);
-            this.picboxInventory1.Name = "picboxInventory1";
-            this.picboxInventory1.Size = new System.Drawing.Size(49, 46);
-            this.picboxInventory1.TabIndex = 1;
-            this.picboxInventory1.TabStop = false;
-            // 
-            // picboxInventory2
-            // 
-            this.picboxInventory2.Location = new System.Drawing.Point(104, 39);
-            this.picboxInventory2.Name = "picboxInventory2";
-            this.picboxInventory2.Size = new System.Drawing.Size(49, 46);
-            this.picboxInventory2.TabIndex = 2;
-            this.picboxInventory2.TabStop = false;
-            // 
-            // picboxInventory3
-            // 
-            this.picboxInventory3.Location = new System.Drawing.Point(13, 104);
-            this.picboxInventory3.Name = "picboxInventory3";
-            this.picboxInventory3.Size = new System.Drawing.Size(49, 46);
-            this.picboxInventory3.TabIndex = 3;
-            this.picboxInventory3.TabStop = false;
-            // 
-            // picboxInventory4
-            // 
-            this.picboxInventory4.Location = new System.Drawing.Point(104, 104);
-            this.picboxInventory4.Name = "picboxInventory4";
-            this.picboxInventory4.Size = new System.Drawing.Size(49, 46);
-            this.picboxInventory4.TabIndex = 4;
-            this.picboxInventory4.TabStop = false;
-            // 
-            // picboxInventory5
-            // 
-            this.picboxInventory5.Location = new System.Drawing.Point(13, 172);
-            this.picboxInventory5.Name = "picboxInventory5";
-            this.picboxInventory5.Size = new System.Drawing.Size(49, 46);
-            this.picboxInventory5.TabIndex = 5;
-            this.picboxInventory5.TabStop = false;
-            // 
-            // picboxInventory6
-            // 
-            this.picboxInventory6.Location = new System.Drawing.Point(104, 172);
-            this.picboxInventory6.Name = "picboxInventory6";
-            this.picboxInventory6.Size = new System.Drawing.Size(49, 46);
-            this.picboxInventory6.TabIndex = 6;
-            this.picboxInventory6.TabStop = false;
+            this.picboxInventory8.Location = new System.Drawing.Point(104, 240);
+            this.picboxInventory8.Name = "picboxInventory8";
+            this.picboxInventory8.Size = new System.Drawing.Size(49, 46);
+            this.picboxInventory8.TabIndex = 8;
+            this.picboxInventory8.TabStop = false;
             // 
             // picboxInventory7
             // 
@@ -444,13 +401,62 @@
             this.picboxInventory7.TabIndex = 7;
             this.picboxInventory7.TabStop = false;
             // 
-            // picboxInventory8
+            // picboxInventory6
             // 
-            this.picboxInventory8.Location = new System.Drawing.Point(104, 240);
-            this.picboxInventory8.Name = "picboxInventory8";
-            this.picboxInventory8.Size = new System.Drawing.Size(49, 46);
-            this.picboxInventory8.TabIndex = 8;
-            this.picboxInventory8.TabStop = false;
+            this.picboxInventory6.Location = new System.Drawing.Point(104, 172);
+            this.picboxInventory6.Name = "picboxInventory6";
+            this.picboxInventory6.Size = new System.Drawing.Size(49, 46);
+            this.picboxInventory6.TabIndex = 6;
+            this.picboxInventory6.TabStop = false;
+            // 
+            // picboxInventory5
+            // 
+            this.picboxInventory5.Location = new System.Drawing.Point(13, 172);
+            this.picboxInventory5.Name = "picboxInventory5";
+            this.picboxInventory5.Size = new System.Drawing.Size(49, 46);
+            this.picboxInventory5.TabIndex = 5;
+            this.picboxInventory5.TabStop = false;
+            // 
+            // picboxInventory4
+            // 
+            this.picboxInventory4.Location = new System.Drawing.Point(104, 104);
+            this.picboxInventory4.Name = "picboxInventory4";
+            this.picboxInventory4.Size = new System.Drawing.Size(49, 46);
+            this.picboxInventory4.TabIndex = 4;
+            this.picboxInventory4.TabStop = false;
+            // 
+            // picboxInventory3
+            // 
+            this.picboxInventory3.Location = new System.Drawing.Point(13, 104);
+            this.picboxInventory3.Name = "picboxInventory3";
+            this.picboxInventory3.Size = new System.Drawing.Size(49, 46);
+            this.picboxInventory3.TabIndex = 3;
+            this.picboxInventory3.TabStop = false;
+            // 
+            // picboxInventory2
+            // 
+            this.picboxInventory2.Location = new System.Drawing.Point(104, 39);
+            this.picboxInventory2.Name = "picboxInventory2";
+            this.picboxInventory2.Size = new System.Drawing.Size(49, 46);
+            this.picboxInventory2.TabIndex = 2;
+            this.picboxInventory2.TabStop = false;
+            // 
+            // picboxInventory1
+            // 
+            this.picboxInventory1.Location = new System.Drawing.Point(13, 39);
+            this.picboxInventory1.Name = "picboxInventory1";
+            this.picboxInventory1.Size = new System.Drawing.Size(49, 46);
+            this.picboxInventory1.TabIndex = 1;
+            this.picboxInventory1.TabStop = false;
+            // 
+            // lblInventoryPanelTitle
+            // 
+            this.lblInventoryPanelTitle.AutoSize = true;
+            this.lblInventoryPanelTitle.Location = new System.Drawing.Point(56, 5);
+            this.lblInventoryPanelTitle.Name = "lblInventoryPanelTitle";
+            this.lblInventoryPanelTitle.Size = new System.Drawing.Size(74, 20);
+            this.lblInventoryPanelTitle.TabIndex = 0;
+            this.lblInventoryPanelTitle.Text = "Inventory";
             // 
             // panelQuest
             // 
@@ -496,6 +502,29 @@
             this.lblSpellsPanelTitle.TabIndex = 0;
             this.lblSpellsPanelTitle.Text = "Spells";
             // 
+            // gameToolStripMenuItem
+            // 
+            this.gameToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.logoutToolStripMenuItem,
+            this.saveAndLogoutToolStripMenuItem});
+            this.gameToolStripMenuItem.Name = "gameToolStripMenuItem";
+            this.gameToolStripMenuItem.Size = new System.Drawing.Size(50, 20);
+            this.gameToolStripMenuItem.Text = "&Game";
+            // 
+            // logoutToolStripMenuItem
+            // 
+            this.logoutToolStripMenuItem.Name = "logoutToolStripMenuItem";
+            this.logoutToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.logoutToolStripMenuItem.Text = "&Logout";
+            this.logoutToolStripMenuItem.Click += new System.EventHandler(this.Logout_Click);
+            // 
+            // saveAndLogoutToolStripMenuItem
+            // 
+            this.saveAndLogoutToolStripMenuItem.Name = "saveAndLogoutToolStripMenuItem";
+            this.saveAndLogoutToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveAndLogoutToolStripMenuItem.Text = "&Save And Logout";
+            this.saveAndLogoutToolStripMenuItem.Click += new System.EventHandler(this.SaveAndLogout_Click);
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
@@ -524,14 +553,14 @@
             ((System.ComponentModel.ISupportInitialize)(this.picLeftHand)).EndInit();
             this.panelInventory.ResumeLayout(false);
             this.panelInventory.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.picboxInventory1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.picboxInventory2)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.picboxInventory3)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.picboxInventory4)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.picboxInventory5)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.picboxInventory6)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.picboxInventory7)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picboxInventory8)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picboxInventory7)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picboxInventory6)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picboxInventory5)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picboxInventory4)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picboxInventory3)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picboxInventory2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picboxInventory1)).EndInit();
             this.panelQuest.ResumeLayout(false);
             this.panelQuest.PerformLayout();
             this.panelSpells.ResumeLayout(false);
@@ -587,6 +616,9 @@
         private System.Windows.Forms.Panel panelGame;
         private System.Windows.Forms.Panel panelSpells;
         private System.Windows.Forms.Label lblSpellsPanelTitle;
+        private System.Windows.Forms.ToolStripMenuItem gameToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem logoutToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem saveAndLogoutToolStripMenuItem;
     }
 }
 

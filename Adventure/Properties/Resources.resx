@@ -126,6 +126,15 @@
   <data name="ErrorGeneral" xml:space="preserve">
     <value>There was an error getting your information. Please start the applicaiton again.</value>
   </data>
+  <data name="ImagesCreditURL" xml:space="preserve">
+    <value>https://shikashiassets.itch.io/shikashis-fantasy-icons-pack</value>
+  </data>
+  <data name="ImagesLicense" xml:space="preserve">
+    <value>Credit for all image assets goes to Shikashi - Images are part of the Shikashi Fantasy Icons Pack. Licensed under CC BY 3.0</value>
+  </data>
+  <data name="ImagesLicenseURL" xml:space="preserve">
+    <value>https://creativecommons.org/licenses/by/3.0/</value>
+  </data>
   <data name="InvalidLoginMessage" xml:space="preserve">
     <value>Your username or password is incorrect. Please try again. Do you need to register?</value>
   </data>

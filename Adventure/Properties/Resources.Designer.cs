@@ -88,6 +88,33 @@ namespace Adventure.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to https://shikashiassets.itch.io/shikashis-fantasy-icons-pack.
+        /// </summary>
+        internal static string ImagesCreditURL {
+            get {
+                return ResourceManager.GetString("ImagesCreditURL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Credit for all image assets goes to Shikashi - Images are part of the Shikashi Fantasy Icons Pack. Licensed under CC BY 3.0.
+        /// </summary>
+        internal static string ImagesLicense {
+            get {
+                return ResourceManager.GetString("ImagesLicense", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to https://creativecommons.org/licenses/by/3.0/.
+        /// </summary>
+        internal static string ImagesLicenseURL {
+            get {
+                return ResourceManager.GetString("ImagesLicenseURL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Your username or password is incorrect. Please try again. Do you need to register?.
         /// </summary>
         internal static string InvalidLoginMessage {
