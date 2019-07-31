@@ -36,7 +36,7 @@ namespace Adventure
             }
             catch (Exception e)
             {
-                LogWriter.Write("ControllerGame Constructor | Could not load inventory:\n\t" + e);
+                LogWriter.Write("ControllerGame() | Could not load inventory: " + e);
             }
             
         }
@@ -116,7 +116,7 @@ namespace Adventure
             panelCharacter.Visible = true;
             panelInventory.Visible = true;
 
-            if (API.HasQuestLog(currentCharacter.UniqueID))
+            if (currentCharacter != null && API.HasQuestLog(currentCharacter.UniqueID))
             {
                 panelQuest.Visible = true;
             }

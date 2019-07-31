@@ -22,12 +22,11 @@ namespace Adventure
                 {
                     try
                     {
-                        w.Write("\r\nLog Entry : ");
-                        w.WriteLine("{0} {1}", DateTime.Now.ToLongTimeString(),
-                            DateTime.Now.ToLongDateString());
-                        w.WriteLine("  :");
-                        w.WriteLine("  :{0}", logMessage);
-                        w.WriteLine("-------------------------------");
+                        string output = "";
+                        output += string.Format("{0} {1}", DateTime.Now.ToLongTimeString(), DateTime.Now.ToLongDateString());
+                        output += string.Format("\t{0}", logMessage);
+
+                        w.WriteLine(output);
                     }
                     catch
                     {

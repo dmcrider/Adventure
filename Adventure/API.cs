@@ -60,7 +60,7 @@ namespace Adventure
             }
             catch (Exception e)
             {
-                LogWriter.Write("Error checking the database version\n\t" + e);
+                LogWriter.Write("API.CheckVersion() | Error checking the database version: " + e);
                 return false;
             }
 
@@ -125,7 +125,7 @@ namespace Adventure
                 return;
             }catch(Exception e)
             {
-                LogWriter.Write("Error loading local data\n\t" + e);
+                LogWriter.Write("API.LoadData() | Error loading local data: " + e);
                 return;
             }
         }
@@ -216,7 +216,7 @@ namespace Adventure
                                         }
                                         catch (Exception e)
                                         {
-                                            LogWriter.Write("Error getting local player data\n\t" + e);
+                                            LogWriter.Write("API.Register() | Error getting local player data: " + e);
                                         }
                                     }
                                 }
@@ -294,14 +294,14 @@ namespace Adventure
 
             foreach(var obj in convertedJSON)
             {
-                LogWriter.Write("API.CreateCharacter() | Response from API:\n\t" + response);
+                LogWriter.Write("API.CreateCharacter() | Response from API: " + response);
                 if(obj.Key == "success")
                 {
                     character.UniqueID = (int)convertedJSON.GetValue("UniqueID");
                     return true;
                 }else if(obj.Key == "error")
                 {
-                    LogWriter.Write("Response at API.CreateCharacter(): " + obj.Value);
+                    LogWriter.Write("API.CreateCharacter() | " + obj.Value);
                 }
             }
             return false;
@@ -333,7 +333,7 @@ namespace Adventure
             }
             else
             {
-                LogWriter.Write("Inventory full for Character: " + characterID);
+                LogWriter.Write("API.AddInventoryItem() | Inventory full for Character: " + characterID);
                 FormMain.InventoryFullMessageBox();
             }
         }
@@ -345,20 +345,29 @@ namespace Adventure
         /// <returns>Returns a List of Items</returns>
         public static List<Inventory> LoadInventory(int characterID)
         {
-            List<Inventory> itemsList = new List<Inventory>();
-
-            string dataString = $"{{\"CharacterID\":{characterID}}}";
-            string response = client.UploadString(Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.InventoryReadAPI, dataString);
-            JObject convertedJSON = JObject.Parse(response);
-
-            foreach (var obj in convertedJSON)
+            try
             {
-                foreach (JObject item in obj.Value)
+                List<Inventory> itemsList = new List<Inventory>();
+
+                string dataString = $"{{\"CharacterID\":{characterID}}}";
+                string response = client.UploadString(Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.InventoryReadAPI, dataString);
+                JObject convertedJSON = JObject.Parse(response);
+
+                foreach (var obj in convertedJSON)
                 {
-                    itemsList.Add((Inventory)item.ToObject(typeof(Inventory)));
+                    foreach (JObject item in obj.Value)
+                    {
+                        itemsList.Add((Inventory)item.ToObject(typeof(Inventory)));
+                    }
                 }
+                return itemsList;
             }
-            return itemsList;
+            catch(Exception e)
+            {
+                LogWriter.Write("API.LoadInventory() | " + e);
+            }
+
+            return null;
         }
 
         /// <summary>
@@ -377,61 +386,70 @@ namespace Adventure
             apiStrings[6] = Properties.Settings.Default.NPCReadAPI;
             apiStrings[7] = Properties.Settings.Default.QuestRewardReadAPI;
 
-            foreach(string apiName in apiStrings)
+            try
             {
-                string fullAPI = Properties.Settings.Default.APIBaseAddress + apiName;
-                string response = client.DownloadString(fullAPI);
-                JObject convertedJSON = JObject.Parse(response);
-
-                foreach(var obj in convertedJSON)
+                foreach (string apiName in apiStrings)
                 {
-                    foreach(var item in obj.Value)
+                    string fullAPI = Properties.Settings.Default.APIBaseAddress + apiName;
+                    string response = client.DownloadString(fullAPI);
+                    JObject convertedJSON = JObject.Parse(response);
+
+                    foreach (var obj in convertedJSON)
                     {
-                        switch (Array.IndexOf(apiStrings,apiName))
+                        foreach (var item in obj.Value)
                         {
-                            case 0: // Items
-                                itemsList.Add(new Item((int)item.SelectToken("UniqueID"), (string)item.SelectToken("DisplayName"), (string)item.SelectToken("AssetName"), (int)item.SelectToken("AttackBonus"), (int)item.SelectToken("DefenseBonus"), (int)item.SelectToken("HPHealed"), (int)item.SelectToken("MagicHealed"), (int)item.SelectToken("MaxStackQuantity"), (int)item.SelectToken("ValueInGold"), (int)item.SelectToken("CanBuySell"), (int)item.SelectToken("IsActive")));
-                                break;
-                            case 1: // Quests
-                                questsList.Add(new Quest((int)item.SelectToken("UniqueID"),(string)item.SelectToken("Name"), (int)item.SelectToken("ExpAwarded"), (int)item.SelectToken("QuestRewardID"), (int)item.SelectToken("MinCharacterLevel"), (int)item.SelectToken("MaxCharacterLevel"), (int)item.SelectToken("NPC_ID"), (string)item.SelectToken("Description")));
-                                break;
-                            case 2: // Spells
-                                spellsList.Add(new Spell((int)item.SelectToken("UniqueID"), (string)item.SelectToken("Name"), (int)item.SelectToken("HealAmount"), (int)item.SelectToken("DamageAmount"), (int)item.SelectToken("Bonus"), (int)item.SelectToken("MagicCost"), (int)item.SelectToken("MinLevel")));
-                                break;
-                            case 3: // Stats
-                                statsList.Add(new Stat((int)item.SelectToken("UniqueID"), (string)item.SelectToken("Name")));
-                                break;
-                            case 4: // Races
-                                racesList.Add(new Race((int)item.SelectToken("UniqueID"), (string)item.SelectToken("Name"), (int)item.SelectToken("BaseSTR"), (int)item.SelectToken("BaseINT"), (int)item.SelectToken("BaseCON"), (int)item.SelectToken("IsActive")));
-                                break;
-                            case 5: // States
-                                statesList.Add(new State((int)item.SelectToken("UniqueID"), (string)item.SelectToken("Name")));
-                                break;
-                            case 6: // NPCs
-                                npcsList.Add(new Npc((int)item.SelectToken("UniqueID"), (string)item.SelectToken("Name")));
-                                break;
-                            case 7: // QuestRewards
-                                questrewardsList.Add(new QuestReward((int)item.SelectToken("UniqueID"), (int)item.SelectToken("IsItem"), (int)item.SelectToken("ItemID"), (int)item.SelectToken("Gold")));
-                                break;
-                            default: // Shouldn't ever happen
-                                break;
+                            switch (Array.IndexOf(apiStrings, apiName))
+                            {
+                                case 0: // Items
+                                    itemsList.Add(new Item((int)item.SelectToken("UniqueID"), (string)item.SelectToken("DisplayName"), (string)item.SelectToken("AssetName"), (int)item.SelectToken("AttackBonus"), (int)item.SelectToken("DefenseBonus"), (int)item.SelectToken("HPHealed"), (int)item.SelectToken("MagicHealed"), (int)item.SelectToken("MaxStackQuantity"), (int)item.SelectToken("ValueInGold"), (int)item.SelectToken("CanBuySell"), (int)item.SelectToken("IsActive")));
+                                    break;
+                                case 1: // Quests
+                                    questsList.Add(new Quest((int)item.SelectToken("UniqueID"), (string)item.SelectToken("Name"), (int)item.SelectToken("ExpAwarded"), (int)item.SelectToken("QuestRewardID"), (int)item.SelectToken("MinCharacterLevel"), (int)item.SelectToken("MaxCharacterLevel"), (int)item.SelectToken("NPC_ID"), (string)item.SelectToken("Description")));
+                                    break;
+                                case 2: // Spells
+                                    spellsList.Add(new Spell((int)item.SelectToken("UniqueID"), (string)item.SelectToken("Name"), (int)item.SelectToken("HealAmount"), (int)item.SelectToken("DamageAmount"), (int)item.SelectToken("Bonus"), (int)item.SelectToken("MagicCost"), (int)item.SelectToken("MinLevel")));
+                                    break;
+                                case 3: // Stats
+                                    statsList.Add(new Stat((int)item.SelectToken("UniqueID"), (string)item.SelectToken("Name")));
+                                    break;
+                                case 4: // Races
+                                    racesList.Add(new Race((int)item.SelectToken("UniqueID"), (string)item.SelectToken("Name"), (int)item.SelectToken("BaseSTR"), (int)item.SelectToken("BaseINT"), (int)item.SelectToken("BaseCON"), (int)item.SelectToken("IsActive")));
+                                    break;
+                                case 5: // States
+                                    statesList.Add(new State((int)item.SelectToken("UniqueID"), (string)item.SelectToken("Name")));
+                                    break;
+                                case 6: // NPCs
+                                    npcsList.Add(new Npc((int)item.SelectToken("UniqueID"), (string)item.SelectToken("Name")));
+                                    break;
+                                case 7: // QuestRewards
+                                    questrewardsList.Add(new QuestReward((int)item.SelectToken("UniqueID"), (int)item.SelectToken("IsItem"), (int)item.SelectToken("ItemID"), (int)item.SelectToken("Gold")));
+                                    break;
+                                default: // Shouldn't ever happen
+                                    break;
+                            }
                         }
                     }
                 }
-            }
 
-            SaveData();
+                SaveData();
+            }
+            catch (Exception e)
+            {
+                LogWriter.Write("API.UpdateFromDatabase() | " + e);
+            }
         }
 
         public static bool HasQuestLog(int characterID)
         {
             // Need to add API functionality on server first!!
+            LogWriter.Write("API.HasQuestLog() | This function has not been implemented yet.");
             return false;
         }
 
         public static bool HasSpellbook(int characterID)
         {
             // Need to add API functionality on server first!!
+            LogWriter.Write("API.HasSpellbook() | This function has not been implemented yet.");
             return false;
         }
 
@@ -448,14 +466,14 @@ namespace Adventure
 
             foreach (var obj in convertedJSON)
             {
-                LogWriter.Write("API.CreateCharacter() | Response from API:\n\t" + response);
+                LogWriter.Write("API.CreateCharacter() | Response from API: " + response);
                 if (obj.Key == "success")
                 {
                     return;
                 }
                 else if (obj.Key == "error")
                 {
-                    LogWriter.Write("Response at API.UpdateCharacter(): " + obj.Value);
+                    LogWriter.Write("API.UpdateCharacter() | Error updating character: " + obj.Value);
                 }
             }
         }
@@ -532,7 +550,7 @@ namespace Adventure
                             }
                             catch (Exception e)
                             {
-                                LogWriter.Write("Error getting local player data\n\t" + e);
+                                LogWriter.Write("API.PlayerExistsLocally() | Error parsing JSON: " + e);
                                 return false;
                             }
                         }

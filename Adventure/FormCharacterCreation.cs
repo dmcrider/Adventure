@@ -66,7 +66,7 @@ namespace Adventure
             }
             catch (Exception exception)
             {
-                LogWriter.Write("Something that wasn't a RadioButton called the RadioButtonChanged function.\n\t" + exception);
+                LogWriter.Write("FormCharacterCreation.RadioButtonEquipment_CheckedChanged() | " + exception);
                 return;
             }
         }
@@ -89,7 +89,7 @@ namespace Adventure
             }
             catch(Exception exception)
             {
-                LogWriter.Write("Something that wasn't a RadioButton called the RadioButtonChanged function.\n\t" + exception);
+                LogWriter.Write("FormCharacterCreation.RadioButtonRace_CheckedChanged() | " + exception);
                 return;
             }
         }
@@ -104,7 +104,7 @@ namespace Adventure
             }
             catch (Exception exception)
             {
-                LogWriter.Write("Something that wasn't a RadioButton called the RadioButtonChanged function.\n\t" + exception);
+                LogWriter.Write("FormCharacterCreation.RadioButtonGender_CheckedChanged() | " + exception);
             }
         }
 
@@ -121,7 +121,7 @@ namespace Adventure
             }
             catch (Exception ex)
             {
-                LogWriter.Write("Error creating character\n\t" + ex);
+                LogWriter.Write("FormCharacterCreation.BtnSave_Click() | Error creating character: " + ex);
             }
             if (!creationSuccess)
             {

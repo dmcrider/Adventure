@@ -90,13 +90,21 @@ namespace Adventure
                 if (!HasCharacter())
                 {
                     // Show the character creation screen
-                    LogWriter.Write("Player needs to create a character");
+                    LogWriter.Write("FormMain_Shown() | Player needs to create a character");
                     frmCharacterCreation.LoggedInPlayer(ref player);
                     frmCharacterCreation.ShowDialog();
+
+                    if (player.character == null)
+                    {
+                        LogWriter.Write("FormMain_Shown() | Player closed the character creation screen without saving.");
+                        MessageBox.Show(Properties.Resources.ErrorGeneral);
+                        Application.Exit();
+                        return;
+                    }
                 }
 
                 // Start the game
-                LogWriter.Write("Starting the game");
+                LogWriter.Write("FormMain_Shown() | Starting the game");
                 ControllerGame ctrlGame = new ControllerGame(this, player);
                 ctrlGame.PopulateInitialData();
             }
@@ -147,7 +155,12 @@ namespace Adventure
 
         private void ExitToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            
+
+            ExitNoSaveConfirm();
+        }
+
+        private void ExitNoSaveConfirm()
+        {
             if (MessageBox.Show(Properties.Resources.ConfirmNoSaveMessage, Properties.Resources.ConfirmNoSaveTitle, MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
                 // User does not want to save
@@ -189,12 +202,20 @@ namespace Adventure
 
         public void Logout_Click(object sender, EventArgs e)
         {
-            // Nullify the current user
-            player = null;
 
-            // "Reload" the application by calling the methods we need
-            FormMain_Load(this, EventArgs.Empty);
-            FormMain_Shown(this, EventArgs.Empty);
+            if (MessageBox.Show(Properties.Resources.ConfirmNoSaveMessage, Properties.Resources.ConfirmNoSaveTitle, MessageBoxButtons.YesNo) == DialogResult.Yes)
+            {
+                // Nullify the current user
+                player = null;
+
+                // "Reload" the application by calling the methods we need
+                FormMain_Load(this, EventArgs.Empty);
+                FormMain_Shown(this, EventArgs.Empty);
+            }
+            else
+            {
+                return;
+            }
         }
 
         public void SaveAndExit_Click(object sender, EventArgs e)
