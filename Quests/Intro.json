@@ -1,0 +1,40 @@
+{
+    "QuestName" : "Intro",
+    "Version" : 0.1,
+    "0":{
+        "NPC-Text" : "You're a new face in town.",
+        "Choice0" : "I am. What's your name?",
+        "Choice1" : "It's been a few years.",
+        "Choice2" : "Name's __0__, nice to meet you.",
+        "Link0" : "1",
+        "Link1" : "2",
+        "Link2" : "3"
+    },
+    "1":{
+        "NPC-Text" : "You're a new face in town.",
+        "Choice0" : "I am. What's your name?",
+        "Choice1" : "It's been a few years.",
+        "Choice2" : "Name's __0__, nice to meet you.",
+        "Link0" : "1",
+        "Link1" : "2",
+        "Link2" : "3"
+    },
+    "2":{
+        "NPC-Text" : "You're a new face in town.",
+        "Choice0" : "I am. What's your name?",
+        "Choice1" : "It's been a few years.",
+        "Choice2" : "Name's __0__, nice to meet you.",
+        "Link0" : "1",
+        "Link1" : "2",
+        "Link2" : "3"
+    },
+    "3":{
+        "NPC-Text" : "You're a new face in town.",
+        "Choice0" : "I am. What's your name?",
+        "Choice1" : "It's been a few years.",
+        "Choice2" : "Name's __0__, nice to meet you.",
+        "Link0" : "1",
+        "Link1" : "2",
+        "Link2" : "3"
+    }
+}
