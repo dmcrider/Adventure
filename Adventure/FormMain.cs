@@ -229,5 +229,12 @@ namespace Adventure
             Save_Click(this, EventArgs.Empty);
             Logout_Click(this, EventArgs.Empty);
         }
+
+        private void BtnManageInventory_Click(object sender, EventArgs e)
+        {
+            LogWriter.Write("FormMain.BtnManageInventory_Click() | User is managing inventory");
+            FormManageInventory formManageInventory = new FormManageInventory(ref player);
+            formManageInventory.ShowDialog();
+        }
     }
 }

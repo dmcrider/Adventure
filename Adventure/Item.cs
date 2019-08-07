@@ -20,6 +20,8 @@ namespace Adventure
         private int canBuySell;
         private int active;
 
+        public Item() { }
+
         public Item(int uniqueID, string displayName, string assetName, int attackBonus, int defenseBonus, int hpHealed, int magicHealed, int maxStackQunatity, int valueInGold, int canBuySell, int active)
         {
             UniqueID = uniqueID;

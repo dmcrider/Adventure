@@ -33,6 +33,9 @@
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveAndExitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.gameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.logoutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveAndLogoutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.supportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -72,9 +75,7 @@
             this.panelGame = new System.Windows.Forms.Panel();
             this.panelSpells = new System.Windows.Forms.Panel();
             this.lblSpellsPanelTitle = new System.Windows.Forms.Label();
-            this.gameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.logoutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.saveAndLogoutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.btnManageInventory = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.panelCharacter.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picboxGold)).BeginInit();
@@ -119,23 +120,46 @@
             // saveToolStripMenuItem
             // 
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
             this.saveToolStripMenuItem.Text = "&Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.Save_Click);
             // 
             // saveAndExitToolStripMenuItem
             // 
             this.saveAndExitToolStripMenuItem.Name = "saveAndExitToolStripMenuItem";
-            this.saveAndExitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveAndExitToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
             this.saveAndExitToolStripMenuItem.Text = "Save and E&xit";
             this.saveAndExitToolStripMenuItem.Click += new System.EventHandler(this.SaveAndExit_Click);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
             this.exitToolStripMenuItem.Text = "&Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.ExitToolStripMenuItem_Click);
+            // 
+            // gameToolStripMenuItem
+            // 
+            this.gameToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.logoutToolStripMenuItem,
+            this.saveAndLogoutToolStripMenuItem});
+            this.gameToolStripMenuItem.Name = "gameToolStripMenuItem";
+            this.gameToolStripMenuItem.Size = new System.Drawing.Size(50, 20);
+            this.gameToolStripMenuItem.Text = "&Game";
+            // 
+            // logoutToolStripMenuItem
+            // 
+            this.logoutToolStripMenuItem.Name = "logoutToolStripMenuItem";
+            this.logoutToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
+            this.logoutToolStripMenuItem.Text = "&Logout";
+            this.logoutToolStripMenuItem.Click += new System.EventHandler(this.Logout_Click);
+            // 
+            // saveAndLogoutToolStripMenuItem
+            // 
+            this.saveAndLogoutToolStripMenuItem.Name = "saveAndLogoutToolStripMenuItem";
+            this.saveAndLogoutToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
+            this.saveAndLogoutToolStripMenuItem.Text = "&Save And Logout";
+            this.saveAndLogoutToolStripMenuItem.Click += new System.EventHandler(this.SaveAndLogout_Click);
             // 
             // aboutToolStripMenuItem
             // 
@@ -149,14 +173,14 @@
             // aboutToolStripMenuItem1
             // 
             this.aboutToolStripMenuItem1.Name = "aboutToolStripMenuItem1";
-            this.aboutToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.aboutToolStripMenuItem1.Size = new System.Drawing.Size(116, 22);
             this.aboutToolStripMenuItem1.Text = "&About";
             this.aboutToolStripMenuItem1.Click += new System.EventHandler(this.AboutToolStripMenuItem1_Click);
             // 
             // supportToolStripMenuItem
             // 
             this.supportToolStripMenuItem.Name = "supportToolStripMenuItem";
-            this.supportToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.supportToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
             this.supportToolStripMenuItem.Text = "&Support";
             this.supportToolStripMenuItem.Click += new System.EventHandler(this.SupportToolStripMenuItem_Click);
             // 
@@ -371,6 +395,7 @@
             // panelInventory
             // 
             this.panelInventory.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panelInventory.Controls.Add(this.btnManageInventory);
             this.panelInventory.Controls.Add(this.picboxInventory8);
             this.panelInventory.Controls.Add(this.picboxInventory7);
             this.panelInventory.Controls.Add(this.picboxInventory6);
@@ -382,7 +407,7 @@
             this.panelInventory.Controls.Add(this.lblInventoryPanelTitle);
             this.panelInventory.Location = new System.Drawing.Point(985, 27);
             this.panelInventory.Name = "panelInventory";
-            this.panelInventory.Size = new System.Drawing.Size(176, 300);
+            this.panelInventory.Size = new System.Drawing.Size(176, 348);
             this.panelInventory.TabIndex = 4;
             // 
             // picboxInventory8
@@ -462,9 +487,9 @@
             // 
             this.panelQuest.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panelQuest.Controls.Add(this.lblQuestPanelTitle);
-            this.panelQuest.Location = new System.Drawing.Point(985, 334);
+            this.panelQuest.Location = new System.Drawing.Point(985, 414);
             this.panelQuest.Name = "panelQuest";
-            this.panelQuest.Size = new System.Drawing.Size(176, 426);
+            this.panelQuest.Size = new System.Drawing.Size(176, 346);
             this.panelQuest.TabIndex = 5;
             // 
             // lblQuestPanelTitle
@@ -502,28 +527,15 @@
             this.lblSpellsPanelTitle.TabIndex = 0;
             this.lblSpellsPanelTitle.Text = "Spells";
             // 
-            // gameToolStripMenuItem
+            // btnManageInventory
             // 
-            this.gameToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.logoutToolStripMenuItem,
-            this.saveAndLogoutToolStripMenuItem});
-            this.gameToolStripMenuItem.Name = "gameToolStripMenuItem";
-            this.gameToolStripMenuItem.Size = new System.Drawing.Size(50, 20);
-            this.gameToolStripMenuItem.Text = "&Game";
-            // 
-            // logoutToolStripMenuItem
-            // 
-            this.logoutToolStripMenuItem.Name = "logoutToolStripMenuItem";
-            this.logoutToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.logoutToolStripMenuItem.Text = "&Logout";
-            this.logoutToolStripMenuItem.Click += new System.EventHandler(this.Logout_Click);
-            // 
-            // saveAndLogoutToolStripMenuItem
-            // 
-            this.saveAndLogoutToolStripMenuItem.Name = "saveAndLogoutToolStripMenuItem";
-            this.saveAndLogoutToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.saveAndLogoutToolStripMenuItem.Text = "&Save And Logout";
-            this.saveAndLogoutToolStripMenuItem.Click += new System.EventHandler(this.SaveAndLogout_Click);
+            this.btnManageInventory.Location = new System.Drawing.Point(51, 301);
+            this.btnManageInventory.Name = "btnManageInventory";
+            this.btnManageInventory.Size = new System.Drawing.Size(75, 33);
+            this.btnManageInventory.TabIndex = 9;
+            this.btnManageInventory.Text = "Manage";
+            this.btnManageInventory.UseVisualStyleBackColor = true;
+            this.btnManageInventory.Click += new System.EventHandler(this.BtnManageInventory_Click);
             // 
             // FormMain
             // 
@@ -619,6 +631,7 @@
         private System.Windows.Forms.ToolStripMenuItem gameToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem logoutToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveAndLogoutToolStripMenuItem;
+        private System.Windows.Forms.Button btnManageInventory;
     }
 }
 
