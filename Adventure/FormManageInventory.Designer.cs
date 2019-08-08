@@ -61,6 +61,11 @@
             this.btnSave = new System.Windows.Forms.Button();
             this.btnDelete = new System.Windows.Forms.Button();
             this.chkbxSelecctAll = new System.Windows.Forms.CheckBox();
+            this.btnUse = new System.Windows.Forms.Button();
+            this.grpHand = new System.Windows.Forms.GroupBox();
+            this.radioHandLeft = new System.Windows.Forms.RadioButton();
+            this.radioHandRight = new System.Windows.Forms.RadioButton();
+            this.btnHold = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.picboxItem1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picboxItem2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picboxItem3)).BeginInit();
@@ -81,6 +86,7 @@
             this.grpItem8.SuspendLayout();
             this.grpItem7.SuspendLayout();
             this.grpItem6.SuspendLayout();
+            this.grpHand.SuspendLayout();
             this.SuspendLayout();
             // 
             // picboxItem1
@@ -381,10 +387,11 @@
             this.btnSave.TabIndex = 18;
             this.btnSave.Text = "&Save && Exit";
             this.btnSave.UseVisualStyleBackColor = true;
+            this.btnSave.Click += new System.EventHandler(this.BtnSave_Click);
             // 
             // btnDelete
             // 
-            this.btnDelete.Location = new System.Drawing.Point(464, 172);
+            this.btnDelete.Location = new System.Drawing.Point(464, 163);
             this.btnDelete.Name = "btnDelete";
             this.btnDelete.Size = new System.Drawing.Size(146, 52);
             this.btnDelete.TabIndex = 19;
@@ -402,11 +409,69 @@
             this.chkbxSelecctAll.UseVisualStyleBackColor = true;
             this.chkbxSelecctAll.CheckedChanged += new System.EventHandler(this.CheckBoxSelectAll_CheckedChanged);
             // 
+            // btnUse
+            // 
+            this.btnUse.Location = new System.Drawing.Point(464, 304);
+            this.btnUse.Name = "btnUse";
+            this.btnUse.Size = new System.Drawing.Size(146, 52);
+            this.btnUse.TabIndex = 31;
+            this.btnUse.Text = "&Use Item";
+            this.btnUse.UseVisualStyleBackColor = true;
+            this.btnUse.Click += new System.EventHandler(this.BtnUse_Click);
+            // 
+            // grpHand
+            // 
+            this.grpHand.Controls.Add(this.btnHold);
+            this.grpHand.Controls.Add(this.radioHandRight);
+            this.grpHand.Controls.Add(this.radioHandLeft);
+            this.grpHand.Location = new System.Drawing.Point(464, 445);
+            this.grpHand.Name = "grpHand";
+            this.grpHand.Size = new System.Drawing.Size(146, 132);
+            this.grpHand.TabIndex = 32;
+            this.grpHand.TabStop = false;
+            this.grpHand.Text = "Hand";
+            // 
+            // radioHandLeft
+            // 
+            this.radioHandLeft.AutoSize = true;
+            this.radioHandLeft.Location = new System.Drawing.Point(7, 40);
+            this.radioHandLeft.Name = "radioHandLeft";
+            this.radioHandLeft.Size = new System.Drawing.Size(55, 24);
+            this.radioHandLeft.TabIndex = 0;
+            this.radioHandLeft.TabStop = true;
+            this.radioHandLeft.Tag = "1";
+            this.radioHandLeft.Text = "Left";
+            this.radioHandLeft.UseVisualStyleBackColor = true;
+            // 
+            // radioHandRight
+            // 
+            this.radioHandRight.AutoSize = true;
+            this.radioHandRight.Location = new System.Drawing.Point(68, 40);
+            this.radioHandRight.Name = "radioHandRight";
+            this.radioHandRight.Size = new System.Drawing.Size(65, 24);
+            this.radioHandRight.TabIndex = 1;
+            this.radioHandRight.TabStop = true;
+            this.radioHandRight.Tag = "2";
+            this.radioHandRight.Text = "Right";
+            this.radioHandRight.UseVisualStyleBackColor = true;
+            // 
+            // btnHold
+            // 
+            this.btnHold.Location = new System.Drawing.Point(29, 95);
+            this.btnHold.Name = "btnHold";
+            this.btnHold.Size = new System.Drawing.Size(80, 31);
+            this.btnHold.TabIndex = 2;
+            this.btnHold.Text = "&Hold";
+            this.btnHold.UseVisualStyleBackColor = true;
+            this.btnHold.Click += new System.EventHandler(this.BtnHold_Click);
+            // 
             // FormManageInventory
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(656, 746);
+            this.Controls.Add(this.grpHand);
+            this.Controls.Add(this.btnUse);
             this.Controls.Add(this.chkbxSelecctAll);
             this.Controls.Add(this.btnDelete);
             this.Controls.Add(this.btnSave);
@@ -455,6 +520,8 @@
             this.grpItem7.PerformLayout();
             this.grpItem6.ResumeLayout(false);
             this.grpItem6.PerformLayout();
+            this.grpHand.ResumeLayout(false);
+            this.grpHand.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -495,5 +562,10 @@
         private System.Windows.Forms.CheckBox chkbxItem9;
         private System.Windows.Forms.CheckBox chkbxItem10;
         private System.Windows.Forms.CheckBox chkbxSelecctAll;
+        private System.Windows.Forms.Button btnUse;
+        private System.Windows.Forms.GroupBox grpHand;
+        private System.Windows.Forms.Button btnHold;
+        private System.Windows.Forms.RadioButton radioHandRight;
+        private System.Windows.Forms.RadioButton radioHandLeft;
     }
 }

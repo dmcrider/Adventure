@@ -370,6 +370,41 @@ namespace Adventure
             return null;
         }
 
+        public static bool UpdateInventory(int characterID, List<Inventory> inventoryList)
+        {
+            try
+            {
+                foreach (Inventory invItem in inventoryList)
+                {
+                    string dataString = $"{{\"CharacterID\":{characterID},\"ItemID\":{invItem.ItemID},\"Quantity\":{invItem.Quantity},\"IsUsing\":{invItem.IsUsing},\"Hand\":{invItem.Hand},\"IsActive\":{invItem.IsActive}}}";
+                    string response = client.UploadString(Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.InventoryUpdateAPI, dataString);
+                    JObject convertedJSON = JObject.Parse(response);
+
+                    foreach(var obj in convertedJSON)
+                    {
+                        if(obj.Key == "success")
+                        {
+                            LogWriter.Write("API.UpdateInventory() | Inventory updated successfully");
+                            return true;
+                        }
+                        else
+                        {
+                            LogWriter.Write("API.UpdateInventory() | Failed to update inventory");
+                            return false;
+                        }
+                    }
+                }
+            }
+            catch(Exception e)
+            {
+                LogWriter.Write("API.UpdateInventory() | " + e);
+                return false;
+            }
+
+            // Something went massively wrong if this is the one getting returned
+            return false;
+        }
+
         /// <summary>
         /// Connects to the cloud database to update the appropriate list
         /// </summary>

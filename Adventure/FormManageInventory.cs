@@ -19,6 +19,7 @@ namespace Adventure
         private GroupBox[] grpArray;
 
         private List<int> selectedItems;
+        private int selectedHand = 0;
 
         public FormManageInventory(ref Player p)
         {
@@ -74,6 +75,10 @@ namespace Adventure
                     currentItem++;
                 }
             }
+
+            // Disable options to use/hold items
+            grpHand.Enabled = false;
+            btnUse.Enabled = false;
         }
 
         private void CheckBox_CheckedChanged(object sender, EventArgs e)
@@ -87,6 +92,63 @@ namespace Adventure
                     // Add the item to the array
                     string tag = tempbox.Tag.ToString();
                     selectedItems.Add(int.Parse(tag));
+
+                    // Enable appropriate buttons, if applicable
+                    Item tempItem = API.itemsList.Find(x => x.UniqueID == int.Parse(tag));
+
+                    // Enable the "use" button for potions
+                    if(tempItem.HpHealed > 0 || tempItem.MagicHealed > 0)
+                    {
+                        // Can only use 1 item at a time
+                        if (btnUse.Enabled)
+                        {
+                            btnUse.Enabled = false;
+                        }
+                        else
+                        {
+                            btnUse.Enabled = true;
+                        }
+                    }
+                    else
+                    {
+                        btnUse.Enabled = false;
+                    }
+
+                    //Enable the "hold" options for weapons and shields
+                    // Set the hand, if it's held
+                    if(tempItem.AttackBonus > 0 || tempItem.DefenseBonus > 0)
+                    {
+                        // Can only change 1 item at a time
+                        if (grpHand.Enabled)
+                        {
+                            grpHand.Enabled = false;
+                        }
+                        else
+                        {
+                            grpHand.Enabled = true;
+                            Inventory tempInv = inventory.Find(x => x.ItemID == tempItem.UniqueID);
+
+                            if (tempInv.IsUsing == 1)
+                            {
+                                if(tempInv.Hand == 1)
+                                {
+                                    // Left Hand
+                                    radioHandLeft.Checked = true;
+                                    selectedHand = tempInv.Hand;
+                                }
+                                else if(tempInv.Hand == 2)
+                                {
+                                    // Right
+                                    radioHandRight.Checked = true;
+                                    selectedHand = tempInv.Hand;
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        grpHand.Enabled = false;
+                    }
                 }
                 else if (!tempbox.Checked)
                 {
@@ -97,7 +159,19 @@ namespace Adventure
                         if(item == int.Parse(tag))
                         {
                             selectedItems.Remove(int.Parse(tag));
+                            selectedHand = 0;
                         }
+                    }
+
+                    // Disable any enabled options
+                    if (btnUse.Enabled)
+                    {
+                        btnUse.Enabled = false;
+                    }
+
+                    if (grpHand.Enabled)
+                    {
+                        grpHand.Enabled = false;
                     }
                 }
             }
@@ -114,6 +188,7 @@ namespace Adventure
                 CheckBox tempbox = (CheckBox)sender;
                 if (tempbox.Checked)
                 {
+                    // Check all visible boxes
                     foreach(CheckBox box in chkArray)
                     {
                         if (box.Visible)
@@ -121,6 +196,10 @@ namespace Adventure
                             box.Checked = true;
                         }
                     }
+
+                    // Disable options to use/hold items
+                    grpHand.Enabled = false;
+                    btnUse.Enabled = false;
                 }
                 else if (!tempbox.Checked)
                 {
@@ -136,6 +215,130 @@ namespace Adventure
             catch(Exception ex)
             {
                 LogWriter.Write("FormManageInventory.CheckBoxSelectAll_CheckedChanged() | Something that wasn't a CheckBox called this function: " + ex);
+            }
+        }
+
+        private void RadioButtonHand_CheckedChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                RadioButton tempBtn = (RadioButton)sender;
+
+                if (tempBtn.Checked)
+                {
+                    // Set the selected hand
+                    selectedHand = int.Parse(tempBtn.Tag.ToString());
+                }
+                else
+                {
+                    selectedHand = 0;
+                }
+            }
+            catch(Exception ex)
+            {
+                LogWriter.Write("FormManageInventory.RadioButtonHand_CheckedChanged() | Something went wrong: " + ex);
+            }
+        }
+
+        private int Heal(int current, int max, int healAmount)
+        {
+            current += healAmount;
+
+            if(current > max)
+            {
+                return max;
+            }
+            else
+            {
+                return current;
+            }
+        }
+
+        private void BtnUse_Click(object sender, EventArgs e)
+        {
+            if(selectedItems.Count() == 1)
+            {
+                try
+                {
+                    int itemUniqueID = selectedItems.ElementAt(0);
+
+                    Item tempItem = API.itemsList.Find(x => x.UniqueID == itemUniqueID);
+                    Inventory invItem = inventory.Find(y => y.ItemID == itemUniqueID);
+
+                    if (tempItem.HpHealed > 0 && invItem.Quantity > 0)
+                    {
+                        player.character.CurrentHP = Heal(player.character.CurrentHP, player.character.MaxHP, tempItem.HpHealed);
+                        invItem.Quantity--;
+                    }
+
+                    if (tempItem.MagicHealed > 0 && invItem.Quantity > 0)
+                    {
+                        player.character.CurrentMagic = Heal(player.character.CurrentMagic, player.character.MaxMagic, tempItem.MagicHealed);
+                        invItem.Quantity--;
+                    }
+
+                    // Remove the item from their inventory if they've used the last one
+                    if(invItem.Quantity <= 0)
+                    {
+                        invItem.IsActive = 0;
+                    }
+                }
+                catch(Exception ex)
+                {
+                    LogWriter.Write("FormManageInventory.BtnUse_Click() | There was an error healing: " + ex);
+                }
+            }
+            else if(selectedItems.Count() > 1)
+            {
+                LogWriter.Write("FormManageInventory.BtnUse_Click() | More than one item is selected");
+            }
+            else if(selectedItems.Count() == 0)
+            {
+                LogWriter.Write("FormManageInventory.BtnUse_Click() | No items were selected");
+            }
+        }
+
+        private void BtnHold_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if(selectedHand != 0)
+                {
+                    Inventory selectedInv = inventory.Find(x => x.ItemID == selectedItems[0]);
+                    selectedInv.IsUsing = 1;
+                    selectedInv.Hand = selectedHand;
+                }
+                else
+                {
+                    LogWriter.Write("FormManageInventory.BtnHold_Click() | No hand was selected");
+                }
+            }
+            catch(Exception ex)
+            {
+                LogWriter.Write("FormManageInventory.BtnHold_Click() | Something went wrong: " + ex);
+            }
+        }
+
+        private void BtnSave_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                bool updateSuccess = API.UpdateInventory(player.character.UniqueID, inventory);
+
+                if (updateSuccess)
+                {
+                    MessageBox.Show("Your inventory was successfully updated.","Inventory Update Success");
+                    this.Close();
+                }
+                else
+                {
+                    MessageBox.Show("Failed to update inventory. Please try again later.", "Inventory Update Failed");
+                    this.Close();
+                }
+            }
+            catch(Exception ex)
+            {
+                LogWriter.Write("FormManageInventory.BtnSave_Click() | Something went wrong: " + ex);
             }
         }
     }

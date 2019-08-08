@@ -59,5 +59,8 @@
     <Setting Name="CharacterUpdateAPI" Type="System.String" Scope="Application">
       <Value Profile="(Default)">characters/update.php</Value>
     </Setting>
+    <Setting Name="InventoryUpdateAPI" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">inventory/update.php</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
