@@ -9,6 +9,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Reflection;
 
 namespace Adventure
 {
@@ -64,9 +65,9 @@ namespace Adventure
                     selectedGold = int.Parse(txtEquipAdventureGold.Text);
                 }
             }
-            catch (Exception exception)
+            catch (Exception ex)
             {
-                LogWriter.Write("FormCharacterCreation.RadioButtonEquipment_CheckedChanged() | " + exception);
+                LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "Error: " + ex);
                 return;
             }
         }
@@ -87,9 +88,9 @@ namespace Adventure
 
                 selectedRace = raceID;
             }
-            catch(Exception exception)
+            catch(Exception ex)
             {
-                LogWriter.Write("FormCharacterCreation.RadioButtonRace_CheckedChanged() | " + exception);
+                LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "Error: " + ex);
                 return;
             }
         }
@@ -102,9 +103,9 @@ namespace Adventure
 
                 selectedGender = int.Parse(tmpRadio.Tag.ToString());
             }
-            catch (Exception exception)
+            catch (Exception ex)
             {
-                LogWriter.Write("FormCharacterCreation.RadioButtonGender_CheckedChanged() | " + exception);
+                LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "Error: " + ex);
             }
         }
 
@@ -121,7 +122,7 @@ namespace Adventure
             }
             catch (Exception ex)
             {
-                LogWriter.Write("FormCharacterCreation.BtnSave_Click() | Error creating character: " + ex);
+                LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "Error creating character: " + ex);
             }
             if (!creationSuccess)
             {

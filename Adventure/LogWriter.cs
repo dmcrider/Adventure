@@ -13,7 +13,7 @@ namespace Adventure
 {
     public static class LogWriter
     {
-        public static void Write(string logMessage)
+        /*public static void Write(string logMessage)
         {
             string outputPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Adventure\\";
             try
@@ -25,6 +25,33 @@ namespace Adventure
                         string output = "";
                         output += string.Format("{0} {1}", DateTime.Now.ToLongTimeString(), DateTime.Now.ToLongDateString());
                         output += string.Format("\t{0}", logMessage);
+
+                        w.WriteLine(output);
+                    }
+                    catch
+                    {
+                        // Do nothing for now
+                    }
+                }
+            }
+            catch
+            {
+                // Do nothing for now
+            }
+        }*/
+
+        public static void Write(string className, string methodName, string logMessage)
+        {
+            string outputPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Adventure\\";
+            try
+            {
+                using (StreamWriter w = File.AppendText(outputPath + "log.txt"))
+                {
+                    try
+                    {
+                        string output = "";
+                        output += string.Format("{0} {1}", DateTime.Now.ToLongTimeString(), DateTime.Now.ToLongDateString());
+                        output += string.Format("\t{0}.{1}() | {2}",className,methodName,logMessage);
 
                         w.WriteLine(output);
                     }

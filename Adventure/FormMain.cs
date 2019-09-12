@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
 using System.Windows.Forms;
+using System.Reflection;
 
 namespace Adventure
 {
@@ -56,17 +57,17 @@ namespace Adventure
             if (!API.CheckVersion(convertedJSON))
             {
                 // Load remote data
-                LogWriter.Write("Loading data from the cloud");
+                LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "Loading remote data");
                 API.UpdateFromDatabase();
             }
             else
             {
                 // Load local data
-                LogWriter.Write("Loading local data");
+                LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "Loading local data");
                 API.LoadData();
             }
 
-            LogWriter.Write("Everything is loaded");
+            LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "Success - everything is loaded");
         }
 
         private void FormMain_Shown(object sender, EventArgs e)
@@ -90,13 +91,13 @@ namespace Adventure
                 if (!HasCharacter())
                 {
                     // Show the character creation screen
-                    LogWriter.Write("FormMain_Shown() | Player needs to create a character");
+                    LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "Error - Player must create Character");
                     frmCharacterCreation.LoggedInPlayer(ref player);
                     frmCharacterCreation.ShowDialog();
 
                     if (player.character == null)
                     {
-                        LogWriter.Write("FormMain_Shown() | Player closed the character creation screen without saving.");
+                        LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "Error - Player closed creation screen without saving");
                         MessageBox.Show(Properties.Resources.ErrorGeneral);
                         Application.Exit();
                         return;
@@ -104,7 +105,7 @@ namespace Adventure
                 }
 
                 // Start the game
-                LogWriter.Write("FormMain_Shown() | Starting the game");
+                LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "Starting the game");
                 ControllerGame ctrlGame = new ControllerGame(this, player);
                 ctrlGame.PopulateInitialData();
             }
@@ -232,7 +233,7 @@ namespace Adventure
 
         private void BtnManageInventory_Click(object sender, EventArgs e)
         {
-            LogWriter.Write("FormMain.BtnManageInventory_Click() | User is managing inventory");
+            LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "Attempting to manage inventory");
             FormManageInventory formManageInventory = new FormManageInventory(ref player);
             formManageInventory.ShowDialog();
         }

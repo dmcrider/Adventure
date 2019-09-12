@@ -7,6 +7,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using System.Reflection;
 
 namespace Adventure
 {
@@ -45,7 +46,8 @@ namespace Adventure
                         if (localVersion != cloudVersion)
                         {
                             // Update the locally stored version number
-                            LogWriter.Write($"Cloud Version: {cloudVersion} | Local Version: {localVersion}");
+                           // LogWriter.Write($"Cloud Version: {cloudVersion} | Local Version: {localVersion}");
+                            LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, $"Cloud Version: {cloudVersion} | Local Version: {localVersion}");
                             Properties.Settings.Default.Version = cloudVersion;
                             Properties.Settings.Default.Save();
 
@@ -60,7 +62,7 @@ namespace Adventure
             }
             catch (Exception e)
             {
-                LogWriter.Write("API.CheckVersion() | Error checking the database version: " + e);
+                LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, "Error checking database version: " + e);
                 return false;
             }
 
@@ -123,9 +125,10 @@ namespace Adventure
                     }
                 }
                 return;
-            }catch(Exception e)
+            }
+            catch (Exception e)
             {
-                LogWriter.Write("API.LoadData() | Error loading local data: " + e);
+                LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, "Error loading local data: " + e);
                 return;
             }
         }
@@ -216,7 +219,7 @@ namespace Adventure
                                         }
                                         catch (Exception e)
                                         {
-                                            LogWriter.Write("API.Register() | Error getting local player data: " + e);
+                                            LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, "Error getting local player data: " + e);
                                         }
                                     }
                                 }
@@ -233,7 +236,7 @@ namespace Adventure
                             }
                             catch (Exception e)
                             {
-                                LogWriter.Write("Error saving all players to file\n\t" + e);
+                                LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, "Error saving players to file: " + e);
                             }
                         }
                         else
@@ -245,7 +248,7 @@ namespace Adventure
                     }
                     catch (Exception e)
                     {
-                        LogWriter.Write("There was an error saving the player locally\n\t" + e);
+                        LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, "Error saving player locally: " + e);
                     }
                     // Return true because the database transaction was successful
                     // Even if saving the player locally wasn't - we can just get it from the database
@@ -294,14 +297,14 @@ namespace Adventure
 
             foreach(var obj in convertedJSON)
             {
-                LogWriter.Write("API.CreateCharacter() | Response from API: " + response);
-                if(obj.Key == "success")
+                //LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, "Response from API: " + response);
+                if (obj.Key == "success")
                 {
                     character.UniqueID = (int)convertedJSON.GetValue("UniqueID");
                     return true;
                 }else if(obj.Key == "error")
                 {
-                    LogWriter.Write("API.CreateCharacter() | " + obj.Value);
+                    LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, "Error creating character: " + obj.Value);
                 }
             }
             return false;
@@ -327,13 +330,13 @@ namespace Adventure
                     if (obj.Key == "success")
                     {
                         int inventoryID = (int)convertedJSON.GetValue("UniqueID");
-                        LogWriter.Write($"API.AddInventoryItem() | Item {convertedJSON.GetValue("DisplayName")} added successfully.");
+                        LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, $"Success - item {convertedJSON.GetValue("DisplayName")} added to inventory successfully.");
                     }
                 }
             }
             else
             {
-                LogWriter.Write("API.AddInventoryItem() | Inventory full for Character: " + characterID);
+                LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, "Error - inventory full for character with ID " + characterID);
                 FormMain.InventoryFullMessageBox();
             }
         }
@@ -364,7 +367,7 @@ namespace Adventure
             }
             catch(Exception e)
             {
-                LogWriter.Write("API.LoadInventory() | " + e);
+                LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, "Error: " + e);
             }
 
             return null;
@@ -384,12 +387,12 @@ namespace Adventure
                     {
                         if(obj.Key == "success")
                         {
-                            LogWriter.Write("API.UpdateInventory() | Inventory updated successfully");
+                            LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, "Success - Inventory Updated successfully.");
                             return true;
                         }
                         else
                         {
-                            LogWriter.Write("API.UpdateInventory() | Failed to update inventory");
+                            LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, "Error - Failed to update inventory");
                             return false;
                         }
                     }
@@ -397,7 +400,7 @@ namespace Adventure
             }
             catch(Exception e)
             {
-                LogWriter.Write("API.UpdateInventory() | " + e);
+                LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, "Error updating inventory: " + e);
                 return false;
             }
 
@@ -470,21 +473,21 @@ namespace Adventure
             }
             catch (Exception e)
             {
-                LogWriter.Write("API.UpdateFromDatabase() | " + e);
+                LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, "Error updating from database: " + e);
             }
         }
 
         public static bool HasQuestLog(int characterID)
         {
             // Need to add API functionality on server first!!
-            LogWriter.Write("API.HasQuestLog() | This function has not been implemented yet.");
+            LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, "NOT YET IMPLEMENTED");
             return false;
         }
 
         public static bool HasSpellbook(int characterID)
         {
             // Need to add API functionality on server first!!
-            LogWriter.Write("API.HasSpellbook() | This function has not been implemented yet.");
+            LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, "NOT YET IMPLEMENTED");
             return false;
         }
 
@@ -501,14 +504,14 @@ namespace Adventure
 
             foreach (var obj in convertedJSON)
             {
-                LogWriter.Write("API.CreateCharacter() | Response from API: " + response);
+                //LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, "Response from API: " + response);
                 if (obj.Key == "success")
                 {
                     return;
                 }
                 else if (obj.Key == "error")
                 {
-                    LogWriter.Write("API.UpdateCharacter() | Error updating character: " + obj.Value);
+                    LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, "Error updating character: " + obj.Value);
                 }
             }
         }
@@ -585,7 +588,7 @@ namespace Adventure
                             }
                             catch (Exception e)
                             {
-                                LogWriter.Write("API.PlayerExistsLocally() | Error parsing JSON: " + e);
+                                LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, "Error parsing JSON: " + e);
                                 return false;
                             }
                         }

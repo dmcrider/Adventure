@@ -63,9 +63,9 @@
             this.chkbxSelecctAll = new System.Windows.Forms.CheckBox();
             this.btnUse = new System.Windows.Forms.Button();
             this.grpHand = new System.Windows.Forms.GroupBox();
-            this.radioHandLeft = new System.Windows.Forms.RadioButton();
-            this.radioHandRight = new System.Windows.Forms.RadioButton();
             this.btnHold = new System.Windows.Forms.Button();
+            this.radioHandRight = new System.Windows.Forms.RadioButton();
+            this.radioHandLeft = new System.Windows.Forms.RadioButton();
             ((System.ComponentModel.ISupportInitialize)(this.picboxItem1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picboxItem2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picboxItem3)).BeginInit();
@@ -397,6 +397,7 @@
             this.btnDelete.TabIndex = 19;
             this.btnDelete.Text = "&Delete Selected";
             this.btnDelete.UseVisualStyleBackColor = true;
+            this.btnDelete.Click += new System.EventHandler(this.BtnDelete_Click);
             // 
             // chkbxSelecctAll
             // 
@@ -431,17 +432,15 @@
             this.grpHand.TabStop = false;
             this.grpHand.Text = "Hand";
             // 
-            // radioHandLeft
+            // btnHold
             // 
-            this.radioHandLeft.AutoSize = true;
-            this.radioHandLeft.Location = new System.Drawing.Point(7, 40);
-            this.radioHandLeft.Name = "radioHandLeft";
-            this.radioHandLeft.Size = new System.Drawing.Size(55, 24);
-            this.radioHandLeft.TabIndex = 0;
-            this.radioHandLeft.TabStop = true;
-            this.radioHandLeft.Tag = "1";
-            this.radioHandLeft.Text = "Left";
-            this.radioHandLeft.UseVisualStyleBackColor = true;
+            this.btnHold.Location = new System.Drawing.Point(29, 95);
+            this.btnHold.Name = "btnHold";
+            this.btnHold.Size = new System.Drawing.Size(80, 31);
+            this.btnHold.TabIndex = 2;
+            this.btnHold.Text = "&Hold";
+            this.btnHold.UseVisualStyleBackColor = true;
+            this.btnHold.Click += new System.EventHandler(this.BtnHold_Click);
             // 
             // radioHandRight
             // 
@@ -455,15 +454,17 @@
             this.radioHandRight.Text = "Right";
             this.radioHandRight.UseVisualStyleBackColor = true;
             // 
-            // btnHold
+            // radioHandLeft
             // 
-            this.btnHold.Location = new System.Drawing.Point(29, 95);
-            this.btnHold.Name = "btnHold";
-            this.btnHold.Size = new System.Drawing.Size(80, 31);
-            this.btnHold.TabIndex = 2;
-            this.btnHold.Text = "&Hold";
-            this.btnHold.UseVisualStyleBackColor = true;
-            this.btnHold.Click += new System.EventHandler(this.BtnHold_Click);
+            this.radioHandLeft.AutoSize = true;
+            this.radioHandLeft.Location = new System.Drawing.Point(7, 40);
+            this.radioHandLeft.Name = "radioHandLeft";
+            this.radioHandLeft.Size = new System.Drawing.Size(55, 24);
+            this.radioHandLeft.TabIndex = 0;
+            this.radioHandLeft.TabStop = true;
+            this.radioHandLeft.Tag = "1";
+            this.radioHandLeft.Text = "Left";
+            this.radioHandLeft.UseVisualStyleBackColor = true;
             // 
             // FormManageInventory
             // 

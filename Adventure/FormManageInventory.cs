@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Reflection;
 
 namespace Adventure
 {
@@ -177,7 +178,7 @@ namespace Adventure
             }
             catch(Exception ex)
             {
-                LogWriter.Write("FormManageInventory.CheckBox_CheckedChanged() | Something that wasn't a CheckBox called this function: " + ex);
+                LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "Error: " + ex);
             }
         }
 
@@ -214,7 +215,7 @@ namespace Adventure
             }
             catch(Exception ex)
             {
-                LogWriter.Write("FormManageInventory.CheckBoxSelectAll_CheckedChanged() | Something that wasn't a CheckBox called this function: " + ex);
+                LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "Error: " + ex);
             }
         }
 
@@ -236,21 +237,7 @@ namespace Adventure
             }
             catch(Exception ex)
             {
-                LogWriter.Write("FormManageInventory.RadioButtonHand_CheckedChanged() | Something went wrong: " + ex);
-            }
-        }
-
-        private int Heal(int current, int max, int healAmount)
-        {
-            current += healAmount;
-
-            if(current > max)
-            {
-                return max;
-            }
-            else
-            {
-                return current;
+                LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "Error: " + ex);
             }
         }
 
@@ -267,13 +254,13 @@ namespace Adventure
 
                     if (tempItem.HpHealed > 0 && invItem.Quantity > 0)
                     {
-                        player.character.CurrentHP = Heal(player.character.CurrentHP, player.character.MaxHP, tempItem.HpHealed);
+                        player.character.CurrentHP = ControllerGame.Heal(player.character.CurrentHP, player.character.MaxHP, tempItem.HpHealed);
                         invItem.Quantity--;
                     }
 
                     if (tempItem.MagicHealed > 0 && invItem.Quantity > 0)
                     {
-                        player.character.CurrentMagic = Heal(player.character.CurrentMagic, player.character.MaxMagic, tempItem.MagicHealed);
+                        player.character.CurrentMagic = ControllerGame.Heal(player.character.CurrentMagic, player.character.MaxMagic, tempItem.MagicHealed);
                         invItem.Quantity--;
                     }
 
@@ -285,16 +272,18 @@ namespace Adventure
                 }
                 catch(Exception ex)
                 {
-                    LogWriter.Write("FormManageInventory.BtnUse_Click() | There was an error healing: " + ex);
+                    LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "Error healing: " + ex);
                 }
             }
             else if(selectedItems.Count() > 1)
             {
-                LogWriter.Write("FormManageInventory.BtnUse_Click() | More than one item is selected");
+                LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "More than one item selected");
+                MessageBox.Show("You can only use one (1) item at a time!","Too Many Items");
             }
             else if(selectedItems.Count() == 0)
             {
-                LogWriter.Write("FormManageInventory.BtnUse_Click() | No items were selected");
+                LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "No item selected");
+                MessageBox.Show("You must select an item to use.","No Item Selected");
             }
         }
 
@@ -310,12 +299,12 @@ namespace Adventure
                 }
                 else
                 {
-                    LogWriter.Write("FormManageInventory.BtnHold_Click() | No hand was selected");
+                    LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "No hand was selected");
                 }
             }
             catch(Exception ex)
             {
-                LogWriter.Write("FormManageInventory.BtnHold_Click() | Something went wrong: " + ex);
+                LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "Error adding item to hand: " + ex);
             }
         }
 
@@ -338,7 +327,56 @@ namespace Adventure
             }
             catch(Exception ex)
             {
-                LogWriter.Write("FormManageInventory.BtnSave_Click() | Something went wrong: " + ex);
+                LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "Error saving data: " + ex);
+            }
+        }
+
+        private void BtnDelete_Click(object sender, EventArgs e)
+        {
+            if(selectedItems.Count != 0)
+            {
+                // Generate list of items to be deleted
+                string msg = "You are about to delete the following items: \n";
+                string selectedList = " ";
+                for(int i = 0; i < selectedItems.Count; i++)
+                {
+                    int itemID = selectedItems.ElementAt(i);
+                    Item tempItem = API.itemsList.Find(x => x.UniqueID == itemID);
+
+                    selectedList += "- " + tempItem.DisplayName;
+                }
+                msg += selectedList + "\n\nAre you sure you want to continue?";
+
+                DialogResult result = MessageBox.Show(msg, "Confirm Delete", MessageBoxButtons.YesNo);
+
+                if (result == DialogResult.Yes)
+                {
+                    try
+                    {
+                        // Proceed with delete
+                        // Delete from inventory
+                        // Push update via API
+                        // Refresh the form
+                        // LogWriter.Write("FormManageInventory.BtnDelete_Click() | Deleting inventory item(s)");
+                        return;
+                    }
+                    catch (Exception ex)
+                    {
+                        LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "Error deleting itemd from inventory: " + ex);
+                    }
+                }
+                else if(result == DialogResult.No)
+                {
+                    // Do not delete
+                    // Do nothing for now, might add functionality later
+                    LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "User abort - No items deleted from inventory");
+
+                }
+            }
+            else
+            {
+                LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "No items were selected");
+                MessageBox.Show("You must select at least one (1) item to delete.", "No Item Selected");
             }
         }
     }

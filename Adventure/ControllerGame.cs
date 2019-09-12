@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Drawing;
+using System.Reflection;
 
 namespace Adventure
 {
@@ -36,7 +37,7 @@ namespace Adventure
             }
             catch (Exception e)
             {
-                LogWriter.Write("ControllerGame() | Could not load inventory: " + e);
+                LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "Error loading inventory: " + e);
             }
             
         }
@@ -141,6 +142,20 @@ namespace Adventure
             }
 
             return assetName;
+        }
+
+        public static int Heal(int current, int max, int healAmount)
+        {
+            current += healAmount;
+
+            if (current > max)
+            {
+                return max;
+            }
+            else
+            {
+                return current;
+            }
         }
     }
 }
