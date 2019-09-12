@@ -45,11 +45,11 @@ namespace Adventure
             }
 
             // Show as many items as they have
-            if (API.inventoryList.Count() > 0)
+            if (player.character.Inventory.Count() > 0)
             {
                 int currentItem = 0;
                 Item tempItem = new Item();
-                foreach(Inventory inv in API.inventoryList)
+                foreach(Inventory inv in player.character.Inventory)
                 {
                     foreach(Item item in API.itemsList)
                     {
@@ -126,7 +126,7 @@ namespace Adventure
                         else
                         {
                             grpHand.Enabled = true;
-                            Inventory tempInv = API.inventoryList.Find(x => x.ItemID == tempItem.UniqueID);
+                            Inventory tempInv = player.character.Inventory.Find(x => x.ItemID == tempItem.UniqueID);
 
                             if (tempInv.IsUsing == 1)
                             {
@@ -249,17 +249,17 @@ namespace Adventure
                     int itemUniqueID = selectedItems.ElementAt(0);
 
                     Item tempItem = API.itemsList.Find(x => x.UniqueID == itemUniqueID);
-                    Inventory invItem = API.inventoryList.Find(y => y.ItemID == itemUniqueID);
+                    Inventory invItem = player.character.Inventory.Find(y => y.ItemID == itemUniqueID);
 
                     if (tempItem.HpHealed > 0 && invItem.Quantity > 0)
                     {
-                        player.character.CurrentHP = ControllerGame.Heal(player.character.CurrentHP, player.character.MaxHP, tempItem.HpHealed);
+                        player.character.CurrentHP = GameController.Heal(player.character.CurrentHP, player.character.MaxHP, tempItem.HpHealed);
                         invItem.Quantity--;
                     }
 
                     if (tempItem.MagicHealed > 0 && invItem.Quantity > 0)
                     {
-                        player.character.CurrentMagic = ControllerGame.Heal(player.character.CurrentMagic, player.character.MaxMagic, tempItem.MagicHealed);
+                        player.character.CurrentMagic = GameController.Heal(player.character.CurrentMagic, player.character.MaxMagic, tempItem.MagicHealed);
                         invItem.Quantity--;
                     }
 
@@ -292,7 +292,7 @@ namespace Adventure
             {
                 if(selectedHand != 0)
                 {
-                    Inventory selectedInv = API.inventoryList.Find(x => x.ItemID == selectedItems[0]);
+                    Inventory selectedInv = player.character.Inventory.Find(x => x.ItemID == selectedItems[0]);
                     selectedInv.IsUsing = 1;
                     selectedInv.Hand = selectedHand;
                 }
@@ -362,8 +362,8 @@ namespace Adventure
                         for(int j = 0; j < itemsToDelete.Count; j++)
                         {
                             // Remove item from inventory
-                            Inventory itemToDelete = API.inventoryList.Find(y => y.ItemID == itemsToDelete[j].UniqueID);
-                            API.inventoryList.Remove(itemToDelete);
+                            Inventory itemToDelete = player.character.Inventory.Find(y => y.ItemID == itemsToDelete[j].UniqueID);
+                            player.character.Inventory.Remove(itemToDelete);
                             LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "Deleted inventory object with ID " + itemToDelete.UniqueID);
                         }
                         // Push update via API

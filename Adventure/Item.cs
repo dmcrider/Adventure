@@ -8,6 +8,10 @@ namespace Adventure
 {
     public class Item
     {
+        private const double SHOP_VALUE = 1.25;
+        private const double SPECIAL_VALUE = 1.0;
+        private const double PLAYER_VALUE = 0.75;
+
         private int uniqueID;
         private string displayName;
         private string assetName;
@@ -18,11 +22,12 @@ namespace Adventure
         private int maxStackQunatity;
         private int valueInGold;
         private int canBuySell;
+        private int minPlayerLevel;
         private int active;
 
         public Item() { }
 
-        public Item(int uniqueID, string displayName, string assetName, int attackBonus, int defenseBonus, int hpHealed, int magicHealed, int maxStackQunatity, int valueInGold, int canBuySell, int active)
+        public Item(int uniqueID, string displayName, string assetName, int attackBonus, int defenseBonus, int hpHealed, int magicHealed, int maxStackQunatity, int valueInGold, int canBuySell, int minplayerlvl, int active)
         {
             UniqueID = uniqueID;
             DisplayName = displayName;
@@ -34,6 +39,7 @@ namespace Adventure
             MaxStackQunatity = maxStackQunatity;
             ValueInGold = valueInGold;
             CanBuySell = canBuySell;
+            MinPlayerLevel = minplayerlvl;
             Active = active;
         }
 
@@ -47,6 +53,36 @@ namespace Adventure
         public int MaxStackQunatity { get => maxStackQunatity; set => maxStackQunatity = value; }
         public int ValueInGold { get => valueInGold; set => valueInGold = value; }
         public int CanBuySell { get => canBuySell; set => canBuySell = value; }
+        public int MinPlayerLevel { get => minPlayerLevel; set => minPlayerLevel = value; }
         public int Active { get => active; set => active = value; }
+
+        /// <summary>
+        /// Populate a listview with item details
+        /// </summary>
+        /// <param name="who">Shops sell at higher prices and buy at lower prices</param>
+        /// <returns>ListViewItem containing the DisplayName and Value of the item</returns>
+        public System.Windows.Forms.ListViewItem ShopDetails(int who)
+        {
+            double value = this.ValueInGold;
+            int outValue = -1;
+
+            if(who == GameController.SHOP)
+            {
+                outValue = (int)Math.Round(value * SHOP_VALUE);
+            }
+
+            if(who == GameController.PLAYER)
+            {
+                outValue = (int)Math.Round(value * PLAYER_VALUE);
+            }
+
+            if(who == GameController.SPECIAL)
+            {
+                outValue = (int)Math.Round(value * SPECIAL_VALUE);
+            }
+
+            string[] retValue = { DisplayName, outValue.ToString(), UniqueID.ToString() };
+            return new System.Windows.Forms.ListViewItem(retValue);
+        }
     }
 }

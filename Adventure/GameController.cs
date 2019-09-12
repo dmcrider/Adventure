@@ -11,21 +11,31 @@ using System.Reflection;
 
 namespace Adventure
 {
-    public class ControllerGame
+    public class GameController
     {
+        // Constants
+        private const int MAX_INVENTORY_SIZE = 10;
+        public const int PLAYER = 1;
+        public const int SHOP = 2;
+        public const int SPECIAL = 3;
+        public const string SHOP_GOLD = "100";
+        // Lists that the rest of the application can access
+        public static List<Inventory> inventoryList = new List<Inventory>();
+        public static List<Item> shopItems = new List<Item>();
+        // Private variables
         private Player currentPlayer;
         private Character currentCharacter;
         private FormMain frmMain;
         private PictureBox pboxLeft;
         private PictureBox pboxRight;
-
+        // Panels
         private Panel panelCharacter;
         private Panel panelInventory;
         private Panel panelQuest;
         private Panel panelGame;
         private Panel panelSpells;
 
-        public ControllerGame(FormMain m, Player player)
+        public GameController(FormMain m, Player player)
         {
             this.currentPlayer = player;
             currentCharacter = player.character;
@@ -68,9 +78,9 @@ namespace Adventure
 
                 // Show any items the character is holding
                 int inventoryCount = 1;
-                if(API.inventoryList.Count > 0)
+                if(inventoryList.Count > 0)
                 {
-                    foreach(Inventory item in API.inventoryList)
+                    foreach(Inventory item in inventoryList)
                     {
                         if (item.IsUsing == 1)
                         {
@@ -102,6 +112,51 @@ namespace Adventure
             }
         }
 
+        public static int Heal(int current, int max, int healAmount)
+        {
+            current += healAmount;
+
+            if (current > max)
+            {
+                return max;
+            }
+            else
+            {
+                return current;
+            }
+        }
+
+
+
+        /// <summary>
+        /// Determines if the Character has at least one empty slot in their inventory
+        /// </summary>
+        /// <returns>True if at least one slot is available, false otherwise</returns>
+        public static bool HasInventorySpace()
+        {
+            try
+            {
+                LogWriter.Write("ControllerGame", MethodBase.GetCurrentMethod().Name, "Current inventory size: " + inventoryList.Count);
+
+                if (inventoryList.Count < MAX_INVENTORY_SIZE)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                LogWriter.Write("ControllerGame", MethodBase.GetCurrentMethod().Name, "Error checking inventory space: " + ex);
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Display relevant Panels
+        /// </summary>
         private void ShowPanels()
         {
             if (currentCharacter != null)
@@ -124,13 +179,18 @@ namespace Adventure
             }
         }
 
+        /// <summary>
+        /// Get the name of the image for the item
+        /// </summary>
+        /// <param name="itemID">ID of the item we need an image for</param>
+        /// <returns>Path to image</returns>
         private string GetAssetName(int itemID)
         {
             string assetName = "Item_";
 
-            foreach(Item item in API.itemsList)
+            foreach (Item item in API.itemsList)
             {
-                if(item.UniqueID == itemID)
+                if (item.UniqueID == itemID)
                 {
                     assetName += item.AssetName;
                     return assetName;
@@ -138,20 +198,6 @@ namespace Adventure
             }
 
             return assetName;
-        }
-
-        public static int Heal(int current, int max, int healAmount)
-        {
-            current += healAmount;
-
-            if (current > max)
-            {
-                return max;
-            }
-            else
-            {
-                return current;
-            }
         }
     }
 }

@@ -13,8 +13,6 @@ namespace Adventure
 {
     public static class API
     {
-        // Constants
-        private const int MAX_INVENTORY_SIZE = 10;
 
         // Lists that the rest of the application can access
         public static List<Item> itemsList = new List<Item>();
@@ -25,7 +23,6 @@ namespace Adventure
         public static List<State> statesList = new List<State>();
         public static List<Npc> npcsList = new List<Npc>();
         public static List<QuestReward> questrewardsList = new List<QuestReward>();
-        public static List<Inventory> inventoryList = new List<Inventory>();
 
         // Single WebClient used throughout this class
         private static WebClient client = new WebClient();
@@ -50,7 +47,6 @@ namespace Adventure
                         if (localVersion != cloudVersion)
                         {
                             // Update the locally stored version number
-                           // LogWriter.Write($"Cloud Version: {cloudVersion} | Local Version: {localVersion}");
                             LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, $"Cloud Version: {cloudVersion} | Local Version: {localVersion}");
                             Properties.Settings.Default.Version = cloudVersion;
                             Properties.Settings.Default.Save();
@@ -323,7 +319,7 @@ namespace Adventure
         public static void AddInventoryItem(Character character, int itemID, int quantity=1)
         {
             // Check that the character has space left
-            if (HasInventorySpace())
+            if (GameController.HasInventorySpace())
             {
                 string dataString = $"{{\"CharacterID\":{character.UniqueID},\"ItemID\":{itemID},\"Quantity\":{quantity}}}";
                 string response = client.UploadString(Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.InventoryAddAPI, dataString);
@@ -335,6 +331,7 @@ namespace Adventure
                     {
                         int inventoryID = (int)convertedJSON.GetValue("UniqueID");
                         LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, $"Success - item {convertedJSON.GetValue("DisplayName")} added to inventory successfully.");
+                        LoadInventory(character.UniqueID);
                     }
                 }
             }
@@ -362,7 +359,7 @@ namespace Adventure
                 {
                     foreach (JObject item in obj.Value)
                     {
-                        inventoryList.Add((Inventory)item.ToObject(typeof(Inventory)));
+                        GameController.inventoryList.Add((Inventory)item.ToObject(typeof(Inventory)));
                     }
                 }
                 LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, "Success - Inventory successfully loaded");
@@ -382,7 +379,7 @@ namespace Adventure
         {
             try
             {
-                foreach (Inventory invItem in inventoryList)
+                foreach (Inventory invItem in GameController.inventoryList)
                 {
                     string dataString = $"{{\"CharacterID\":{characterID},\"ItemID\":{invItem.ItemID},\"Quantity\":{invItem.Quantity},\"IsUsing\":{invItem.IsUsing},\"Hand\":{invItem.Hand},\"IsActive\":{invItem.IsActive}}}";
                     string response = client.UploadString(Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.InventoryUpdateAPI, dataString);
@@ -444,7 +441,7 @@ namespace Adventure
                             switch (Array.IndexOf(apiStrings, apiName))
                             {
                                 case 0: // Items
-                                    itemsList.Add(new Item((int)item.SelectToken("UniqueID"), (string)item.SelectToken("DisplayName"), (string)item.SelectToken("AssetName"), (int)item.SelectToken("AttackBonus"), (int)item.SelectToken("DefenseBonus"), (int)item.SelectToken("HPHealed"), (int)item.SelectToken("MagicHealed"), (int)item.SelectToken("MaxStackQuantity"), (int)item.SelectToken("ValueInGold"), (int)item.SelectToken("CanBuySell"), (int)item.SelectToken("IsActive")));
+                                    itemsList.Add(new Item((int)item.SelectToken("UniqueID"), (string)item.SelectToken("DisplayName"), (string)item.SelectToken("AssetName"), (int)item.SelectToken("AttackBonus"), (int)item.SelectToken("DefenseBonus"), (int)item.SelectToken("HPHealed"), (int)item.SelectToken("MagicHealed"), (int)item.SelectToken("MaxStackQuantity"), (int)item.SelectToken("ValueInGold"), (int)item.SelectToken("CanBuySell"), (int)item.SelectToken("MinPlayerLevel"), (int)item.SelectToken("IsActive")));
                                     break;
                                 case 1: // Quests
                                     questsList.Add(new Quest((int)item.SelectToken("UniqueID"), (string)item.SelectToken("Name"), (int)item.SelectToken("ExpAwarded"), (int)item.SelectToken("QuestRewardID"), (int)item.SelectToken("MinCharacterLevel"), (int)item.SelectToken("MaxCharacterLevel"), (int)item.SelectToken("NPC_ID"), (string)item.SelectToken("Description")));
@@ -538,32 +535,6 @@ namespace Adventure
                 {
                     LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, "Error updating character: " + obj.Value);
                 }
-            }
-        }
-
-        /// <summary>
-        /// Determines if the Character has at least one empty slot in their inventory
-        /// </summary>
-        /// <returns>True if at least one slot is available, false otherwise</returns>
-        private static bool HasInventorySpace()
-        {
-            try
-            {
-                LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, "Current inventory size: " + inventoryList.Count);
-
-                if (inventoryList.Count < MAX_INVENTORY_SIZE)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            catch(Exception ex)
-            {
-                LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, "Error checking inventory space: " + ex);
-                return false;
             }
         }
 
