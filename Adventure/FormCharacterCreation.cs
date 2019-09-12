@@ -9,12 +9,14 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Reflection;
 
 namespace Adventure
 {
     public partial class FormCharacterCreation : Form
     {
         private int selectedRace;
+        private int selectedGender;
         private int selectedWeapon1;
         private int selectedWeapon2;
         private int selectedGold;
@@ -39,6 +41,7 @@ namespace Adventure
             // Set the defaults
             radioRaceHuman.Checked = true;
             radioEquipExplorer.Checked = true;
+            radioGenderMale.Checked = true;
         }
 
         private void RadioButtonEquipment_CheckedChanged(object sender, EventArgs e)
@@ -52,19 +55,19 @@ namespace Adventure
                     // Set the explorer defaults
                     selectedWeapon1 = 2; // Short Sword
                     selectedWeapon2 = 0; // Null
-                    selectedGold = 40;
+                    selectedGold = int.Parse(txtEquipExplorerGold.Text);
                 }
                 else if (tmpRadio.Tag.Equals("adventurer"))
                 {
                     // Set the explorer defaults
                     selectedWeapon1 = 2; // Short Sword
                     selectedWeapon2 = 1; // Shield
-                    selectedGold = 25;
+                    selectedGold = int.Parse(txtEquipAdventureGold.Text);
                 }
             }
-            catch (Exception exception)
+            catch (Exception ex)
             {
-                LogWriter.Write("Something that wasn't a RadioButton called the RadioButtonChanged function.\n\t" + exception);
+                LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "Error: " + ex);
                 return;
             }
         }
@@ -85,31 +88,60 @@ namespace Adventure
 
                 selectedRace = raceID;
             }
-            catch(Exception exception)
+            catch(Exception ex)
             {
-                LogWriter.Write("Something that wasn't a RadioButton called the RadioButtonChanged function.\n\t" + exception);
+                LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "Error: " + ex);
                 return;
+            }
+        }
+
+        private void RadioButtonGender_CheckedChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                RadioButton tmpRadio = (RadioButton)sender;
+
+                selectedGender = int.Parse(tmpRadio.Tag.ToString());
+            }
+            catch (Exception ex)
+            {
+                LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "Error: " + ex);
             }
         }
 
         private void BtnSave_Click(object sender, EventArgs e)
         {
             // Create and save the character
-            Character newCharacter = new Character(player.uniqueID,txtCharacterName.Text,selectedRace);
-            if (!API.CreateCharacter(ref newCharacter, newCharacter.UserID))
+            player.character = new Character(player.uniqueID,txtCharacterName.Text,selectedRace);
+            player.character.Gold = selectedGold;
+            player.character.Gender = selectedGender;
+            bool creationSuccess = false;
+            try
+            {
+                creationSuccess = API.CreateCharacter(ref player.character, player.uniqueID);
+            }
+            catch (Exception ex)
+            {
+                LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "Error creating character: " + ex);
+            }
+            if (!creationSuccess)
             {
                 // There was a problem
                 MessageBox.Show(Properties.Resources.ErrorGeneral, "Error");
             }
-            // Create and save the inventory
-            if(selectedWeapon1 != 0)
+            else
             {
-                API.AddInventoryItem(newCharacter.UniqueID,selectedWeapon1);
-            }
+                // Character saved successfully - we have a UniqueID we can use now
+                // Create and save the inventory
+                if (selectedWeapon1 != 0)
+                {
+                    API.AddInventoryItem(player.character.UniqueID, selectedWeapon1);
+                }
 
-            if (selectedWeapon2 != 0)
-            {
-                API.AddInventoryItem(newCharacter.UniqueID, selectedWeapon2);
+                if (selectedWeapon2 != 0)
+                {
+                    API.AddInventoryItem(player.character.UniqueID, selectedWeapon2);
+                }
             }
         }
     }

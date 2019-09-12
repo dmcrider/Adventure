@@ -7,11 +7,13 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using System.Reflection;
 
 namespace Adventure
 {
     public static class API
     {
+
         // Lists that the rest of the application can access
         public static List<Item> itemsList = new List<Item>();
         public static List<Quest> questsList = new List<Quest>();
@@ -45,7 +47,7 @@ namespace Adventure
                         if (localVersion != cloudVersion)
                         {
                             // Update the locally stored version number
-                            LogWriter.Write($"Cloud Version: {cloudVersion} | Local Version: {localVersion}");
+                            LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, $"Cloud Version: {cloudVersion} | Local Version: {localVersion}");
                             Properties.Settings.Default.Version = cloudVersion;
                             Properties.Settings.Default.Save();
 
@@ -60,7 +62,7 @@ namespace Adventure
             }
             catch (Exception e)
             {
-                LogWriter.Write("Error checking the database version\n\t" + e);
+                LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, "Error checking database version: " + e);
                 return false;
             }
 
@@ -123,9 +125,10 @@ namespace Adventure
                     }
                 }
                 return;
-            }catch(Exception e)
+            }
+            catch (Exception e)
             {
-                LogWriter.Write("Error loading local data\n\t" + e);
+                LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, "Error loading local data: " + e);
                 return;
             }
         }
@@ -161,9 +164,10 @@ namespace Adventure
             {
                 if(obj.Key == "success")
                 {
+                    player.uniqueID = (int)convertedJSON.GetValue("UniqueID");
                     return 1; // Login was successful
                 }
-                else if (obj.Key == "fail")
+                else if (obj.Key == "fail" || obj.Key == "error")
                 {
                     return 0; // Bad login attempt
                 }
@@ -215,7 +219,7 @@ namespace Adventure
                                         }
                                         catch (Exception e)
                                         {
-                                            LogWriter.Write("Error getting local player data\n\t" + e);
+                                            LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, "Error getting local player data: " + e);
                                         }
                                     }
                                 }
@@ -232,7 +236,7 @@ namespace Adventure
                             }
                             catch (Exception e)
                             {
-                                LogWriter.Write("Error saving all players to file\n\t" + e);
+                                LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, "Error saving players to file: " + e);
                             }
                         }
                         else
@@ -244,7 +248,7 @@ namespace Adventure
                     }
                     catch (Exception e)
                     {
-                        LogWriter.Write("There was an error saving the player locally\n\t" + e);
+                        LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, "Error saving player locally: " + e);
                     }
                     // Return true because the database transaction was successful
                     // Even if saving the player locally wasn't - we can just get it from the database
@@ -263,7 +267,6 @@ namespace Adventure
         public static Character GetCharacter(int userID)
         {
             string response = client.DownloadString(Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.CharacterReadAPI);
-
             JObject convertedJSON = JObject.Parse(response);
 
             foreach (var item in convertedJSON)
@@ -280,26 +283,131 @@ namespace Adventure
             return null;
         }
 
+        /// <summary>
+        /// Saves the character to the database
+        /// </summary>
+        /// <param name="character"></param>
+        /// <param name="playerID"></param>
+        /// <returns>Returns true if database transaction was successful, false otherwise</returns>
         public static bool CreateCharacter(ref Character character, int playerID)
         {
-            string charValues = $"{{\"UserID\":\"{playerID}\",\"Name\":\"{character.Name}\",\"RaceID\":\"{character.RaceID}\",\"MaxHP\":\"{character.MaxHP}\",\"CurrentHP\":\"{character.CurrentHP}\",\"MaxMagic\":\"{character.MaxMagic}\",\"CurrentMagic\":\"{character.CurrentMagic}\",\"Strength\":\"{character.Strength}\",\"Intelligence\":\"{character.Intelligence}\",\"Constitution\":\"{character.Constitution}\",\"Gold\":\"{character.Gold}\",\"Level\":\"{character.Level}\",\"ExpPoints\":\"{character.ExpPoints}\"}}";
+            string charValues = $"{{\"UserID\":\"{playerID}\",\"Name\":\"{character.Name}\",\"RaceID\":\"{character.RaceID}\",\"Gender\":\"{character.Gender}\",\"MaxHP\":\"{character.MaxHP}\",\"CurrentHP\":\"{character.CurrentHP}\",\"MaxMagic\":\"{character.MaxMagic}\",\"CurrentMagic\":\"{character.CurrentMagic}\",\"Strength\":\"{character.Strength}\",\"Intelligence\":\"{character.Intelligence}\",\"Constitution\":\"{character.Constitution}\",\"Gold\":\"{character.Gold}\",\"Level\":\"{character.Level}\",\"ExpPoints\":\"{character.ExpPoints}\"}}";
             string response = client.UploadString(Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.CharacterCreateAPI, charValues);
             JObject convertedJSON = JObject.Parse(response);
 
             foreach(var obj in convertedJSON)
             {
-                if(obj.Key == "success")
+                //LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, "Response from API: " + response);
+                if (obj.Key == "success")
                 {
                     character.UniqueID = (int)convertedJSON.GetValue("UniqueID");
                     return true;
+                }else if(obj.Key == "error")
+                {
+                    LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, "Error creating character: " + obj.Value);
                 }
             }
             return false;
         }
 
-        public static void AddInventoryItem(int characterID, int itemID)
+        /// <summary>
+        /// Adds an Item to the character's inventory
+        /// </summary>
+        /// <param name="character"></param>
+        /// <param name="itemID"></param>
+        /// <param name="quantity"></param>
+        public static void AddInventoryItem(Character character, int itemID, int quantity=1)
         {
-            return;
+            // Check that the character has space left
+            if (GameController.HasInventorySpace())
+            {
+                string dataString = $"{{\"CharacterID\":{character.UniqueID},\"ItemID\":{itemID},\"Quantity\":{quantity}}}";
+                string response = client.UploadString(Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.InventoryAddAPI, dataString);
+                JObject convertedJSON = JObject.Parse(response);
+
+                foreach (var obj in convertedJSON)
+                {
+                    if (obj.Key == "success")
+                    {
+                        int inventoryID = (int)convertedJSON.GetValue("UniqueID");
+                        LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, $"Success - item {convertedJSON.GetValue("DisplayName")} added to inventory successfully.");
+                        LoadInventory(character.UniqueID);
+                    }
+                }
+            }
+            else
+            {
+                LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, "Error - inventory full for character with ID " + character.UniqueID);
+                FormMain.InventoryFullMessageBox();
+            }
+        }
+
+        /// <summary>
+        /// Gets all inventory items for the associated Character
+        /// </summary>
+        /// <param name="characterID"></param>
+        /// <returns>Returns a List of Items</returns>
+        public static void LoadInventory(int characterID)
+        {
+            try
+            {
+                string dataString = $"{{\"CharacterID\":{characterID}}}";
+                string response = client.UploadString(Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.InventoryReadAPI, dataString);
+                JObject convertedJSON = JObject.Parse(response);
+
+                foreach (var obj in convertedJSON)
+                {
+                    foreach (JObject item in obj.Value)
+                    {
+                        GameController.inventoryList.Add((Inventory)item.ToObject(typeof(Inventory)));
+                    }
+                }
+                LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, "Success - Inventory successfully loaded");
+            }
+            catch(Exception e)
+            {
+                LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, "Error: " + e);
+            }
+        }
+
+        /// <summary>
+        /// Pushes local updates to a player's inventory to the database
+        /// </summary>
+        /// <param name="characterID">The ID of a Character</param>
+        /// <returns></returns>
+        public static bool UpdateInventory(int characterID)
+        {
+            try
+            {
+                foreach (Inventory invItem in GameController.inventoryList)
+                {
+                    string dataString = $"{{\"CharacterID\":{characterID},\"ItemID\":{invItem.ItemID},\"Quantity\":{invItem.Quantity},\"IsUsing\":{invItem.IsUsing},\"Hand\":{invItem.Hand},\"IsActive\":{invItem.IsActive}}}";
+                    string response = client.UploadString(Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.InventoryUpdateAPI, dataString);
+                    JObject convertedJSON = JObject.Parse(response);
+
+                    foreach(var obj in convertedJSON)
+                    {
+                        if(obj.Key == "success")
+                        {
+                            LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, "Success - Inventory Updated successfully.");
+                            return true;
+                        }
+                        else
+                        {
+                            LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, "Error - Failed to update inventory");
+                            return false;
+                        }
+                    }
+                }
+            }
+            catch(Exception e)
+            {
+                LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, "Error updating inventory: " + e);
+                return false;
+            }
+
+            // Something went massively wrong if this is the one getting returned
+            return false;
         }
 
         /// <summary>
@@ -318,50 +426,116 @@ namespace Adventure
             apiStrings[6] = Properties.Settings.Default.NPCReadAPI;
             apiStrings[7] = Properties.Settings.Default.QuestRewardReadAPI;
 
-            foreach(string apiName in apiStrings)
+            try
             {
-                string fullAPI = Properties.Settings.Default.APIBaseAddress + apiName;
-                string response = client.DownloadString(fullAPI);
-                JObject convertedJSON = JObject.Parse(response);
-
-                foreach(var obj in convertedJSON)
+                foreach (string apiName in apiStrings)
                 {
-                    foreach(var item in obj.Value)
+                    string fullAPI = Properties.Settings.Default.APIBaseAddress + apiName;
+                    string response = client.DownloadString(fullAPI);
+                    JObject convertedJSON = JObject.Parse(response);
+
+                    foreach (var obj in convertedJSON)
                     {
-                        switch (Array.IndexOf(apiStrings,apiName))
+                        foreach (var item in obj.Value)
                         {
-                            case 0: // Items
-                                itemsList.Add(new Item((int)item.SelectToken("UniqueID"), (string)item.SelectToken("DisplayName"), (string)item.SelectToken("AssetName"), (int)item.SelectToken("AttackBonus"), (int)item.SelectToken("DefenseBonus"), (int)item.SelectToken("HPHealed"), (int)item.SelectToken("MagicHealed"), (int)item.SelectToken("MaxStackQuantity"), (int)item.SelectToken("ValueInGold"), (int)item.SelectToken("CanBuySell"), (int)item.SelectToken("IsActive")));
-                                break;
-                            case 1: // Quests
-                                questsList.Add(new Quest((int)item.SelectToken("UniqueID"),(string)item.SelectToken("Name"), (int)item.SelectToken("ExpAwarded"), (int)item.SelectToken("QuestRewardID"), (int)item.SelectToken("MinCharacterLevel"), (int)item.SelectToken("MaxCharacterLevel"), (int)item.SelectToken("NPC_ID"), (string)item.SelectToken("Description")));
-                                break;
-                            case 2: // Spells
-                                spellsList.Add(new Spell((int)item.SelectToken("UniqueID"), (string)item.SelectToken("Name"), (int)item.SelectToken("HealAmount"), (int)item.SelectToken("DamageAmount"), (int)item.SelectToken("Bonus"), (int)item.SelectToken("MagicCost"), (int)item.SelectToken("MinLevel")));
-                                break;
-                            case 3: // Stats
-                                statsList.Add(new Stat((int)item.SelectToken("UniqueID"), (string)item.SelectToken("Name")));
-                                break;
-                            case 4: // Races
-                                racesList.Add(new Race((int)item.SelectToken("UniqueID"), (string)item.SelectToken("Name"), (int)item.SelectToken("BaseSTR"), (int)item.SelectToken("BaseINT"), (int)item.SelectToken("BaseCON"), (int)item.SelectToken("IsActive")));
-                                break;
-                            case 5: // States
-                                statesList.Add(new State((int)item.SelectToken("UniqueID"), (string)item.SelectToken("Name")));
-                                break;
-                            case 6: // NPCs
-                                npcsList.Add(new Npc((int)item.SelectToken("UniqueID"), (string)item.SelectToken("Name")));
-                                break;
-                            case 7: // QuestRewards
-                                questrewardsList.Add(new QuestReward((int)item.SelectToken("UniqueID"), (int)item.SelectToken("IsItem"), (int)item.SelectToken("ItemID"), (int)item.SelectToken("Gold")));
-                                break;
-                            default: // Shouldn't ever happen
-                                break;
+                            switch (Array.IndexOf(apiStrings, apiName))
+                            {
+                                case 0: // Items
+                                    itemsList.Add(new Item((int)item.SelectToken("UniqueID"), (string)item.SelectToken("DisplayName"), (string)item.SelectToken("AssetName"), (int)item.SelectToken("AttackBonus"), (int)item.SelectToken("DefenseBonus"), (int)item.SelectToken("HPHealed"), (int)item.SelectToken("MagicHealed"), (int)item.SelectToken("MaxStackQuantity"), (int)item.SelectToken("ValueInGold"), (int)item.SelectToken("CanBuySell"), (int)item.SelectToken("MinPlayerLevel"), (int)item.SelectToken("IsActive")));
+                                    break;
+                                case 1: // Quests
+                                    questsList.Add(new Quest((int)item.SelectToken("UniqueID"), (string)item.SelectToken("Name"), (int)item.SelectToken("ExpAwarded"), (int)item.SelectToken("QuestRewardID"), (int)item.SelectToken("MinCharacterLevel"), (int)item.SelectToken("MaxCharacterLevel"), (int)item.SelectToken("NPC_ID"), (string)item.SelectToken("Description")));
+                                    break;
+                                case 2: // Spells
+                                    spellsList.Add(new Spell((int)item.SelectToken("UniqueID"), (string)item.SelectToken("Name"), (int)item.SelectToken("HealAmount"), (int)item.SelectToken("DamageAmount"), (int)item.SelectToken("Bonus"), (int)item.SelectToken("MagicCost"), (int)item.SelectToken("MinLevel")));
+                                    break;
+                                case 3: // Stats
+                                    statsList.Add(new Stat((int)item.SelectToken("UniqueID"), (string)item.SelectToken("Name")));
+                                    break;
+                                case 4: // Races
+                                    racesList.Add(new Race((int)item.SelectToken("UniqueID"), (string)item.SelectToken("Name"), (int)item.SelectToken("BaseSTR"), (int)item.SelectToken("BaseINT"), (int)item.SelectToken("BaseCON"), (int)item.SelectToken("IsActive")));
+                                    break;
+                                case 5: // States
+                                    statesList.Add(new State((int)item.SelectToken("UniqueID"), (string)item.SelectToken("Name")));
+                                    break;
+                                case 6: // NPCs
+                                    npcsList.Add(new Npc((int)item.SelectToken("UniqueID"), (string)item.SelectToken("Name")));
+                                    break;
+                                case 7: // QuestRewards
+                                    questrewardsList.Add(new QuestReward((int)item.SelectToken("UniqueID"), (int)item.SelectToken("IsItem"), (int)item.SelectToken("ItemID"), (int)item.SelectToken("Gold")));
+                                    break;
+                                default: // Shouldn't ever happen
+                                    break;
+                            }
                         }
                     }
                 }
-            }
 
-            SaveData();
+                SaveData();
+            }
+            catch (Exception e)
+            {
+                LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, "Error updating from database: " + e);
+            }
+        }
+
+        /// <summary>
+        /// Determines if the Character has any quests
+        /// </summary>
+        /// <param name="characterID">The ID of a Character</param>
+        /// <returns>True if the Character has Quests, false otherwise</returns>
+        public static bool HasQuestLog(int characterID)
+        {
+            // Need to add API functionality on server first!!
+            LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, "NOT YET IMPLEMENTED");
+            return false;
+        }
+
+        /// <summary>
+        /// Determines if the Character has access to Spells
+        /// </summary>
+        /// <param name="characterID">The ID of a Character</param>
+        /// <returns>True if the Character has Spells, false otherwise</returns>
+        public static bool HasSpellbook(int characterID)
+        {
+            // Need to add API functionality on server first!!
+            LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, "NOT YET IMPLEMENTED");
+            return false;
+        }
+
+        /// <summary>
+        /// Save a Player's settings and Character progress
+        /// </summary>
+        /// <param name="player">A Player object referencing the current user</param>
+        public static void SaveProgress(Player player)
+        {
+            // UpdateSettings();
+            UpdateCharacter(player.character, player.uniqueID);
+        }
+
+        /// <summary>
+        /// Update a Character's database entry
+        /// </summary>
+        /// <param name="character">A Character object referencing the Character to be saved</param>
+        /// <param name="playerID">The ID of the Player associated with the Character</param>
+        private static void UpdateCharacter(Character character, int playerID)
+        {
+            string charValues = $"{{\"UserID\":\"{playerID}\",\"Name\":\"{character.Name}\",\"RaceID\":\"{character.RaceID}\",\"Gender\":\"{character.Gender}\",\"MaxHP\":\"{character.MaxHP}\",\"CurrentHP\":\"{character.CurrentHP}\",\"MaxMagic\":\"{character.MaxMagic}\",\"CurrentMagic\":\"{character.CurrentMagic}\",\"Strength\":\"{character.Strength}\",\"Intelligence\":\"{character.Intelligence}\",\"Constitution\":\"{character.Constitution}\",\"Gold\":\"{character.Gold}\",\"Level\":\"{character.Level}\",\"ExpPoints\":\"{character.ExpPoints}\"}}";
+            string response = client.UploadString(Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.CharacterUpdateAPI, charValues);
+            JObject convertedJSON = JObject.Parse(response);
+
+            foreach (var obj in convertedJSON)
+            {
+                //LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, "Response from API: " + response);
+                if (obj.Key == "success")
+                {
+                    return;
+                }
+                else if (obj.Key == "error")
+                {
+                    LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, "Error updating character: " + obj.Value);
+                }
+            }
         }
 
         /// <summary>
@@ -428,7 +602,7 @@ namespace Adventure
                             }
                             catch (Exception e)
                             {
-                                LogWriter.Write("Error getting local player data\n\t" + e);
+                                LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, "Error parsing JSON: " + e);
                                 return false;
                             }
                         }

@@ -10,6 +10,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
 using System.Windows.Forms;
+using System.Reflection;
+
+//LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "message");
 
 namespace Adventure
 {
@@ -27,6 +30,46 @@ namespace Adventure
             InitializeComponent();
         }
 
+        public static void InventoryFullMessageBox()
+        {
+            MessageBox.Show("You need to make some space in your inventory first.", "Inventory Full");
+        }
+
+        public void Save_Click(object sender, EventArgs e)
+        {
+            API.SaveProgress(player);
+        }
+
+        public void Logout_Click(object sender, EventArgs e)
+        {
+
+            if (MessageBox.Show(Properties.Resources.ConfirmNoSaveMessage, Properties.Resources.ConfirmNoSaveTitle, MessageBoxButtons.YesNo) == DialogResult.Yes)
+            {
+                // Nullify the current user
+                player = null;
+
+                // "Reload" the application by calling the methods we need
+                FormMain_Load(this, EventArgs.Empty);
+                FormMain_Shown(this, EventArgs.Empty);
+            }
+            else
+            {
+                return;
+            }
+        }
+
+        public void SaveAndExit_Click(object sender, EventArgs e)
+        {
+            Save_Click(this, EventArgs.Empty);
+            ExitApplication();
+        }
+
+        public void SaveAndLogout_Click(object sender, EventArgs e)
+        {
+            Save_Click(this, EventArgs.Empty);
+            Logout_Click(this, EventArgs.Empty);
+        }
+
         private void FormMain_Load(object sender, EventArgs e)
         {
             // Center to screen
@@ -34,6 +77,10 @@ namespace Adventure
 
             // Hide Panels until user logs in
             panelCharacter.Visible = false;
+            panelInventory.Visible = false;
+            panelQuest.Visible = false;
+            panelGame.Visible = false;
+            panelSpells.Visible = false;
 
             // Clear defaults
             lblCharacterName.Text = string.Empty;
@@ -52,17 +99,17 @@ namespace Adventure
             if (!API.CheckVersion(convertedJSON))
             {
                 // Load remote data
-                LogWriter.Write("Loading data from the cloud");
+                LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "Loading remote data");
                 API.UpdateFromDatabase();
             }
             else
             {
                 // Load local data
-                LogWriter.Write("Loading local data");
+                LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "Loading local data");
                 API.LoadData();
             }
 
-            LogWriter.Write("Everything is loaded");
+            LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "Success - everything is loaded");
         }
 
         private void FormMain_Shown(object sender, EventArgs e)
@@ -83,18 +130,26 @@ namespace Adventure
                 this.Enabled = true;
 
                 // Check if the have a character
-                if (HasCharacter())
-                {
-                    panelCharacter.Visible = true;
-                    ControllerGame ctrlGame = new ControllerGame(this, player);
-                    ctrlGame.PopulateInitialData();
-                }
-                else
+                if (!HasCharacter())
                 {
                     // Show the character creation screen
+                    LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "Error - Player must create Character");
                     frmCharacterCreation.LoggedInPlayer(ref player);
                     frmCharacterCreation.ShowDialog();
+
+                    if (player.character == null)
+                    {
+                        LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "Error - Player closed creation screen without saving");
+                        MessageBox.Show(Properties.Resources.ErrorGeneral);
+                        Application.Exit();
+                        return;
+                    }
                 }
+
+                // Start the game
+                LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "Starting the game");
+                GameController ctrlGame = new GameController(this, player);
+                ctrlGame.PopulateInitialData();
             }
         }
 
@@ -112,10 +167,6 @@ namespace Adventure
                 {
                     hasCharacter = true;
                     player.character = character;
-                }
-                else
-                {
-                    LogWriter.Write("Error getting player's character (PlayerID: " + player.uniqueID + ")");
                 }
             }
 
@@ -147,7 +198,12 @@ namespace Adventure
 
         private void ExitToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            
+
+            ExitNoSaveConfirm();
+        }
+
+        private void ExitNoSaveConfirm()
+        {
             if (MessageBox.Show(Properties.Resources.ConfirmNoSaveMessage, Properties.Resources.ConfirmNoSaveTitle, MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
                 // User does not want to save
@@ -174,6 +230,27 @@ namespace Adventure
         private void BtnTest_Click(object sender, EventArgs e)
         {
             panelHP.Width -= 1;
+        }
+
+        private void BtnManageInventory_Click(object sender, EventArgs e)
+        {
+            LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "Attempting to manage inventory");
+            FormManageInventory formManageInventory = new FormManageInventory(ref player);
+            formManageInventory.ShowDialog();
+        }
+
+        private void BtnOpenShop_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "Attempting to load Shop");
+                FormShop frmShop = new FormShop(player.character);
+                frmShop.ShowDialog();
+            }
+            catch(Exception ex)
+            {
+                LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "Error: " + ex);
+            }
         }
     }
 }

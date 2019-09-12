@@ -69,7 +69,7 @@
   <ItemGroup>
     <Compile Include="API.cs" />
     <Compile Include="Character.cs" />
-    <Compile Include="ControllerGame.cs" />
+    <Compile Include="GameController.cs" />
     <Compile Include="FormCharacterCreation.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -88,11 +88,23 @@
     <Compile Include="FormMain.Designer.cs">
       <DependentUpon>FormMain.cs</DependentUpon>
     </Compile>
+    <Compile Include="FormManageInventory.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormManageInventory.Designer.cs">
+      <DependentUpon>FormManageInventory.cs</DependentUpon>
+    </Compile>
     <Compile Include="FormRegister.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="FormRegister.Designer.cs">
       <DependentUpon>FormRegister.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormShop.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormShop.Designer.cs">
+      <DependentUpon>FormShop.cs</DependentUpon>
     </Compile>
     <Compile Include="FormSupport.cs">
       <SubType>Form</SubType>
@@ -106,6 +118,7 @@
     <Compile Include="FormWelcome.Designer.cs">
       <DependentUpon>FormWelcome.cs</DependentUpon>
     </Compile>
+    <Compile Include="Inventory.cs" />
     <Compile Include="Item.cs" />
     <Compile Include="Items.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -132,8 +145,14 @@
     <EmbeddedResource Include="FormMain.resx">
       <DependentUpon>FormMain.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="FormManageInventory.resx">
+      <DependentUpon>FormManageInventory.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FormRegister.resx">
       <DependentUpon>FormRegister.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormShop.resx">
+      <DependentUpon>FormShop.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FormSupport.resx">
       <DependentUpon>FormSupport.cs</DependentUpon>
@@ -192,6 +211,15 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Item_Gold.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Item_PotionHPSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Item_PotionMagicSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Symbol_Male.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

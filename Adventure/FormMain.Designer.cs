@@ -33,11 +33,16 @@
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveAndExitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.gameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.logoutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveAndLogoutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.supportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.playerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panelCharacter = new System.Windows.Forms.Panel();
+            this.txtInventoryGold = new System.Windows.Forms.TextBox();
+            this.picboxGold = new System.Windows.Forms.PictureBox();
             this.picRightHand = new System.Windows.Forms.PictureBox();
             this.picLeftHand = new System.Windows.Forms.PictureBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -55,20 +60,45 @@
             this.lblINTName = new System.Windows.Forms.Label();
             this.lblSTRName = new System.Windows.Forms.Label();
             this.lblCharacterName = new System.Windows.Forms.Label();
-            this.btnTest = new System.Windows.Forms.Button();
-            this.picboxGold = new System.Windows.Forms.PictureBox();
-            this.txtInventoryGold = new System.Windows.Forms.TextBox();
+            this.panelInventory = new System.Windows.Forms.Panel();
+            this.picboxInventory8 = new System.Windows.Forms.PictureBox();
+            this.picboxInventory7 = new System.Windows.Forms.PictureBox();
+            this.picboxInventory6 = new System.Windows.Forms.PictureBox();
+            this.picboxInventory5 = new System.Windows.Forms.PictureBox();
+            this.picboxInventory4 = new System.Windows.Forms.PictureBox();
+            this.picboxInventory3 = new System.Windows.Forms.PictureBox();
+            this.picboxInventory2 = new System.Windows.Forms.PictureBox();
+            this.picboxInventory1 = new System.Windows.Forms.PictureBox();
+            this.lblInventoryPanelTitle = new System.Windows.Forms.Label();
+            this.panelQuest = new System.Windows.Forms.Panel();
+            this.lblQuestPanelTitle = new System.Windows.Forms.Label();
+            this.panelGame = new System.Windows.Forms.Panel();
+            this.panelSpells = new System.Windows.Forms.Panel();
+            this.lblSpellsPanelTitle = new System.Windows.Forms.Label();
+            this.btnManageInventory = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.panelCharacter.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picboxGold)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picRightHand)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picLeftHand)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.picboxGold)).BeginInit();
+            this.panelInventory.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picboxInventory8)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picboxInventory7)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picboxInventory6)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picboxInventory5)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picboxInventory4)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picboxInventory3)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picboxInventory2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picboxInventory1)).BeginInit();
+            this.panelQuest.SuspendLayout();
+            this.panelSpells.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
+            this.gameToolStripMenuItem,
             this.aboutToolStripMenuItem,
             this.playerToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
@@ -92,12 +122,14 @@
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
             this.saveToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
             this.saveToolStripMenuItem.Text = "&Save";
+            this.saveToolStripMenuItem.Click += new System.EventHandler(this.Save_Click);
             // 
             // saveAndExitToolStripMenuItem
             // 
             this.saveAndExitToolStripMenuItem.Name = "saveAndExitToolStripMenuItem";
             this.saveAndExitToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
             this.saveAndExitToolStripMenuItem.Text = "Save and E&xit";
+            this.saveAndExitToolStripMenuItem.Click += new System.EventHandler(this.SaveAndExit_Click);
             // 
             // exitToolStripMenuItem
             // 
@@ -105,6 +137,29 @@
             this.exitToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
             this.exitToolStripMenuItem.Text = "&Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.ExitToolStripMenuItem_Click);
+            // 
+            // gameToolStripMenuItem
+            // 
+            this.gameToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.logoutToolStripMenuItem,
+            this.saveAndLogoutToolStripMenuItem});
+            this.gameToolStripMenuItem.Name = "gameToolStripMenuItem";
+            this.gameToolStripMenuItem.Size = new System.Drawing.Size(50, 20);
+            this.gameToolStripMenuItem.Text = "&Game";
+            // 
+            // logoutToolStripMenuItem
+            // 
+            this.logoutToolStripMenuItem.Name = "logoutToolStripMenuItem";
+            this.logoutToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
+            this.logoutToolStripMenuItem.Text = "&Logout";
+            this.logoutToolStripMenuItem.Click += new System.EventHandler(this.Logout_Click);
+            // 
+            // saveAndLogoutToolStripMenuItem
+            // 
+            this.saveAndLogoutToolStripMenuItem.Name = "saveAndLogoutToolStripMenuItem";
+            this.saveAndLogoutToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
+            this.saveAndLogoutToolStripMenuItem.Text = "&Save And Logout";
+            this.saveAndLogoutToolStripMenuItem.Click += new System.EventHandler(this.SaveAndLogout_Click);
             // 
             // aboutToolStripMenuItem
             // 
@@ -159,12 +214,31 @@
             this.panelCharacter.Controls.Add(this.lblCharacterName);
             this.panelCharacter.Location = new System.Drawing.Point(0, 27);
             this.panelCharacter.Name = "panelCharacter";
-            this.panelCharacter.Size = new System.Drawing.Size(165, 733);
+            this.panelCharacter.Size = new System.Drawing.Size(165, 482);
             this.panelCharacter.TabIndex = 2;
+            // 
+            // txtInventoryGold
+            // 
+            this.txtInventoryGold.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtInventoryGold.Location = new System.Drawing.Point(88, 431);
+            this.txtInventoryGold.Name = "txtInventoryGold";
+            this.txtInventoryGold.ReadOnly = true;
+            this.txtInventoryGold.Size = new System.Drawing.Size(54, 26);
+            this.txtInventoryGold.TabIndex = 18;
+            // 
+            // picboxGold
+            // 
+            this.picboxGold.Image = global::Adventure.Properties.Resources.Item_Gold;
+            this.picboxGold.InitialImage = null;
+            this.picboxGold.Location = new System.Drawing.Point(17, 421);
+            this.picboxGold.Name = "picboxGold";
+            this.picboxGold.Size = new System.Drawing.Size(46, 48);
+            this.picboxGold.TabIndex = 17;
+            this.picboxGold.TabStop = false;
             // 
             // picRightHand
             // 
-            this.picRightHand.Location = new System.Drawing.Point(88, 348);
+            this.picRightHand.Location = new System.Drawing.Point(88, 313);
             this.picRightHand.Name = "picRightHand";
             this.picRightHand.Size = new System.Drawing.Size(54, 69);
             this.picRightHand.TabIndex = 16;
@@ -172,7 +246,7 @@
             // 
             // picLeftHand
             // 
-            this.picLeftHand.Location = new System.Drawing.Point(17, 348);
+            this.picLeftHand.Location = new System.Drawing.Point(17, 313);
             this.picLeftHand.Name = "picLeftHand";
             this.picLeftHand.Size = new System.Drawing.Size(54, 69);
             this.picLeftHand.TabIndex = 15;
@@ -181,7 +255,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(94, 286);
+            this.label1.Location = new System.Drawing.Point(94, 251);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(48, 40);
             this.label1.TabIndex = 14;
@@ -191,7 +265,7 @@
             // lblLeftHand
             // 
             this.lblLeftHand.AutoSize = true;
-            this.lblLeftHand.Location = new System.Drawing.Point(23, 286);
+            this.lblLeftHand.Location = new System.Drawing.Point(23, 251);
             this.lblLeftHand.Name = "lblLeftHand";
             this.lblLeftHand.Size = new System.Drawing.Size(48, 40);
             this.lblLeftHand.TabIndex = 13;
@@ -318,40 +392,160 @@
             this.lblCharacterName.TabIndex = 0;
             this.lblCharacterName.Text = "Terithan";
             // 
-            // btnTest
+            // panelInventory
             // 
-            this.btnTest.Location = new System.Drawing.Point(361, 158);
-            this.btnTest.Name = "btnTest";
-            this.btnTest.Size = new System.Drawing.Size(117, 51);
-            this.btnTest.TabIndex = 3;
-            this.btnTest.Text = "Test";
-            this.btnTest.UseVisualStyleBackColor = true;
-            this.btnTest.Click += new System.EventHandler(this.BtnTest_Click);
+            this.panelInventory.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panelInventory.Controls.Add(this.btnManageInventory);
+            this.panelInventory.Controls.Add(this.picboxInventory8);
+            this.panelInventory.Controls.Add(this.picboxInventory7);
+            this.panelInventory.Controls.Add(this.picboxInventory6);
+            this.panelInventory.Controls.Add(this.picboxInventory5);
+            this.panelInventory.Controls.Add(this.picboxInventory4);
+            this.panelInventory.Controls.Add(this.picboxInventory3);
+            this.panelInventory.Controls.Add(this.picboxInventory2);
+            this.panelInventory.Controls.Add(this.picboxInventory1);
+            this.panelInventory.Controls.Add(this.lblInventoryPanelTitle);
+            this.panelInventory.Location = new System.Drawing.Point(985, 27);
+            this.panelInventory.Name = "panelInventory";
+            this.panelInventory.Size = new System.Drawing.Size(176, 348);
+            this.panelInventory.TabIndex = 4;
             // 
-            // picboxGold
+            // picboxInventory8
             // 
-            this.picboxGold.InitialImage = global::Adventure.Properties.Resources.Item_Gold;
-            this.picboxGold.Location = new System.Drawing.Point(17, 536);
-            this.picboxGold.Name = "picboxGold";
-            this.picboxGold.Size = new System.Drawing.Size(54, 48);
-            this.picboxGold.TabIndex = 17;
-            this.picboxGold.TabStop = false;
+            this.picboxInventory8.Location = new System.Drawing.Point(104, 240);
+            this.picboxInventory8.Name = "picboxInventory8";
+            this.picboxInventory8.Size = new System.Drawing.Size(49, 46);
+            this.picboxInventory8.TabIndex = 8;
+            this.picboxInventory8.TabStop = false;
             // 
-            // txtInventoryGold
+            // picboxInventory7
             // 
-            this.txtInventoryGold.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.txtInventoryGold.Location = new System.Drawing.Point(88, 546);
-            this.txtInventoryGold.Name = "txtInventoryGold";
-            this.txtInventoryGold.ReadOnly = true;
-            this.txtInventoryGold.Size = new System.Drawing.Size(54, 26);
-            this.txtInventoryGold.TabIndex = 18;
+            this.picboxInventory7.Location = new System.Drawing.Point(13, 240);
+            this.picboxInventory7.Name = "picboxInventory7";
+            this.picboxInventory7.Size = new System.Drawing.Size(49, 46);
+            this.picboxInventory7.TabIndex = 7;
+            this.picboxInventory7.TabStop = false;
+            // 
+            // picboxInventory6
+            // 
+            this.picboxInventory6.Location = new System.Drawing.Point(104, 172);
+            this.picboxInventory6.Name = "picboxInventory6";
+            this.picboxInventory6.Size = new System.Drawing.Size(49, 46);
+            this.picboxInventory6.TabIndex = 6;
+            this.picboxInventory6.TabStop = false;
+            // 
+            // picboxInventory5
+            // 
+            this.picboxInventory5.Location = new System.Drawing.Point(13, 172);
+            this.picboxInventory5.Name = "picboxInventory5";
+            this.picboxInventory5.Size = new System.Drawing.Size(49, 46);
+            this.picboxInventory5.TabIndex = 5;
+            this.picboxInventory5.TabStop = false;
+            // 
+            // picboxInventory4
+            // 
+            this.picboxInventory4.Location = new System.Drawing.Point(104, 104);
+            this.picboxInventory4.Name = "picboxInventory4";
+            this.picboxInventory4.Size = new System.Drawing.Size(49, 46);
+            this.picboxInventory4.TabIndex = 4;
+            this.picboxInventory4.TabStop = false;
+            // 
+            // picboxInventory3
+            // 
+            this.picboxInventory3.Location = new System.Drawing.Point(13, 104);
+            this.picboxInventory3.Name = "picboxInventory3";
+            this.picboxInventory3.Size = new System.Drawing.Size(49, 46);
+            this.picboxInventory3.TabIndex = 3;
+            this.picboxInventory3.TabStop = false;
+            // 
+            // picboxInventory2
+            // 
+            this.picboxInventory2.Location = new System.Drawing.Point(104, 39);
+            this.picboxInventory2.Name = "picboxInventory2";
+            this.picboxInventory2.Size = new System.Drawing.Size(49, 46);
+            this.picboxInventory2.TabIndex = 2;
+            this.picboxInventory2.TabStop = false;
+            // 
+            // picboxInventory1
+            // 
+            this.picboxInventory1.Location = new System.Drawing.Point(13, 39);
+            this.picboxInventory1.Name = "picboxInventory1";
+            this.picboxInventory1.Size = new System.Drawing.Size(49, 46);
+            this.picboxInventory1.TabIndex = 1;
+            this.picboxInventory1.TabStop = false;
+            // 
+            // lblInventoryPanelTitle
+            // 
+            this.lblInventoryPanelTitle.AutoSize = true;
+            this.lblInventoryPanelTitle.Location = new System.Drawing.Point(56, 5);
+            this.lblInventoryPanelTitle.Name = "lblInventoryPanelTitle";
+            this.lblInventoryPanelTitle.Size = new System.Drawing.Size(74, 20);
+            this.lblInventoryPanelTitle.TabIndex = 0;
+            this.lblInventoryPanelTitle.Text = "Inventory";
+            // 
+            // panelQuest
+            // 
+            this.panelQuest.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panelQuest.Controls.Add(this.lblQuestPanelTitle);
+            this.panelQuest.Location = new System.Drawing.Point(985, 414);
+            this.panelQuest.Name = "panelQuest";
+            this.panelQuest.Size = new System.Drawing.Size(176, 346);
+            this.panelQuest.TabIndex = 5;
+            // 
+            // lblQuestPanelTitle
+            // 
+            this.lblQuestPanelTitle.AutoSize = true;
+            this.lblQuestPanelTitle.Location = new System.Drawing.Point(65, 7);
+            this.lblQuestPanelTitle.Name = "lblQuestPanelTitle";
+            this.lblQuestPanelTitle.Size = new System.Drawing.Size(52, 20);
+            this.lblQuestPanelTitle.TabIndex = 0;
+            this.lblQuestPanelTitle.Text = "Quest";
+            // 
+            // panelGame
+            // 
+            this.panelGame.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panelGame.Location = new System.Drawing.Point(172, 27);
+            this.panelGame.Name = "panelGame";
+            this.panelGame.Size = new System.Drawing.Size(807, 733);
+            this.panelGame.TabIndex = 6;
+            // 
+            // panelSpells
+            // 
+            this.panelSpells.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panelSpells.Controls.Add(this.lblSpellsPanelTitle);
+            this.panelSpells.Location = new System.Drawing.Point(0, 516);
+            this.panelSpells.Name = "panelSpells";
+            this.panelSpells.Size = new System.Drawing.Size(166, 244);
+            this.panelSpells.TabIndex = 7;
+            // 
+            // lblSpellsPanelTitle
+            // 
+            this.lblSpellsPanelTitle.AutoSize = true;
+            this.lblSpellsPanelTitle.Location = new System.Drawing.Point(54, 9);
+            this.lblSpellsPanelTitle.Name = "lblSpellsPanelTitle";
+            this.lblSpellsPanelTitle.Size = new System.Drawing.Size(52, 20);
+            this.lblSpellsPanelTitle.TabIndex = 0;
+            this.lblSpellsPanelTitle.Text = "Spells";
+            // 
+            // btnManageInventory
+            // 
+            this.btnManageInventory.Location = new System.Drawing.Point(51, 301);
+            this.btnManageInventory.Name = "btnManageInventory";
+            this.btnManageInventory.Size = new System.Drawing.Size(75, 33);
+            this.btnManageInventory.TabIndex = 9;
+            this.btnManageInventory.Text = "Manage";
+            this.btnManageInventory.UseVisualStyleBackColor = true;
+            this.btnManageInventory.Click += new System.EventHandler(this.BtnManageInventory_Click);
             // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1161, 762);
-            this.Controls.Add(this.btnTest);
+            this.Controls.Add(this.panelSpells);
+            this.Controls.Add(this.panelGame);
+            this.Controls.Add(this.panelQuest);
+            this.Controls.Add(this.panelInventory);
             this.Controls.Add(this.panelCharacter);
             this.Controls.Add(this.menuStrip1);
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -366,9 +560,23 @@
             this.menuStrip1.PerformLayout();
             this.panelCharacter.ResumeLayout(false);
             this.panelCharacter.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picboxGold)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picRightHand)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picLeftHand)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.picboxGold)).EndInit();
+            this.panelInventory.ResumeLayout(false);
+            this.panelInventory.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picboxInventory8)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picboxInventory7)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picboxInventory6)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picboxInventory5)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picboxInventory4)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picboxInventory3)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picboxInventory2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picboxInventory1)).EndInit();
+            this.panelQuest.ResumeLayout(false);
+            this.panelQuest.PerformLayout();
+            this.panelSpells.ResumeLayout(false);
+            this.panelSpells.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -393,7 +601,6 @@
         private System.Windows.Forms.Label lblCONName;
         private System.Windows.Forms.Label lblINTName;
         private System.Windows.Forms.Label lblSTRName;
-        private System.Windows.Forms.Button btnTest;
         private System.Windows.Forms.TextBox txtCONValue;
         private System.Windows.Forms.TextBox txtINTValue;
         private System.Windows.Forms.TextBox txtSTRValue;
@@ -406,6 +613,25 @@
         private System.Windows.Forms.PictureBox picLeftHand;
         private System.Windows.Forms.TextBox txtInventoryGold;
         private System.Windows.Forms.PictureBox picboxGold;
+        private System.Windows.Forms.Panel panelInventory;
+        private System.Windows.Forms.PictureBox picboxInventory8;
+        private System.Windows.Forms.PictureBox picboxInventory7;
+        private System.Windows.Forms.PictureBox picboxInventory6;
+        private System.Windows.Forms.PictureBox picboxInventory5;
+        private System.Windows.Forms.PictureBox picboxInventory4;
+        private System.Windows.Forms.PictureBox picboxInventory3;
+        private System.Windows.Forms.PictureBox picboxInventory2;
+        private System.Windows.Forms.PictureBox picboxInventory1;
+        private System.Windows.Forms.Label lblInventoryPanelTitle;
+        private System.Windows.Forms.Panel panelQuest;
+        private System.Windows.Forms.Label lblQuestPanelTitle;
+        private System.Windows.Forms.Panel panelGame;
+        private System.Windows.Forms.Panel panelSpells;
+        private System.Windows.Forms.Label lblSpellsPanelTitle;
+        private System.Windows.Forms.ToolStripMenuItem gameToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem logoutToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem saveAndLogoutToolStripMenuItem;
+        private System.Windows.Forms.Button btnManageInventory;
     }
 }
 
