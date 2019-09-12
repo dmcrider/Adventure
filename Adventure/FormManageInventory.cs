@@ -14,7 +14,6 @@ namespace Adventure
     public partial class FormManageInventory : Form
     {
         private Player player;
-        private List<Inventory> inventory;
         private CheckBox[] chkArray;
         private PictureBox[] picArray;
         private GroupBox[] grpArray;
@@ -26,7 +25,7 @@ namespace Adventure
         {
             InitializeComponent();
             player = p;
-            inventory = API.LoadInventory(player.character.UniqueID);
+            API.LoadInventory(player.character.UniqueID);
 
             chkArray = new CheckBox[]{ chkbxItem1, chkbxItem2, chkbxItem3, chkbxItem4, chkbxItem5, chkbxItem6, chkbxItem7, chkbxItem8, chkbxItem9, chkbxItem10 };
             picArray = new PictureBox[]{ picboxItem1, picboxItem2, picboxItem3, picboxItem4, picboxItem5, picboxItem6, picboxItem7, picboxItem8, picboxItem9, picboxItem10 };
@@ -46,11 +45,11 @@ namespace Adventure
             }
 
             // Show as many items as they have
-            if (inventory.Count() > 0)
+            if (API.inventoryList.Count() > 0)
             {
                 int currentItem = 0;
                 Item tempItem = new Item();
-                foreach(Inventory inv in inventory)
+                foreach(Inventory inv in API.inventoryList)
                 {
                     foreach(Item item in API.itemsList)
                     {
@@ -127,7 +126,7 @@ namespace Adventure
                         else
                         {
                             grpHand.Enabled = true;
-                            Inventory tempInv = inventory.Find(x => x.ItemID == tempItem.UniqueID);
+                            Inventory tempInv = API.inventoryList.Find(x => x.ItemID == tempItem.UniqueID);
 
                             if (tempInv.IsUsing == 1)
                             {
@@ -250,7 +249,7 @@ namespace Adventure
                     int itemUniqueID = selectedItems.ElementAt(0);
 
                     Item tempItem = API.itemsList.Find(x => x.UniqueID == itemUniqueID);
-                    Inventory invItem = inventory.Find(y => y.ItemID == itemUniqueID);
+                    Inventory invItem = API.inventoryList.Find(y => y.ItemID == itemUniqueID);
 
                     if (tempItem.HpHealed > 0 && invItem.Quantity > 0)
                     {
@@ -293,7 +292,7 @@ namespace Adventure
             {
                 if(selectedHand != 0)
                 {
-                    Inventory selectedInv = inventory.Find(x => x.ItemID == selectedItems[0]);
+                    Inventory selectedInv = API.inventoryList.Find(x => x.ItemID == selectedItems[0]);
                     selectedInv.IsUsing = 1;
                     selectedInv.Hand = selectedHand;
                 }
@@ -312,7 +311,7 @@ namespace Adventure
         {
             try
             {
-                bool updateSuccess = API.UpdateInventory(player.character.UniqueID, inventory);
+                bool updateSuccess = API.UpdateInventory(player.character.UniqueID);
 
                 if (updateSuccess)
                 {
@@ -327,7 +326,7 @@ namespace Adventure
             }
             catch(Exception ex)
             {
-                LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "Error saving data: " + ex);
+                LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "Error saving inventory: " + ex);
             }
         }
 
@@ -353,16 +352,29 @@ namespace Adventure
                 {
                     try
                     {
-                        // Proceed with delete
-                        // Delete from inventory
+                        // Select items to delete
+                        List<Item> itemsToDelete = new List<Item>();
+                        for(int i = 0; i < selectedItems.Count; i++)
+                        {
+                            Item tempItem = API.itemsList.Find(x => x.UniqueID == selectedItems.ElementAt(i));
+                            itemsToDelete.Add(tempItem);
+                        }
+                        for(int j = 0; j < itemsToDelete.Count; j++)
+                        {
+                            // Remove item from inventory
+                            Inventory itemToDelete = API.inventoryList.Find(y => y.ItemID == itemsToDelete[j].UniqueID);
+                            API.inventoryList.Remove(itemToDelete);
+                            LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "Deleted inventory object with ID " + itemToDelete.UniqueID);
+                        }
                         // Push update via API
+                        API.UpdateInventory(player.character.UniqueID);
+
                         // Refresh the form
-                        // LogWriter.Write("FormManageInventory.BtnDelete_Click() | Deleting inventory item(s)");
-                        return;
+                        FormManageInventory_Load(this, EventArgs.Empty);
                     }
                     catch (Exception ex)
                     {
-                        LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "Error deleting itemd from inventory: " + ex);
+                        LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "Error deleting items from inventory: " + ex);
                     }
                 }
                 else if(result == DialogResult.No)
@@ -370,7 +382,7 @@ namespace Adventure
                     // Do not delete
                     // Do nothing for now, might add functionality later
                     LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "User abort - No items deleted from inventory");
-
+                    return;
                 }
             }
             else

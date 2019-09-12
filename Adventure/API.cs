@@ -13,6 +13,9 @@ namespace Adventure
 {
     public static class API
     {
+        // Constants
+        private const int MAX_INVENTORY_SIZE = 10;
+
         // Lists that the rest of the application can access
         public static List<Item> itemsList = new List<Item>();
         public static List<Quest> questsList = new List<Quest>();
@@ -22,6 +25,7 @@ namespace Adventure
         public static List<State> statesList = new List<State>();
         public static List<Npc> npcsList = new List<Npc>();
         public static List<QuestReward> questrewardsList = new List<QuestReward>();
+        public static List<Inventory> inventoryList = new List<Inventory>();
 
         // Single WebClient used throughout this class
         private static WebClient client = new WebClient();
@@ -313,15 +317,15 @@ namespace Adventure
         /// <summary>
         /// Adds an Item to the character's inventory
         /// </summary>
-        /// <param name="characterID"></param>
+        /// <param name="character"></param>
         /// <param name="itemID"></param>
         /// <param name="quantity"></param>
-        public static void AddInventoryItem(int characterID, int itemID, int quantity=1)
+        public static void AddInventoryItem(Character character, int itemID, int quantity=1)
         {
             // Check that the character has space left
-            if (HasInventorySpace(characterID))
+            if (HasInventorySpace())
             {
-                string dataString = $"{{\"CharacterID\":{characterID},\"ItemID\":{itemID},\"Quantity\":{quantity}}}";
+                string dataString = $"{{\"CharacterID\":{character.UniqueID},\"ItemID\":{itemID},\"Quantity\":{quantity}}}";
                 string response = client.UploadString(Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.InventoryAddAPI, dataString);
                 JObject convertedJSON = JObject.Parse(response);
 
@@ -336,7 +340,7 @@ namespace Adventure
             }
             else
             {
-                LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, "Error - inventory full for character with ID " + characterID);
+                LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, "Error - inventory full for character with ID " + character.UniqueID);
                 FormMain.InventoryFullMessageBox();
             }
         }
@@ -346,12 +350,10 @@ namespace Adventure
         /// </summary>
         /// <param name="characterID"></param>
         /// <returns>Returns a List of Items</returns>
-        public static List<Inventory> LoadInventory(int characterID)
+        public static void LoadInventory(int characterID)
         {
             try
             {
-                List<Inventory> itemsList = new List<Inventory>();
-
                 string dataString = $"{{\"CharacterID\":{characterID}}}";
                 string response = client.UploadString(Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.InventoryReadAPI, dataString);
                 JObject convertedJSON = JObject.Parse(response);
@@ -360,20 +362,23 @@ namespace Adventure
                 {
                     foreach (JObject item in obj.Value)
                     {
-                        itemsList.Add((Inventory)item.ToObject(typeof(Inventory)));
+                        inventoryList.Add((Inventory)item.ToObject(typeof(Inventory)));
                     }
                 }
-                return itemsList;
+                LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, "Success - Inventory successfully loaded");
             }
             catch(Exception e)
             {
                 LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, "Error: " + e);
             }
-
-            return null;
         }
 
-        public static bool UpdateInventory(int characterID, List<Inventory> inventoryList)
+        /// <summary>
+        /// Pushes local updates to a player's inventory to the database
+        /// </summary>
+        /// <param name="characterID">The ID of a Character</param>
+        /// <returns></returns>
+        public static bool UpdateInventory(int characterID)
         {
             try
             {
@@ -477,6 +482,11 @@ namespace Adventure
             }
         }
 
+        /// <summary>
+        /// Determines if the Character has any quests
+        /// </summary>
+        /// <param name="characterID">The ID of a Character</param>
+        /// <returns>True if the Character has Quests, false otherwise</returns>
         public static bool HasQuestLog(int characterID)
         {
             // Need to add API functionality on server first!!
@@ -484,6 +494,11 @@ namespace Adventure
             return false;
         }
 
+        /// <summary>
+        /// Determines if the Character has access to Spells
+        /// </summary>
+        /// <param name="characterID">The ID of a Character</param>
+        /// <returns>True if the Character has Spells, false otherwise</returns>
         public static bool HasSpellbook(int characterID)
         {
             // Need to add API functionality on server first!!
@@ -491,11 +506,21 @@ namespace Adventure
             return false;
         }
 
+        /// <summary>
+        /// Save a Player's settings and Character progress
+        /// </summary>
+        /// <param name="player">A Player object referencing the current user</param>
         public static void SaveProgress(Player player)
         {
+            // UpdateSettings();
             UpdateCharacter(player.character, player.uniqueID);
         }
 
+        /// <summary>
+        /// Update a Character's database entry
+        /// </summary>
+        /// <param name="character">A Character object referencing the Character to be saved</param>
+        /// <param name="playerID">The ID of the Player associated with the Character</param>
         private static void UpdateCharacter(Character character, int playerID)
         {
             string charValues = $"{{\"UserID\":\"{playerID}\",\"Name\":\"{character.Name}\",\"RaceID\":\"{character.RaceID}\",\"Gender\":\"{character.Gender}\",\"MaxHP\":\"{character.MaxHP}\",\"CurrentHP\":\"{character.CurrentHP}\",\"MaxMagic\":\"{character.MaxMagic}\",\"CurrentMagic\":\"{character.CurrentMagic}\",\"Strength\":\"{character.Strength}\",\"Intelligence\":\"{character.Intelligence}\",\"Constitution\":\"{character.Constitution}\",\"Gold\":\"{character.Gold}\",\"Level\":\"{character.Level}\",\"ExpPoints\":\"{character.ExpPoints}\"}}";
@@ -516,12 +541,30 @@ namespace Adventure
             }
         }
 
-        private static bool HasInventorySpace(int characterID)
+        /// <summary>
+        /// Determines if the Character has at least one empty slot in their inventory
+        /// </summary>
+        /// <returns>True if at least one slot is available, false otherwise</returns>
+        private static bool HasInventorySpace()
         {
-            // call check.php
-            // if count >= 10, return false
-            // else return true
-            return true;
+            try
+            {
+                LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, "Current inventory size: " + inventoryList.Count);
+
+                if (inventoryList.Count < MAX_INVENTORY_SIZE)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch(Exception ex)
+            {
+                LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, "Error checking inventory space: " + ex);
+                return false;
+            }
         }
 
         /// <summary>
