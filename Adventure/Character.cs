@@ -87,5 +87,15 @@ namespace Adventure
         public int ExpPoints { get => expPoints; set => expPoints = value; }
         public int Active { get => active; set => active = value; }
         public int Gender { get => gender; set => gender = value; }
+
+        public string GetGold()
+        {
+            return Gold.ToString();
+        }
+
+        public List<Inventory> Inventory
+        {
+            get => GameController.inventoryList;
+        }
     }
 }

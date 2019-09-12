@@ -12,6 +12,8 @@ using System.Threading;
 using System.Windows.Forms;
 using System.Reflection;
 
+//LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "message");
+
 namespace Adventure
 {
     public partial class FormMain : Form
@@ -26,6 +28,46 @@ namespace Adventure
         public FormMain()
         {
             InitializeComponent();
+        }
+
+        public static void InventoryFullMessageBox()
+        {
+            MessageBox.Show("You need to make some space in your inventory first.", "Inventory Full");
+        }
+
+        public void Save_Click(object sender, EventArgs e)
+        {
+            API.SaveProgress(player);
+        }
+
+        public void Logout_Click(object sender, EventArgs e)
+        {
+
+            if (MessageBox.Show(Properties.Resources.ConfirmNoSaveMessage, Properties.Resources.ConfirmNoSaveTitle, MessageBoxButtons.YesNo) == DialogResult.Yes)
+            {
+                // Nullify the current user
+                player = null;
+
+                // "Reload" the application by calling the methods we need
+                FormMain_Load(this, EventArgs.Empty);
+                FormMain_Shown(this, EventArgs.Empty);
+            }
+            else
+            {
+                return;
+            }
+        }
+
+        public void SaveAndExit_Click(object sender, EventArgs e)
+        {
+            Save_Click(this, EventArgs.Empty);
+            ExitApplication();
+        }
+
+        public void SaveAndLogout_Click(object sender, EventArgs e)
+        {
+            Save_Click(this, EventArgs.Empty);
+            Logout_Click(this, EventArgs.Empty);
         }
 
         private void FormMain_Load(object sender, EventArgs e)
@@ -106,7 +148,7 @@ namespace Adventure
 
                 // Start the game
                 LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "Starting the game");
-                ControllerGame ctrlGame = new ControllerGame(this, player);
+                GameController ctrlGame = new GameController(this, player);
                 ctrlGame.PopulateInitialData();
             }
         }
@@ -190,52 +232,25 @@ namespace Adventure
             panelHP.Width -= 1;
         }
 
-        public static void InventoryFullMessageBox()
-        {
-            // Show a popup that says the users inventory is full
-            // Take them to a "manage inventory" screen
-        }
-
-        public void Save_Click(object sender, EventArgs e)
-        {
-            API.SaveProgress(player);
-        }
-
-        public void Logout_Click(object sender, EventArgs e)
-        {
-
-            if (MessageBox.Show(Properties.Resources.ConfirmNoSaveMessage, Properties.Resources.ConfirmNoSaveTitle, MessageBoxButtons.YesNo) == DialogResult.Yes)
-            {
-                // Nullify the current user
-                player = null;
-
-                // "Reload" the application by calling the methods we need
-                FormMain_Load(this, EventArgs.Empty);
-                FormMain_Shown(this, EventArgs.Empty);
-            }
-            else
-            {
-                return;
-            }
-        }
-
-        public void SaveAndExit_Click(object sender, EventArgs e)
-        {
-            Save_Click(this, EventArgs.Empty);
-            ExitApplication();
-        }
-
-        public void SaveAndLogout_Click(object sender, EventArgs e)
-        {
-            Save_Click(this, EventArgs.Empty);
-            Logout_Click(this, EventArgs.Empty);
-        }
-
         private void BtnManageInventory_Click(object sender, EventArgs e)
         {
             LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "Attempting to manage inventory");
             FormManageInventory formManageInventory = new FormManageInventory(ref player);
             formManageInventory.ShowDialog();
+        }
+
+        private void BtnOpenShop_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "Attempting to load Shop");
+                FormShop frmShop = new FormShop(player.character);
+                frmShop.ShowDialog();
+            }
+            catch(Exception ex)
+            {
+                LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "Error: " + ex);
+            }
         }
     }
 }
