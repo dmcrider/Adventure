@@ -9,6 +9,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Reflection;
 
 namespace Adventure
 {
@@ -67,6 +68,7 @@ namespace Adventure
 
             txtUsername.Text = String.Empty;
             txtUsername.Focus();
+            LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "Player is already registered");
         }
 
         private void AlertInvalidRegister()
@@ -74,6 +76,7 @@ namespace Adventure
             invalidRegisterLabel.Width = this.Width;
             // Add the label to the form
             this.Controls.Add(invalidRegisterLabel);
+            LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "Error - Invalid registration");
         }
     }
 }

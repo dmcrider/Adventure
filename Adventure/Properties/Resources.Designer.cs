@@ -88,6 +88,33 @@ namespace Adventure.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to https://shikashiassets.itch.io/shikashis-fantasy-icons-pack.
+        /// </summary>
+        internal static string ImagesCreditURL {
+            get {
+                return ResourceManager.GetString("ImagesCreditURL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Credit for all image assets goes to Shikashi - Images are part of the Shikashi Fantasy Icons Pack. Licensed under CC BY 3.0.
+        /// </summary>
+        internal static string ImagesLicense {
+            get {
+                return ResourceManager.GetString("ImagesLicense", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to https://creativecommons.org/licenses/by/3.0/.
+        /// </summary>
+        internal static string ImagesLicenseURL {
+            get {
+                return ResourceManager.GetString("ImagesLicenseURL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Your username or password is incorrect. Please try again. Do you need to register?.
         /// </summary>
         internal static string InvalidLoginMessage {
@@ -120,6 +147,26 @@ namespace Adventure.Properties {
         internal static System.Drawing.Bitmap Item_Gold {
             get {
                 object obj = ResourceManager.GetObject("Item_Gold", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Item_PotionHPSmall {
+            get {
+                object obj = ResourceManager.GetObject("Item_PotionHPSmall", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Item_PotionMagicSmall {
+            get {
+                object obj = ResourceManager.GetObject("Item_PotionMagicSmall", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
