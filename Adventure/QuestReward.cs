@@ -21,6 +21,8 @@ namespace Adventure
             Gold = gold;
         }
 
+        public QuestReward() { }
+
         public int UniqueID { get => uniqueID; set => uniqueID = value; }
         public int IsItem { get => isItem; set => isItem = value; }
         public int ItemID { get => itemID; set => itemID = value; }

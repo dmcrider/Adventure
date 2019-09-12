@@ -8,16 +8,9 @@ namespace Adventure
 {
     public class State
     {
-        private int uniqueID;
-        private string name;
-
-        public State(int uniqueID, string name)
-        {
-            UniqueID = uniqueID;
-            Name = name;
-        }
-
-        public int UniqueID { get => uniqueID; set => uniqueID = value; }
-        public string Name { get => name; set => name = value; }
+        public const int NEW = 1;
+        public const int IN_PROGRESS = 2;
+        public const int COMPLETE_REWARD_AVAIL = 3;
+        public const int COMPLETE_NO_REWARD = 4;
     }
 }

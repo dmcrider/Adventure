@@ -22,6 +22,7 @@ namespace Adventure
         // Lists that the rest of the application can access
         public static List<Inventory> inventoryList = new List<Inventory>();
         public static List<Item> shopItems = new List<Item>();
+        public static List<QuestLog> questLog = new List<QuestLog>();
         // Private variables
         private Player currentPlayer;
         private Character currentCharacter;
@@ -126,8 +127,6 @@ namespace Adventure
             }
         }
 
-
-
         /// <summary>
         /// Determines if the Character has at least one empty slot in their inventory
         /// </summary>
@@ -167,16 +166,143 @@ namespace Adventure
                 panelInventory.Visible = true;
 
                 // Only show these panels if applicable
-                if (API.HasQuestLog(currentCharacter.UniqueID))
+                if (API.LoadQuestLog(currentCharacter.UniqueID))
                 {
                     panelQuest.Visible = true;
+                    PopulateQuestsPanel();
+                }
+                else
+                {
+                    MessageBox.Show("There was an error loading your QuestLog", "QuestLog Error");
                 }
 
                 if (API.HasSpellbook(currentCharacter.UniqueID))
                 {
                     panelSpells.Visible = true;
+                    PopulateSpellsPanel();
+                }
+                else
+                {
+                    MessageBox.Show("There was an error loading your Spells", "Spells Error");
                 }
             }
+        }
+
+        private void PopulateQuestsPanel()
+        {
+            TabControl tabQuests = (TabControl)frmMain.Controls["tabQuests"];
+            ListView listViewComplete = new ListView();
+            ListView listViewActive = new ListView();
+
+            listViewComplete.Columns.Add("QuestID").Width = 0;
+            listViewComplete.Columns.Add("Quest Name");
+            listViewComplete.Columns.Add("Description");
+            listViewComplete.Columns.Add("Reward");
+            listViewComplete.Columns.Add("Gold");
+
+            listViewActive.Columns.Add("QuestID").Width = 0;
+            listViewActive.Columns.Add("Quest Name");
+            listViewActive.Columns.Add("Description");
+            listViewActive.Columns.Add("Reward");
+            listViewActive.Columns.Add("Gold");
+
+            // Create the tab pages
+            TabPage currentQuest = new TabPage
+            {
+                Name = "current",
+                Text = "Current"
+            };
+            TabPage activeQuests = new TabPage
+            {
+                Name = "active",
+                Text = "Active"
+            };
+            TabPage completedQuests = new TabPage
+            {
+                Name = "completed",
+                Text = "Completed"
+            };
+
+            // Load Quests
+            foreach(QuestLog log in questLog)
+            {
+                if (log.IsActive == 1)
+                {
+                    Quest tempQuest = API.questsList.Find(x => x.UniqueID == log.QuestID);
+                    QuestReward tempReward = new QuestReward();
+                    Item rewardItem = new Item();
+
+                    if (log.StateID == State.IN_PROGRESS) // Only one active quest at a time
+                    {
+                        ControlActiveQuest ctrlActive = new ControlActiveQuest();
+                        ctrlActive.Controls["lblQuestName"].Text = tempQuest.Name;
+                        ctrlActive.Controls["txtDescription"].Text = tempQuest.Description;
+
+                        // Get the reward(s)
+                        tempReward = API.questrewardsList.Find(y => y.UniqueID == tempQuest.QuestRewardID);
+                        if (tempReward.IsItem == 1)
+                        {
+                            // Show the item
+                            rewardItem = API.itemsList.Find(z => z.UniqueID == tempReward.ItemID);
+                            ctrlActive.Controls["txtRewardItem"].Text = rewardItem.DisplayName;
+                        }
+                        else
+                        {
+                            // Hide item fields since we won't have anything to show
+                            ctrlActive.Controls["lblReward"].Visible = false;
+                            ctrlActive.Controls["txtRewardItem"].Visible = false;
+                        }
+
+                        // Add the gold
+                        ctrlActive.Controls["txtGoldReward"].Text = tempReward.Gold.ToString();
+
+                        // Add the control to the tabpage
+                        currentQuest.Controls.Add(ctrlActive);
+                    }
+                    else if (log.StateID == State.NEW) // New quests not yet started
+                    {
+                        tempReward = API.questrewardsList.Find(x => x.UniqueID == tempQuest.QuestRewardID);
+                        rewardItem = API.itemsList.Find(y => y.UniqueID == tempReward.ItemID);
+                        string[] rowBuilder = { tempQuest.UniqueID.ToString(), tempQuest.Name, tempQuest.Description, rewardItem.DisplayName, tempReward.Gold.ToString() };
+                        ListViewItem row = new ListViewItem(rowBuilder);
+                        listViewActive.Items.Add(row);
+
+                        completedQuests.Controls.Add(listViewActive);
+                    }
+                    else if(log.StateID == State.COMPLETE_NO_REWARD || log.StateID == State.COMPLETE_REWARD_AVAIL) // completed quests
+                    {
+                        tempReward = API.questrewardsList.Find(x => x.UniqueID == tempQuest.QuestRewardID);
+                        rewardItem = API.itemsList.Find(y => y.UniqueID == tempReward.ItemID);
+                        string[] rowBuilder = {tempQuest.UniqueID.ToString(), tempQuest.Name, tempQuest.Description, rewardItem.DisplayName, tempReward.Gold.ToString()};
+                        ListViewItem row = new ListViewItem();
+                        if(log.StateID == State.COMPLETE_REWARD_AVAIL)
+                        {
+                            row = new ListViewItem(rowBuilder)
+                            {
+                                Font = new Font(listViewComplete.Font, FontStyle.Bold)
+                            };
+                        }
+                        else
+                        {
+                            row = new ListViewItem(rowBuilder);
+                        }
+                        listViewComplete.Items.Add(row);
+
+                        completedQuests.Controls.Add(listViewComplete);
+                    }
+                }
+                
+            }
+
+            // Add the tab pages to the tab control
+            tabQuests.TabPages.Add(currentQuest);
+            tabQuests.TabPages.Add(activeQuests);
+            tabQuests.TabPages.Add(completedQuests);
+        }
+
+        private void PopulateSpellsPanel()
+        {
+
         }
 
         /// <summary>

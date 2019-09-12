@@ -205,5 +205,23 @@ namespace Adventure.Properties {
                 return ((string)(this["InventoryUpdateAPI"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("questlog/read.php")]
+        public string QuestLogReadAPI {
+            get {
+                return ((string)(this["QuestLogReadAPI"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("questlog/update.php")]
+        public string QuestLogUpdateAPI {
+            get {
+                return ((string)(this["QuestLogUpdateAPI"]));
+            }
+        }
     }
 }

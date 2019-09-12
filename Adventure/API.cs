@@ -20,7 +20,6 @@ namespace Adventure
         public static List<Spell> spellsList = new List<Spell>();
         public static List<Stat> statsList = new List<Stat>();
         public static List<Race> racesList = new List<Race>();
-        public static List<State> statesList = new List<State>();
         public static List<Npc> npcsList = new List<Npc>();
         public static List<QuestReward> questrewardsList = new List<QuestReward>();
 
@@ -108,9 +107,6 @@ namespace Adventure
                                     break;
                                 case "races":
                                     racesList.Add((Race)obj.ToObject(typeof(Race)));
-                                    break;
-                                case "states":
-                                    statesList.Add((State)obj.ToObject(typeof(State)));
                                     break;
                                 case "npcs":
                                     npcsList.Add((Npc)obj.ToObject(typeof(Npc)));
@@ -455,9 +451,6 @@ namespace Adventure
                                 case 4: // Races
                                     racesList.Add(new Race((int)item.SelectToken("UniqueID"), (string)item.SelectToken("Name"), (int)item.SelectToken("BaseSTR"), (int)item.SelectToken("BaseINT"), (int)item.SelectToken("BaseCON"), (int)item.SelectToken("IsActive")));
                                     break;
-                                case 5: // States
-                                    statesList.Add(new State((int)item.SelectToken("UniqueID"), (string)item.SelectToken("Name")));
-                                    break;
                                 case 6: // NPCs
                                     npcsList.Add(new Npc((int)item.SelectToken("UniqueID"), (string)item.SelectToken("Name")));
                                     break;
@@ -484,11 +477,29 @@ namespace Adventure
         /// </summary>
         /// <param name="characterID">The ID of a Character</param>
         /// <returns>True if the Character has Quests, false otherwise</returns>
-        public static bool HasQuestLog(int characterID)
+        public static bool LoadQuestLog(int characterID)
         {
-            // Need to add API functionality on server first!!
-            LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, "NOT YET IMPLEMENTED");
-            return false;
+            try
+            {
+                string dataString = $"{{\"CharacterID:\":{characterID}}}";
+                string response = client.UploadString(Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.QuestLogReadAPI, dataString);
+                JObject convertedJSON = JObject.Parse(response);
+
+                foreach(var obj in convertedJSON)
+                {
+                    foreach(JObject item in obj.Value)
+                    {
+                        GameController.questLog.Add((QuestLog)item.ToObject(typeof(QuestLog)));
+                    }
+                }
+                LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, "Success - QuestLog successfully loaded");
+                return true;
+            }
+            catch(Exception ex)
+            {
+                LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, "Error reading questlog: " + ex);
+                return false;
+            }
         }
 
         /// <summary>
@@ -549,7 +560,6 @@ namespace Adventure
             string spellsJSON = JsonConvert.SerializeObject(spellsList);
             string statsJSON = JsonConvert.SerializeObject(statsList);
             string racesJSON = JsonConvert.SerializeObject(racesList);
-            string statesJSON = JsonConvert.SerializeObject(statesList);
             string npcsJSON = JsonConvert.SerializeObject(npcsList);
             string questRewardsJSON = JsonConvert.SerializeObject(questrewardsList);
 
@@ -566,7 +576,6 @@ namespace Adventure
             File.WriteAllText(storageLocation + "spells.json", spellsJSON);
             File.WriteAllText(storageLocation + "stats.json", statsJSON);
             File.WriteAllText(storageLocation + "races.json", racesJSON);
-            File.WriteAllText(storageLocation + "states.json", statesJSON);
             File.WriteAllText(storageLocation + "npcs.json", npcsJSON);
             File.WriteAllText(storageLocation + "questrewards.json", questRewardsJSON);
         }
