@@ -18,7 +18,6 @@ namespace Adventure
         private FormMain frmMain;
         private PictureBox pboxLeft;
         private PictureBox pboxRight;
-        private List<Inventory> inventory;
 
         private Panel panelCharacter;
         private Panel panelInventory;
@@ -31,15 +30,7 @@ namespace Adventure
             this.currentPlayer = player;
             currentCharacter = player.character;
             frmMain = m;
-            try
-            {
-                inventory = API.LoadInventory(player.character.UniqueID);
-            }
-            catch (Exception e)
-            {
-                LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "Error loading inventory: " + e);
-            }
-            
+            API.LoadInventory(player.character.UniqueID);
         }
 
         public void PopulateInitialData()
@@ -77,9 +68,9 @@ namespace Adventure
 
                 // Show any items the character is holding
                 int inventoryCount = 1;
-                if(inventory.Count > 0)
+                if(API.inventoryList.Count > 0)
                 {
-                    foreach(Inventory item in inventory)
+                    foreach(Inventory item in API.inventoryList)
                     {
                         if (item.IsUsing == 1)
                         {
@@ -113,18 +104,23 @@ namespace Adventure
 
         private void ShowPanels()
         {
-            panelGame.Visible = true;
-            panelCharacter.Visible = true;
-            panelInventory.Visible = true;
-
-            if (currentCharacter != null && API.HasQuestLog(currentCharacter.UniqueID))
+            if (currentCharacter != null)
             {
-                panelQuest.Visible = true;
-            }
+                // Always show these panels
+                panelGame.Visible = true;
+                panelCharacter.Visible = true;
+                panelInventory.Visible = true;
 
-            if (API.HasSpellbook(currentCharacter.UniqueID))
-            {
-                panelSpells.Visible = true;
+                // Only show these panels if applicable
+                if (API.HasQuestLog(currentCharacter.UniqueID))
+                {
+                    panelQuest.Visible = true;
+                }
+
+                if (API.HasSpellbook(currentCharacter.UniqueID))
+                {
+                    panelSpells.Visible = true;
+                }
             }
         }
 
