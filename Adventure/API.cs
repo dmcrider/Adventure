@@ -76,7 +76,7 @@ namespace Adventure
         {
             try
             {
-                string[] filesArray = {"items.json","quests.json","spells.json","stats.json","races.json","states.json","npcs.json","questrewards.json"};
+                string[] filesArray = {"items.json","quests.json","spells.json","stats.json","races.json","npcs.json","questrewards.json"};
                 
 
                 foreach (string file in filesArray)
@@ -481,15 +481,23 @@ namespace Adventure
         {
             try
             {
-                string dataString = $"{{\"CharacterID:\":{characterID}}}";
+                string dataString = $"{{\"CharacterID\":{characterID}}}";
                 string response = client.UploadString(Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.QuestLogReadAPI, dataString);
                 JObject convertedJSON = JObject.Parse(response);
 
-                foreach(var obj in convertedJSON)
+                foreach (var obj in convertedJSON)
                 {
-                    foreach(JObject item in obj.Value)
+                    if(obj.Key != "error")
                     {
-                        GameController.questLog.Add((QuestLog)item.ToObject(typeof(QuestLog)));
+                        foreach (JObject item in obj.Value)
+                        {
+                            GameController.questLog.Add((QuestLog)item.ToObject(typeof(QuestLog)));
+                        }
+                    }
+                    else
+                    {
+                        LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, "No questlog entries for this character.");
+                        return false; // No questlogs for this player
                     }
                 }
                 LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, "Success - QuestLog successfully loaded");

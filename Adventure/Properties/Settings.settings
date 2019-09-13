@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="Version" Type="System.Double" Scope="User">
-      <Value Profile="(Default)">1.7</Value>
+      <Value Profile="(Default)">0.1</Value>
     </Setting>
     <Setting Name="LoginAPI" Type="System.String" Scope="Application">
       <Value Profile="(Default)">users/login.php</Value>

@@ -27,7 +27,7 @@ namespace Adventure
                     w.WriteLine(output);
                 }
             }
-            catch(Exception e)
+            catch
             {
                 // Catch it, but do nothing
                 // This way the program won't crash

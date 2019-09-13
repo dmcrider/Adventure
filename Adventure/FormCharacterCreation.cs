@@ -135,12 +135,12 @@ namespace Adventure
                 // Create and save the inventory
                 if (selectedWeapon1 != 0)
                 {
-                    API.AddInventoryItem(player.character.UniqueID, selectedWeapon1);
+                    API.AddInventoryItem(player.character, selectedWeapon1);
                 }
 
                 if (selectedWeapon2 != 0)
                 {
-                    API.AddInventoryItem(player.character.UniqueID, selectedWeapon2);
+                    API.AddInventoryItem(player.character, selectedWeapon2);
                 }
             }
         }

@@ -171,20 +171,14 @@ namespace Adventure
                     panelQuest.Visible = true;
                     PopulateQuestsPanel();
                 }
-                else
-                {
-                    MessageBox.Show("There was an error loading your QuestLog", "QuestLog Error");
-                }
+                //else, no questlogs for this player
 
                 if (API.HasSpellbook(currentCharacter.UniqueID))
                 {
                     panelSpells.Visible = true;
                     PopulateSpellsPanel();
                 }
-                else
-                {
-                    MessageBox.Show("There was an error loading your Spells", "Spells Error");
-                }
+                // else no spellbook for this player
             }
         }
 
