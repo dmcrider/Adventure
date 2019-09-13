@@ -1,0 +1,42 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing;
+using System.Data;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace Adventure
+{
+    public partial class xDEV : UserControl
+    {
+        static Random rand = new Random();
+        public xDEV()
+        {
+            InitializeComponent();
+            this.Name = "panelDev";
+        }
+
+        private void BtnReduceHP_Click(object sender, EventArgs e)
+        {
+            Instances.GameController.Damage(Instances.Character.CurrentHP, int.Parse(txtDamage.Text), GameController.HP);
+        }
+
+        private void BtnReduceMagic_Click(object sender, EventArgs e)
+        {
+            Instances.GameController.Damage(Instances.Character.CurrentMagic, int.Parse(txtDamage.Text), GameController.MAGIC);
+        }
+
+        private void BtnNewQuest_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Not Yet Implemented", "NYI");
+        }
+
+        private void BtnOpenShop_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Not Yet Implemented", "NYI");
+        }
+    }
+}

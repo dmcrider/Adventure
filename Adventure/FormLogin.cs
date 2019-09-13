@@ -19,8 +19,6 @@ namespace Adventure
 {
     public partial class FormLogin : Form
     {
-        Player loggedInPlayer;
-
         // Create an alert label
         Label invalidLoginLabel = new Label
         {
@@ -32,6 +30,10 @@ namespace Adventure
         public FormLogin()
         {
             InitializeComponent();
+#if DEBUG
+            txtUsername.Text = "test1";
+            txtPassword.Text = "test1";
+#endif
         }
         
         private void BtnLogin_Click(object sender, EventArgs e)
@@ -39,9 +41,9 @@ namespace Adventure
             string username = txtUsername.Text;
             string pwd = txtPassword.Text;
 
-            loggedInPlayer = new Player(username, pwd);
+            Instances.Player = new Player(username, pwd);
 
-            int loginType = API.Login(ref loggedInPlayer);
+            int loginType = API.Login(Instances.Player);
 
             if (loginType == 1)
             {
@@ -51,7 +53,7 @@ namespace Adventure
             else if(loginType == 0)
             {
                 // Bad credentials
-                loggedInPlayer = null;
+                Instances.Player = null;
                 ClearForm();
                 AlertInvalidLogin();
             }
@@ -75,6 +77,7 @@ namespace Adventure
         private void FormLogin_Load(object sender, EventArgs e)
         {
             this.CenterToScreen();
+            this.AcceptButton = btnLogin;
         }
 
         private void BtnRegister_Click(object sender, EventArgs e)
@@ -88,24 +91,6 @@ namespace Adventure
             FormRegister frmRegister = new FormRegister();
 
             frmRegister.ShowDialog();
-        }
-
-        public Player GetLoggedInPlayer()
-        {
-            if(loggedInPlayer != null)
-            {
-                return loggedInPlayer;
-            }
-
-            return null;
-        }
-
-        private void BtnLogin_KeyDown(object sender, KeyEventArgs e)
-        {
-            if(e.KeyCode == Keys.Enter)
-            {
-                BtnLogin_Click(this, EventArgs.Empty);
-            }
         }
     }
 }

@@ -124,6 +124,7 @@
     <Compile Include="FormWelcome.Designer.cs">
       <DependentUpon>FormWelcome.cs</DependentUpon>
     </Compile>
+    <Compile Include="Instances.cs" />
     <Compile Include="Inventory.cs" />
     <Compile Include="Item.cs" />
     <Compile Include="Items.Designer.cs">
@@ -143,6 +144,12 @@
     <Compile Include="Spell.cs" />
     <Compile Include="Stat.cs" />
     <Compile Include="State.cs" />
+    <Compile Include="xDEV.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="xDEV.Designer.cs">
+      <DependentUpon>xDEV.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="ControlActiveQuest.resx">
       <DependentUpon>ControlActiveQuest.cs</DependentUpon>
     </EmbeddedResource>
@@ -184,6 +191,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="xDEV.resx">
+      <DependentUpon>xDEV.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

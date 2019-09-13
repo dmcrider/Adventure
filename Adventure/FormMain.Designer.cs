@@ -72,13 +72,13 @@
             this.picboxInventory1 = new System.Windows.Forms.PictureBox();
             this.lblInventoryPanelTitle = new System.Windows.Forms.Label();
             this.panelQuest = new System.Windows.Forms.Panel();
+            this.tabQuests = new System.Windows.Forms.TabControl();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.tabPage2 = new System.Windows.Forms.TabPage();
             this.lblQuestPanelTitle = new System.Windows.Forms.Label();
             this.panelGame = new System.Windows.Forms.Panel();
             this.panelSpells = new System.Windows.Forms.Panel();
             this.lblSpellsPanelTitle = new System.Windows.Forms.Label();
-            this.tabQuests = new System.Windows.Forms.TabControl();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
             this.menuStrip1.SuspendLayout();
             this.panelCharacter.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picboxGold)).BeginInit();
@@ -94,8 +94,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.picboxInventory2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picboxInventory1)).BeginInit();
             this.panelQuest.SuspendLayout();
-            this.panelSpells.SuspendLayout();
             this.tabQuests.SuspendLayout();
+            this.panelSpells.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -124,21 +124,21 @@
             // saveToolStripMenuItem
             // 
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(143, 22);
             this.saveToolStripMenuItem.Text = "&Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.Save_Click);
             // 
             // saveAndExitToolStripMenuItem
             // 
             this.saveAndExitToolStripMenuItem.Name = "saveAndExitToolStripMenuItem";
-            this.saveAndExitToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
+            this.saveAndExitToolStripMenuItem.Size = new System.Drawing.Size(143, 22);
             this.saveAndExitToolStripMenuItem.Text = "Save and E&xit";
             this.saveAndExitToolStripMenuItem.Click += new System.EventHandler(this.SaveAndExit_Click);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(143, 22);
             this.exitToolStripMenuItem.Text = "&Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.ExitToolStripMenuItem_Click);
             // 
@@ -229,6 +229,7 @@
             this.txtInventoryGold.ReadOnly = true;
             this.txtInventoryGold.Size = new System.Drawing.Size(54, 26);
             this.txtInventoryGold.TabIndex = 18;
+            this.txtInventoryGold.TabStop = false;
             // 
             // picboxGold
             // 
@@ -282,8 +283,9 @@
             this.panelMagic.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.panelMagic.Location = new System.Drawing.Point(8, 103);
             this.panelMagic.Name = "panelMagic";
-            this.panelMagic.Size = new System.Drawing.Size(241, 24);
+            this.panelMagic.Size = new System.Drawing.Size(240, 24);
             this.panelMagic.TabIndex = 8;
+            this.panelMagic.Tag = "240";
             // 
             // lblMagicValue
             // 
@@ -312,6 +314,7 @@
             this.txtCONValue.ReadOnly = true;
             this.txtCONValue.Size = new System.Drawing.Size(45, 26);
             this.txtCONValue.TabIndex = 10;
+            this.txtCONValue.TabStop = false;
             // 
             // txtINTValue
             // 
@@ -321,6 +324,7 @@
             this.txtINTValue.ReadOnly = true;
             this.txtINTValue.Size = new System.Drawing.Size(45, 26);
             this.txtINTValue.TabIndex = 9;
+            this.txtINTValue.TabStop = false;
             // 
             // txtSTRValue
             // 
@@ -330,6 +334,7 @@
             this.txtSTRValue.ReadOnly = true;
             this.txtSTRValue.Size = new System.Drawing.Size(45, 26);
             this.txtSTRValue.TabIndex = 8;
+            this.txtSTRValue.TabStop = false;
             // 
             // lblHPValue
             // 
@@ -347,8 +352,9 @@
             this.panelHP.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.panelHP.Location = new System.Drawing.Point(8, 49);
             this.panelHP.Name = "panelHP";
-            this.panelHP.Size = new System.Drawing.Size(241, 24);
+            this.panelHP.Size = new System.Drawing.Size(240, 24);
             this.panelHP.TabIndex = 7;
+            this.panelHP.Tag = "240";
             // 
             // lblHPName
             // 
@@ -507,6 +513,36 @@
             this.panelQuest.Size = new System.Drawing.Size(253, 379);
             this.panelQuest.TabIndex = 5;
             // 
+            // tabQuests
+            // 
+            this.tabQuests.Controls.Add(this.tabPage1);
+            this.tabQuests.Controls.Add(this.tabPage2);
+            this.tabQuests.Location = new System.Drawing.Point(4, 33);
+            this.tabQuests.Name = "tabQuests";
+            this.tabQuests.SelectedIndex = 0;
+            this.tabQuests.Size = new System.Drawing.Size(236, 335);
+            this.tabQuests.TabIndex = 1;
+            // 
+            // tabPage1
+            // 
+            this.tabPage1.Location = new System.Drawing.Point(4, 29);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage1.Size = new System.Drawing.Size(228, 302);
+            this.tabPage1.TabIndex = 0;
+            this.tabPage1.Text = "tabPage1";
+            this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // tabPage2
+            // 
+            this.tabPage2.Location = new System.Drawing.Point(4, 29);
+            this.tabPage2.Name = "tabPage2";
+            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage2.Size = new System.Drawing.Size(228, 302);
+            this.tabPage2.TabIndex = 1;
+            this.tabPage2.Text = "tabPage2";
+            this.tabPage2.UseVisualStyleBackColor = true;
+            // 
             // lblQuestPanelTitle
             // 
             this.lblQuestPanelTitle.AutoSize = true;
@@ -542,36 +578,6 @@
             this.lblSpellsPanelTitle.TabIndex = 0;
             this.lblSpellsPanelTitle.Text = "Spells";
             // 
-            // tabQuests
-            // 
-            this.tabQuests.Controls.Add(this.tabPage1);
-            this.tabQuests.Controls.Add(this.tabPage2);
-            this.tabQuests.Location = new System.Drawing.Point(4, 33);
-            this.tabQuests.Name = "tabQuests";
-            this.tabQuests.SelectedIndex = 0;
-            this.tabQuests.Size = new System.Drawing.Size(236, 335);
-            this.tabQuests.TabIndex = 1;
-            // 
-            // tabPage1
-            // 
-            this.tabPage1.Location = new System.Drawing.Point(4, 29);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(228, 302);
-            this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "tabPage1";
-            this.tabPage1.UseVisualStyleBackColor = true;
-            // 
-            // tabPage2
-            // 
-            this.tabPage2.Location = new System.Drawing.Point(4, 29);
-            this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(192, 67);
-            this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "tabPage2";
-            this.tabPage2.UseVisualStyleBackColor = true;
-            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
@@ -589,6 +595,7 @@
             this.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.Name = "FormMain";
             this.Text = "Adventure";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormMain_FormClosing);
             this.Load += new System.EventHandler(this.FormMain_Load);
             this.Shown += new System.EventHandler(this.FormMain_Shown);
             this.menuStrip1.ResumeLayout(false);
@@ -610,9 +617,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.picboxInventory1)).EndInit();
             this.panelQuest.ResumeLayout(false);
             this.panelQuest.PerformLayout();
+            this.tabQuests.ResumeLayout(false);
             this.panelSpells.ResumeLayout(false);
             this.panelSpells.PerformLayout();
-            this.tabQuests.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 

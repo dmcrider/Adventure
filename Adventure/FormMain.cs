@@ -18,13 +18,6 @@ namespace Adventure
 {
     public partial class FormMain : Form
     {
-        // Create an instance of the Welcome Window
-        readonly FormWelcome frmWelcome = new FormWelcome();
-        readonly FormLogin frmLogin = new FormLogin();
-        readonly FormSupport frmSupport = new FormSupport();
-        readonly FormCharacterCreation frmCharacterCreation = new FormCharacterCreation();
-        Player player;
-
         public FormMain()
         {
             InitializeComponent();
@@ -37,7 +30,7 @@ namespace Adventure
 
         public void Save_Click(object sender, EventArgs e)
         {
-            API.SaveProgress(player);
+            API.SaveProgress(Instances.Player);
         }
 
         public void Logout_Click(object sender, EventArgs e)
@@ -46,7 +39,7 @@ namespace Adventure
             if (MessageBox.Show(Properties.Resources.ConfirmNoSaveMessage, Properties.Resources.ConfirmNoSaveTitle, MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
                 // Nullify the current user
-                player = null;
+                Instances.Player = null;
 
                 // "Reload" the application by calling the methods we need
                 FormMain_Load(this, EventArgs.Empty);
@@ -72,6 +65,10 @@ namespace Adventure
 
         private void FormMain_Load(object sender, EventArgs e)
         {
+            // Load some basic instances
+            Instances.FormWelcome = new FormWelcome();
+            Instances.FormLogin = new FormLogin();
+
             // Center to screen
             this.CenterToScreen();
 
@@ -88,6 +85,16 @@ namespace Adventure
             // Throw this in a Thread so we can still let the user login
             Thread apiThread = new Thread(new ThreadStart(APIChecks));
             apiThread.Start();
+        }
+
+        private void SetInstances()
+        {
+            Instances.FormMain = this;
+            Instances.FormShop = new FormShop();
+            Instances.FormManageInventory = new FormManageInventory();
+            Instances.FormSupport = new FormSupport();
+            Instances.FormCharacterCreation = new FormCharacterCreation();
+            Instances.GameController = new GameController();
         }
 
         private void APIChecks()
@@ -114,15 +121,16 @@ namespace Adventure
 
         private void FormMain_Shown(object sender, EventArgs e)
         {
+            SetInstances();
+
             // Disable the main form until the user has sucesfully logged in
             this.Enabled = false;
 
             // Show the welcome screen
-            frmWelcome.ShowDialog();
+            Instances.FormWelcome.ShowDialog();
 
             // Show the login screen
-            frmLogin.ShowDialog();
-            player = frmLogin.GetLoggedInPlayer();
+            Instances.FormLogin.ShowDialog();
 
             if (CheckForNullPlayer())
             {
@@ -132,12 +140,12 @@ namespace Adventure
                 // Check if the have a character
                 if (!HasCharacter())
                 {
+                    // Does not yet have a character
                     // Show the character creation screen
                     LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "Error - Player must create Character");
-                    frmCharacterCreation.LoggedInPlayer(ref player);
-                    frmCharacterCreation.ShowDialog();
+                    Instances.FormCharacterCreation.ShowDialog();
 
-                    if (player.character == null)
+                    if (Instances.Player.character == null)
                     {
                         LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "Error - Player closed creation screen without saving");
                         MessageBox.Show(Properties.Resources.ErrorGeneral);
@@ -145,11 +153,16 @@ namespace Adventure
                         return;
                     }
                 }
+                else
+                {
+                    // Already has a character
+                    // Load the inventory
+                    API.LoadInventory(Instances.Character.UniqueID);
+                }
 
                 // Start the game
                 LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "Starting the game");
-                GameController ctrlGame = new GameController(this, player);
-                ctrlGame.PopulateInitialData();
+                Instances.GameController.PopulateInitialData();
             }
         }
 
@@ -159,14 +172,14 @@ namespace Adventure
 
             // See if there's a character associated with the player
             // Verify the player has an ID - it's necessary for the API call
-            if(player != null && player.uniqueID != 0)
+            if(Instances.Player != null && Instances.Player.uniqueID != 0)
             {
-                Character character = API.GetCharacter(player.uniqueID);
+                Character character = API.GetCharacter(Instances.Player.uniqueID);
 
                 if(character != null)
                 {
                     hasCharacter = true;
-                    player.character = character;
+                    Instances.Character = character;
                 }
             }
 
@@ -175,7 +188,7 @@ namespace Adventure
 
         private bool CheckForNullPlayer()
         {
-            if (player == null)
+            if (Instances.Player == null)
             {
                 MessageBox.Show(Properties.Resources.ErrorGeneral);
                 ExitApplication();
@@ -187,13 +200,13 @@ namespace Adventure
         private void AboutToolStripMenuItem1_Click(object sender, EventArgs e)
         {
             // Show the welcome message
-            frmWelcome.ShowDialog();
+            Instances.FormWelcome.ShowDialog();
         }
 
         private void SupportToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // Show the support window
-            frmSupport.ShowDialog();
+            Instances.FormSupport.ShowDialog();
         }
 
         private void ExitToolStripMenuItem_Click(object sender, EventArgs e)
@@ -235,8 +248,7 @@ namespace Adventure
         private void BtnManageInventory_Click(object sender, EventArgs e)
         {
             LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "Attempting to manage inventory");
-            FormManageInventory formManageInventory = new FormManageInventory(ref player);
-            formManageInventory.ShowDialog();
+            Instances.FormManageInventory.ShowDialog();
         }
 
         private void BtnOpenShop_Click(object sender, EventArgs e)
@@ -244,13 +256,22 @@ namespace Adventure
             try
             {
                 LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "Attempting to load Shop");
-                FormShop frmShop = new FormShop(player.character);
-                frmShop.ShowDialog();
+                Instances.FormShop.ShowDialog();
             }
             catch(Exception ex)
             {
                 LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "Error: " + ex);
             }
+        }
+
+        private void FormMain_FormClosing(object sender, FormClosingEventArgs e)
+        {
+#if !DEBUG
+            if(e.CloseReason != CloseReason.ApplicationExitCall)
+            {
+                ExitNoSaveConfirm();
+            }
+#endif
         }
     }
 }

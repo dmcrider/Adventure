@@ -21,13 +21,6 @@ namespace Adventure
         private int selectedWeapon2;
         private int selectedGold;
 
-        private Player player;
-
-        public void LoggedInPlayer(ref Player player)
-        {
-            this.player = player;
-        }
-
         public FormCharacterCreation()
         {
             InitializeComponent();
@@ -112,18 +105,19 @@ namespace Adventure
         private void BtnSave_Click(object sender, EventArgs e)
         {
             // Create and save the character
-            player.character = new Character(player.uniqueID,txtCharacterName.Text,selectedRace);
-            player.character.Gold = selectedGold;
-            player.character.Gender = selectedGender;
+            Instances.Character = new Character(Instances.Player.uniqueID,txtCharacterName.Text,selectedRace);
+            Instances.Character.Gold = selectedGold;
+            Instances.Character.Gender = selectedGender;
             bool creationSuccess = false;
             try
             {
-                creationSuccess = API.CreateCharacter(ref player.character, player.uniqueID);
+                creationSuccess = API.CreateCharacter(Instances.Character, Instances.Player.uniqueID);
             }
             catch (Exception ex)
             {
                 LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "Error creating character: " + ex);
             }
+
             if (!creationSuccess)
             {
                 // There was a problem
@@ -135,13 +129,16 @@ namespace Adventure
                 // Create and save the inventory
                 if (selectedWeapon1 != 0)
                 {
-                    API.AddInventoryItem(player.character, selectedWeapon1);
+                    API.AddInventoryItem(Instances.Character, selectedWeapon1);
                 }
 
                 if (selectedWeapon2 != 0)
                 {
-                    API.AddInventoryItem(player.character, selectedWeapon2);
+                    API.AddInventoryItem(Instances.Character, selectedWeapon2);
                 }
+
+                // Load the inventory
+                API.LoadInventory(Instances.Character.UniqueID);
             }
         }
     }

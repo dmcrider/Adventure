@@ -79,7 +79,6 @@
             this.btnLogin.Text = "&Login";
             this.btnLogin.UseVisualStyleBackColor = true;
             this.btnLogin.Click += new System.EventHandler(this.BtnLogin_Click);
-            this.btnLogin.KeyDown += new System.Windows.Forms.KeyEventHandler(this.BtnLogin_KeyDown);
             // 
             // btnRegister
             // 

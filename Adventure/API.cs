@@ -134,7 +134,7 @@ namespace Adventure
         /// </summary>
         /// <param name="player"></param>
         /// <returns>Returns 1 if login was successful, 0 if login failed</returns>
-        public static int Login(ref Player player)
+        public static int Login(Player player)
         {
             string credentials = "";
             if (player.HasID())
@@ -285,7 +285,7 @@ namespace Adventure
         /// <param name="character"></param>
         /// <param name="playerID"></param>
         /// <returns>Returns true if database transaction was successful, false otherwise</returns>
-        public static bool CreateCharacter(ref Character character, int playerID)
+        public static bool CreateCharacter(Character character, int playerID)
         {
             string charValues = $"{{\"UserID\":\"{playerID}\",\"Name\":\"{character.Name}\",\"RaceID\":\"{character.RaceID}\",\"Gender\":\"{character.Gender}\",\"MaxHP\":\"{character.MaxHP}\",\"CurrentHP\":\"{character.CurrentHP}\",\"MaxMagic\":\"{character.MaxMagic}\",\"CurrentMagic\":\"{character.CurrentMagic}\",\"Strength\":\"{character.Strength}\",\"Intelligence\":\"{character.Intelligence}\",\"Constitution\":\"{character.Constitution}\",\"Gold\":\"{character.Gold}\",\"Level\":\"{character.Level}\",\"ExpPoints\":\"{character.ExpPoints}\"}}";
             string response = client.UploadString(Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.CharacterCreateAPI, charValues);
@@ -358,7 +358,7 @@ namespace Adventure
                         GameController.inventoryList.Add((Inventory)item.ToObject(typeof(Inventory)));
                     }
                 }
-                LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, "Success - Inventory successfully loaded");
+                LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, "Success - Inventory successfully loaded. Item Count: " + GameController.inventoryList.Count);
             }
             catch(Exception e)
             {

@@ -19,14 +19,13 @@ namespace Adventure
         public const int SHOP = 2;
         public const int SPECIAL = 3;
         public const string SHOP_GOLD = "100";
+        public const int HP = 1;
+        public const int MAGIC = 2;
         // Lists that the rest of the application can access
         public static List<Inventory> inventoryList = new List<Inventory>();
         public static List<Item> shopItems = new List<Item>();
         public static List<QuestLog> questLog = new List<QuestLog>();
         // Private variables
-        private Player currentPlayer;
-        private Character currentCharacter;
-        private FormMain frmMain;
         private PictureBox pboxLeft;
         private PictureBox pboxRight;
         // Panels
@@ -36,43 +35,40 @@ namespace Adventure
         private Panel panelGame;
         private Panel panelSpells;
 
-        public GameController(FormMain m, Player player)
+        public GameController()
         {
-            this.currentPlayer = player;
-            currentCharacter = player.character;
-            frmMain = m;
-            API.LoadInventory(player.character.UniqueID);
+            
         }
 
         public void PopulateInitialData()
         {
             // Populate Player data
-            if(currentPlayer != null)
+            if(Instances.Player != null)
             {
                 // Access the Character Panel and the Inventory Panel
-                frmMain.MainMenuStrip.Items["playerToolStripMenuItem"].Text = currentPlayer.username;
-                panelCharacter = (Panel)frmMain.Controls["panelCharacter"];
-                panelInventory = (Panel)frmMain.Controls["panelInventory"];
-                panelQuest = (Panel)frmMain.Controls["panelQuest"];
-                panelGame = (Panel)frmMain.Controls["panelGame"];
-                panelSpells = (Panel)frmMain.Controls["panelSpells"];
+                Instances.FormMain.MainMenuStrip.Items["playerToolStripMenuItem"].Text = Instances.Player.username;
+                panelCharacter = (Panel)Instances.FormMain.Controls["panelCharacter"];
+                panelInventory = (Panel)Instances.FormMain.Controls["panelInventory"];
+                panelQuest = (Panel)Instances.FormMain.Controls["panelQuest"];
+                panelGame = (Panel)Instances.FormMain.Controls["panelGame"];
+                panelSpells = (Panel)Instances.FormMain.Controls["panelSpells"];
 
                 ShowPanels();
 
                 // Set the Character's name
-                panelCharacter.Controls["lblCharacterName"].Text = currentCharacter.Name;
+                panelCharacter.Controls["lblCharacterName"].Text = Instances.Character.Name;
 
                 // Set their current HP and Magic levels
-                panelCharacter.Controls["lblHPValue"].Text = $"{currentCharacter.CurrentHP}/{currentCharacter.MaxHP}";
-                panelCharacter.Controls["lblMagicValue"].Text = $"{currentCharacter.CurrentMagic}/{currentCharacter.MaxMagic}";
+                panelCharacter.Controls["lblHPValue"].Text = $"{Instances.Character.CurrentHP}/{Instances.Character.MaxHP}";
+                panelCharacter.Controls["lblMagicValue"].Text = $"{Instances.Character.CurrentMagic}/{Instances.Character.MaxMagic}";
 
                 // Set their STR, INT, and CON levels
-                panelCharacter.Controls["txtSTRValue"].Text = currentCharacter.Strength.ToString();
-                panelCharacter.Controls["txtINTValue"].Text = currentCharacter.Intelligence.ToString();
-                panelCharacter.Controls["txtCONValue"].Text = currentCharacter.Constitution.ToString();
+                panelCharacter.Controls["txtSTRValue"].Text = Instances.Character.Strength.ToString();
+                panelCharacter.Controls["txtINTValue"].Text = Instances.Character.Intelligence.ToString();
+                panelCharacter.Controls["txtCONValue"].Text = Instances.Character.Constitution.ToString();
 
                 // Set their gold
-                panelCharacter.Controls["txtInventoryGold"].Text = currentCharacter.Gold.ToString();
+                panelCharacter.Controls["txtInventoryGold"].Text = Instances.Character.Gold.ToString();
 
                 pboxLeft = (PictureBox)panelCharacter.Controls["picLeftHand"];
                 pboxRight = (PictureBox)panelCharacter.Controls["picRightHand"];
@@ -113,17 +109,81 @@ namespace Adventure
             }
         }
 
-        public static int Heal(int current, int max, int healAmount)
+        /// <summary>
+        /// Restore up to the maximum value of the character's HP or Magic
+        /// </summary>
+        /// <param name="current">The character's current value</param>
+        /// <param name="max">The character's maximum value</param>
+        /// <param name="healAmount">The amount to restore by</param>
+        /// <returns></returns>
+        public void Heal(int current, int max, int healAmount, int type)
         {
+            Label lblValue;
             current += healAmount;
 
             if (current > max)
             {
-                return max;
+                current = max;
             }
-            else
+
+            if (type == HP)
             {
-                return current;
+                lblValue = (Label)panelCharacter.Controls["lblHPValue"];
+                lblValue.Text = current.ToString();
+                Instances.Character.CurrentHP = current;
+            }
+            else if(type == MAGIC)
+            {
+                lblValue = (Label)panelCharacter.Controls["lblMagicValue"];
+                lblValue.Text = current.ToString();
+                Instances.Character.CurrentMagic = current;
+            }
+        }
+
+        /// <summary>
+        /// Reduce the amount of the character's HP or Magic
+        /// </summary>
+        /// <param name="current">The character's current value</param>
+        /// <param name="damageAmount">The amount to reduce by</param>
+        public void Damage(int current, int damageAmount, int type)
+        {
+            Label lblValue;
+            current -= damageAmount;
+
+            if (current <= 0)
+            {
+                current = 0; // Player is dead
+            }
+
+            if (type == HP)
+            {
+                // Update the values
+                lblValue = (Label)panelCharacter.Controls["lblHPValue"];
+                lblValue.Text = $"{current.ToString()}/{Instances.Character.MaxHP.ToString()}";
+                Instances.Character.CurrentHP = current;
+
+                // Update the box
+                Panel panelHP = (Panel)panelCharacter.Controls["panelHP"];
+                double maxWidth = double.Parse(panelHP.Tag.ToString());
+
+                double percentReduce = current / (double)Instances.Character.MaxHP;
+                double reduceWidthBy = panelHP.Width - (maxWidth * percentReduce);
+                panelHP.Width -= Convert.ToInt32(reduceWidthBy);
+            }
+            else if (type == MAGIC)
+            {
+                // Update the values
+                lblValue = (Label)panelCharacter.Controls["lblMagicValue"];
+                lblValue.Text = $"{current.ToString()}/{Instances.Character.MaxMagic.ToString()}";
+                Instances.Character.CurrentMagic = current;
+
+                // Update the box
+                Panel panelMagic = (Panel)panelCharacter.Controls["panelMagic"];
+                double maxWidth = double.Parse(panelMagic.Tag.ToString());
+
+                double percentReduce = current / (double)Instances.Character.MaxMagic;
+                double reduceWidthBy = panelMagic.Width - (maxWidth * percentReduce);
+                panelMagic.Width -= Convert.ToInt32(reduceWidthBy);
             }
         }
 
@@ -158,22 +218,27 @@ namespace Adventure
         /// </summary>
         private void ShowPanels()
         {
-            if (currentCharacter != null)
+            if (Instances.Character != null)
             {
                 // Always show these panels
                 panelGame.Visible = true;
                 panelCharacter.Visible = true;
                 panelInventory.Visible = true;
 
+#if DEBUG
+                Instances.PanelDev = new xDEV();
+                panelGame.Controls.Add(Instances.PanelDev);
+#endif
+
                 // Only show these panels if applicable
-                if (API.LoadQuestLog(currentCharacter.UniqueID))
+                if (API.LoadQuestLog(Instances.Character.UniqueID))
                 {
                     panelQuest.Visible = true;
                     PopulateQuestsPanel();
                 }
                 //else, no questlogs for this player
 
-                if (API.HasSpellbook(currentCharacter.UniqueID))
+                if (API.HasSpellbook(Instances.Character.UniqueID))
                 {
                     panelSpells.Visible = true;
                     PopulateSpellsPanel();
@@ -184,7 +249,7 @@ namespace Adventure
 
         private void PopulateQuestsPanel()
         {
-            TabControl tabQuests = (TabControl)frmMain.Controls["tabQuests"];
+            TabControl tabQuests = (TabControl)Instances.FormMain.Controls["tabQuests"];
             ListView listViewComplete = new ListView();
             ListView listViewActive = new ListView();
 

@@ -13,13 +13,11 @@ namespace Adventure
 {
     public partial class FormShop : Form
     {
-        private Character character;
         private int total = 0;
 
-        public FormShop(Character c)
+        public FormShop()
         {
             InitializeComponent();
-            character = c;
         }
 
         private void FormShop_Load(object sender, EventArgs e)
@@ -35,7 +33,7 @@ namespace Adventure
         /// </summary>
         private void SetGold()
         {
-            txtGoldPlayer.Text = character.GetGold();
+            txtGoldPlayer.Text = Instances.Character.GetGold();
             txtGoldShop.Text = GameController.SHOP_GOLD;
         }
 
@@ -52,7 +50,7 @@ namespace Adventure
             try
             {
                 // Set the lists to be shown for the player's inventory
-                foreach (var item in character.Inventory)
+                foreach (var item in Instances.Character.Inventory)
                 {
                     Item tempItem = API.itemsList.Find(x => x.UniqueID == item.ItemID);
 
@@ -85,7 +83,7 @@ namespace Adventure
                 foreach (Item item in API.itemsList)
                 {
                     // Make sure we can sell it, it's a valid item, and the character is the right level
-                    if (item.CanBuySell == 1 && item.Active == 1 && item.MinPlayerLevel <= character.Level)
+                    if (item.CanBuySell == 1 && item.Active == 1 && item.MinPlayerLevel <= Instances.Character.Level)
                     {
                         listViewPlayer.Items.Add(item.ShopDetails(GameController.SHOP));
                     }
@@ -121,7 +119,7 @@ namespace Adventure
                     listViewShop.Items.RemoveByKey(tempItem.DisplayName);
 
                     // Take the gold from the player
-                    character.Gold -= total;
+                    Instances.Character.Gold -= total;
 
                     // Add gold to the shop
                     int shopGold = int.Parse(txtGoldShop.Text);
@@ -129,7 +127,7 @@ namespace Adventure
                     txtGoldShop.Text = shopGold.ToString();
 
                     // Add the item to the player's inventory
-                    API.AddInventoryItem(character, tempItem.UniqueID);
+                    API.AddInventoryItem(Instances.Character, tempItem.UniqueID);
 
                     // Show the item in the list
                     LoadPlayerList();
@@ -165,7 +163,7 @@ namespace Adventure
                     listViewPlayer.Items.RemoveByKey(tempItem.DisplayName);
 
                     // Add the gold to the player
-                    character.Gold += total;
+                    Instances.Character.Gold += total;
 
                     // Take the gold from the shop
                     int shopGold = int.Parse(txtGoldShop.Text);
@@ -173,9 +171,9 @@ namespace Adventure
                     txtGoldShop.Text = shopGold.ToString();
 
                     // Remove the item from the player's inventory
-                    character.Inventory.Remove(character.Inventory.Find(y => y.ItemID == tempItem.UniqueID));
+                    Instances.Character.Inventory.Remove(Instances.Character.Inventory.Find(y => y.ItemID == tempItem.UniqueID));
 
-                    if (API.UpdateInventory(character.UniqueID))
+                    if (API.UpdateInventory(Instances.Character.UniqueID))
                     {
                         // Show the item in the list
                         LoadPlayerList();

@@ -13,7 +13,6 @@ namespace Adventure
 {
     public partial class FormManageInventory : Form
     {
-        private Player player;
         private CheckBox[] chkArray;
         private PictureBox[] picArray;
         private GroupBox[] grpArray;
@@ -21,11 +20,9 @@ namespace Adventure
         private List<int> selectedItems;
         private int selectedHand = 0;
 
-        public FormManageInventory(ref Player p)
+        public FormManageInventory()
         {
             InitializeComponent();
-            player = p;
-            API.LoadInventory(player.character.UniqueID);
 
             chkArray = new CheckBox[]{ chkbxItem1, chkbxItem2, chkbxItem3, chkbxItem4, chkbxItem5, chkbxItem6, chkbxItem7, chkbxItem8, chkbxItem9, chkbxItem10 };
             picArray = new PictureBox[]{ picboxItem1, picboxItem2, picboxItem3, picboxItem4, picboxItem5, picboxItem6, picboxItem7, picboxItem8, picboxItem9, picboxItem10 };
@@ -45,11 +42,11 @@ namespace Adventure
             }
 
             // Show as many items as they have
-            if (player.character.Inventory.Count() > 0)
+            if (Instances.Character.Inventory.Count() > 0)
             {
                 int currentItem = 0;
                 Item tempItem = new Item();
-                foreach(Inventory inv in player.character.Inventory)
+                foreach(Inventory inv in Instances.Character.Inventory)
                 {
                     foreach(Item item in API.itemsList)
                     {
@@ -126,7 +123,7 @@ namespace Adventure
                         else
                         {
                             grpHand.Enabled = true;
-                            Inventory tempInv = player.character.Inventory.Find(x => x.ItemID == tempItem.UniqueID);
+                            Inventory tempInv = Instances.Character.Inventory.Find(x => x.ItemID == tempItem.UniqueID);
 
                             if (tempInv.IsUsing == 1)
                             {
@@ -249,17 +246,17 @@ namespace Adventure
                     int itemUniqueID = selectedItems.ElementAt(0);
 
                     Item tempItem = API.itemsList.Find(x => x.UniqueID == itemUniqueID);
-                    Inventory invItem = player.character.Inventory.Find(y => y.ItemID == itemUniqueID);
+                    Inventory invItem = Instances.Character.Inventory.Find(y => y.ItemID == itemUniqueID);
 
                     if (tempItem.HpHealed > 0 && invItem.Quantity > 0)
                     {
-                        player.character.CurrentHP = GameController.Heal(player.character.CurrentHP, player.character.MaxHP, tempItem.HpHealed);
+                        Instances.GameController.Heal(Instances.Character.CurrentHP, Instances.Character.MaxHP, tempItem.HpHealed, GameController.HP);
                         invItem.Quantity--;
                     }
 
                     if (tempItem.MagicHealed > 0 && invItem.Quantity > 0)
                     {
-                        player.character.CurrentMagic = GameController.Heal(player.character.CurrentMagic, player.character.MaxMagic, tempItem.MagicHealed);
+                        Instances.GameController.Heal(Instances.Character.CurrentMagic, Instances.Character.MaxMagic, tempItem.MagicHealed, GameController.MAGIC);
                         invItem.Quantity--;
                     }
 
@@ -292,7 +289,7 @@ namespace Adventure
             {
                 if(selectedHand != 0)
                 {
-                    Inventory selectedInv = player.character.Inventory.Find(x => x.ItemID == selectedItems[0]);
+                    Inventory selectedInv = Instances.Character.Inventory.Find(x => x.ItemID == selectedItems[0]);
                     selectedInv.IsUsing = 1;
                     selectedInv.Hand = selectedHand;
                 }
@@ -311,7 +308,7 @@ namespace Adventure
         {
             try
             {
-                bool updateSuccess = API.UpdateInventory(player.character.UniqueID);
+                bool updateSuccess = API.UpdateInventory(Instances.Character.UniqueID);
 
                 if (updateSuccess)
                 {
@@ -362,12 +359,12 @@ namespace Adventure
                         for(int j = 0; j < itemsToDelete.Count; j++)
                         {
                             // Remove item from inventory
-                            Inventory itemToDelete = player.character.Inventory.Find(y => y.ItemID == itemsToDelete[j].UniqueID);
-                            player.character.Inventory.Remove(itemToDelete);
+                            Inventory itemToDelete = Instances.Character.Inventory.Find(y => y.ItemID == itemsToDelete[j].UniqueID);
+                            Instances.Character.Inventory.Remove(itemToDelete);
                             LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "Deleted inventory object with ID " + itemToDelete.UniqueID);
                         }
                         // Push update via API
-                        API.UpdateInventory(player.character.UniqueID);
+                        API.UpdateInventory(Instances.Character.UniqueID);
 
                         // Refresh the form
                         FormManageInventory_Load(this, EventArgs.Empty);
