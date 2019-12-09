@@ -14,6 +14,7 @@ namespace Adventure
     public class GameController
     {
         // Constants
+        private const string LOG_NAME = "ControllerGame";
         private const int MAX_INVENTORY_SIZE = 10;
         public const int PLAYER = 1;
         public const int SHOP = 2;
@@ -37,7 +38,7 @@ namespace Adventure
 
         public GameController()
         {
-            
+            // Do nothing on instantiation for now
         }
 
         public void PopulateInitialData()
@@ -55,55 +56,67 @@ namespace Adventure
 
                 ShowPanels();
 
-                // Set the Character's name
-                panelCharacter.Controls["lblCharacterName"].Text = Instances.Character.Name;
+                SetPlayerInfo();
 
-                // Set their current HP and Magic levels
-                panelCharacter.Controls["lblHPValue"].Text = $"{Instances.Character.CurrentHP}/{Instances.Character.MaxHP}";
-                panelCharacter.Controls["lblMagicValue"].Text = $"{Instances.Character.CurrentMagic}/{Instances.Character.MaxMagic}";
+                SetInventory();
+            }
+        }
 
-                // Set their STR, INT, and CON levels
-                panelCharacter.Controls["txtSTRValue"].Text = Instances.Character.Strength.ToString();
-                panelCharacter.Controls["txtINTValue"].Text = Instances.Character.Intelligence.ToString();
-                panelCharacter.Controls["txtCONValue"].Text = Instances.Character.Constitution.ToString();
+        private void SetPlayerInfo()
+        {
+            LogWriter.Write(LOG_NAME, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.GamePlay, "Setting Player Info");
+            // Set the Character's name
+            panelCharacter.Controls["lblCharacterName"].Text = Instances.Character.Name;
 
-                // Set their gold
-                panelCharacter.Controls["txtInventoryGold"].Text = Instances.Character.Gold.ToString();
+            // Set their current HP and Magic levels
+            panelCharacter.Controls["lblHPValue"].Text = $"{Instances.Character.CurrentHP}/{Instances.Character.MaxHP}";
+            panelCharacter.Controls["lblMagicValue"].Text = $"{Instances.Character.CurrentMagic}/{Instances.Character.MaxMagic}";
 
-                pboxLeft = (PictureBox)panelCharacter.Controls["picLeftHand"];
-                pboxRight = (PictureBox)panelCharacter.Controls["picRightHand"];
+            // Set their STR, INT, and CON levels
+            panelCharacter.Controls["txtSTRValue"].Text = Instances.Character.Strength.ToString();
+            panelCharacter.Controls["txtINTValue"].Text = Instances.Character.Intelligence.ToString();
+            panelCharacter.Controls["txtCONValue"].Text = Instances.Character.Constitution.ToString();
 
-                // Show any items the character is holding
-                int inventoryCount = 1;
-                if(inventoryList.Count > 0)
+            // Set their gold
+            panelCharacter.Controls["txtInventoryGold"].Text = Instances.Character.Gold.ToString();
+
+            pboxLeft = (PictureBox)panelCharacter.Controls["picLeftHand"];
+            pboxRight = (PictureBox)panelCharacter.Controls["picRightHand"];
+        }
+
+        private void SetInventory()
+        {
+            LogWriter.Write(LOG_NAME, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.GamePlay, "Setting Player Inventory");
+            // Show any items the character is holding
+            int inventoryCount = 1;
+            if (inventoryList.Count > 0)
+            {
+                foreach (Inventory item in inventoryList)
                 {
-                    foreach(Inventory item in inventoryList)
+                    if (item.IsUsing == 1)
                     {
-                        if (item.IsUsing == 1)
+                        // Determine which hand
+                        if (item.Hand == 1)
                         {
-                            // Determine which hand
-                            if(item.Hand == 1)
-                            {
-                                // Left Hand
-                                pboxLeft.Image = (Image)Properties.Resources.ResourceManager.GetObject(GetAssetName(item.UniqueID));
-                                pboxLeft.Refresh();
-                            }
-                            else if(item.Hand == 2)
-                            {
-                                // Right hand
-                                pboxRight.Image = (Image)Properties.Resources.ResourceManager.GetObject(GetAssetName(item.UniqueID));
-                                pboxRight.Refresh();
-                            }
+                            // Left Hand
+                            pboxLeft.Image = (Image)Properties.Resources.ResourceManager.GetObject(GetAssetName(item.UniqueID));
+                            pboxLeft.Refresh();
                         }
-                        else if(item.IsUsing == 0)
+                        else if (item.Hand == 2)
                         {
-                            // Add the item to the inventory panel
-                            PictureBox tempPicBox = (PictureBox)panelInventory.Controls["picboxInventory" + inventoryCount];
-                            tempPicBox.Image = (Image)Properties.Resources.ResourceManager.GetObject(GetAssetName(item.ItemID));
-                            tempPicBox.Refresh();
+                            // Right hand
+                            pboxRight.Image = (Image)Properties.Resources.ResourceManager.GetObject(GetAssetName(item.UniqueID));
+                            pboxRight.Refresh();
+                        }
+                    }
+                    else if (item.IsUsing == 0)
+                    {
+                        // Add the item to the inventory panel
+                        PictureBox tempPicBox = (PictureBox)panelInventory.Controls["picboxInventory" + inventoryCount];
+                        tempPicBox.Image = (Image)Properties.Resources.ResourceManager.GetObject(GetAssetName(item.ItemID));
+                        tempPicBox.Refresh();
 
-                            inventoryCount++;
-                        }
+                        inventoryCount++;
                     }
                 }
             }
@@ -118,6 +131,8 @@ namespace Adventure
         /// <returns></returns>
         public void Heal(int current, int max, int healAmount, int type)
         {
+            string typeName = type == HP ? "HP" : "Magic";
+            LogWriter.Write(LOG_NAME, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.GamePlay, $"Healing {typeName} for {healAmount} points");
             Label lblValue;
             current += healAmount;
 
@@ -147,6 +162,8 @@ namespace Adventure
         /// <param name="damageAmount">The amount to reduce by</param>
         public void Damage(int current, int damageAmount, int type)
         {
+            string typeName = type == HP ? "HP" : "Magic";
+            LogWriter.Write(LOG_NAME, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.GamePlay, $"Damaging {typeName} for {damageAmount} points");
             Label lblValue;
             current -= damageAmount;
 
@@ -195,7 +212,7 @@ namespace Adventure
         {
             try
             {
-                LogWriter.Write("ControllerGame", MethodBase.GetCurrentMethod().Name, "Current inventory size: " + inventoryList.Count);
+                LogWriter.Write(LOG_NAME, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.GamePlay, "Current inventory size: " + inventoryList.Count);
 
                 if (inventoryList.Count < MAX_INVENTORY_SIZE)
                 {
@@ -208,7 +225,7 @@ namespace Adventure
             }
             catch (Exception ex)
             {
-                LogWriter.Write("ControllerGame", MethodBase.GetCurrentMethod().Name, "Error checking inventory space: " + ex);
+                LogWriter.Write(LOG_NAME, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, "Checking inventory space: " + ex);
                 return false;
             }
         }
@@ -226,6 +243,7 @@ namespace Adventure
                 panelInventory.Visible = true;
 
 #if DEBUG
+                LogWriter.Write(LOG_NAME, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Debug, "Loading Debug panel");
                 Instances.PanelDev = new xDEV();
                 panelGame.Controls.Add(Instances.PanelDev);
 #endif
@@ -233,6 +251,7 @@ namespace Adventure
                 // Only show these panels if applicable
                 if (API.LoadQuestLog(Instances.Character.UniqueID))
                 {
+                    LogWriter.Write(LOG_NAME, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.GamePlay, "Loading QuestLog panel");
                     panelQuest.Visible = true;
                     PopulateQuestsPanel();
                 }
@@ -240,6 +259,7 @@ namespace Adventure
 
                 if (API.HasSpellbook(Instances.Character.UniqueID))
                 {
+                    LogWriter.Write(LOG_NAME, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.GamePlay, "Loading Spellbook panel");
                     panelSpells.Visible = true;
                     PopulateSpellsPanel();
                 }
@@ -249,6 +269,7 @@ namespace Adventure
 
         private void PopulateQuestsPanel()
         {
+            LogWriter.Write(LOG_NAME, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.GamePlay, "Populating quests");
             TabControl tabQuests = (TabControl)Instances.FormMain.Controls["tabQuests"];
             ListView listViewComplete = new ListView();
             ListView listViewActive = new ListView();
@@ -361,7 +382,7 @@ namespace Adventure
 
         private void PopulateSpellsPanel()
         {
-
+            // TODO: Add method for PopulateSpellsPanel
         }
 
         /// <summary>
@@ -371,18 +392,26 @@ namespace Adventure
         /// <returns>Path to image</returns>
         private string GetAssetName(int itemID)
         {
-            string assetName = "Item_";
-
-            foreach (Item item in API.itemsList)
+            try
             {
-                if (item.UniqueID == itemID)
-                {
-                    assetName += item.AssetName;
-                    return assetName;
-                }
-            }
+                string assetName = "Item_";
 
-            return assetName;
+                foreach (Item item in API.itemsList)
+                {
+                    if (item.UniqueID == itemID)
+                    {
+                        assetName += item.AssetName;
+                        return assetName;
+                    }
+                }
+
+                return assetName;
+            }
+            catch(Exception ex)
+            {
+                LogWriter.Write(LOG_NAME, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Critical, ex.Message);
+                return null;
+            }
         }
     }
 }

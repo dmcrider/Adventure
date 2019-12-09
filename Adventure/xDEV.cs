@@ -17,6 +17,7 @@ namespace Adventure
         {
             InitializeComponent();
             this.Name = "panelDev";
+            txtDamage.Text = rand.Next(1, 21).ToString();
         }
 
         private void BtnReduceHP_Click(object sender, EventArgs e)

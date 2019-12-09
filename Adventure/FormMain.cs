@@ -87,16 +87,6 @@ namespace Adventure
             apiThread.Start();
         }
 
-        private void SetInstances()
-        {
-            Instances.FormMain = this;
-            Instances.FormShop = new FormShop();
-            Instances.FormManageInventory = new FormManageInventory();
-            Instances.FormSupport = new FormSupport();
-            Instances.FormCharacterCreation = new FormCharacterCreation();
-            Instances.GameController = new GameController();
-        }
-
         private void APIChecks()
         {
             string response = new WebClient().DownloadString(Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.VersionAPI);
@@ -106,17 +96,17 @@ namespace Adventure
             if (!API.CheckVersion(convertedJSON))
             {
                 // Load remote data
-                LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "Loading remote data");
+                LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Info, "Loading remote data");
                 API.UpdateFromDatabase();
             }
             else
             {
                 // Load local data
-                LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "Loading local data");
+                LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Info, "Loading local data");
                 API.LoadData();
             }
 
-            LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "Success - everything is loaded");
+            LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Success, "Everything is loaded");
         }
 
         private void FormMain_Shown(object sender, EventArgs e)
@@ -142,12 +132,12 @@ namespace Adventure
                 {
                     // Does not yet have a character
                     // Show the character creation screen
-                    LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "Error - Player must create Character");
+                    LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.GamePlay, "Player must create Character");
                     Instances.FormCharacterCreation.ShowDialog();
 
                     if (Instances.Player.character == null)
                     {
-                        LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "Error - Player closed creation screen without saving");
+                        LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Critical, "Player closed creation screen without saving");
                         MessageBox.Show(Properties.Resources.ErrorGeneral);
                         Application.Exit();
                         return;
@@ -161,9 +151,19 @@ namespace Adventure
                 }
 
                 // Start the game
-                LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "Starting the game");
+                LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.GamePlay, "Starting the game");
                 Instances.GameController.PopulateInitialData();
             }
+        }
+
+        private void SetInstances()
+        {
+            Instances.FormMain = this;
+            Instances.FormShop = new FormShop();
+            Instances.FormManageInventory = new FormManageInventory();
+            Instances.FormSupport = new FormSupport();
+            Instances.FormCharacterCreation = new FormCharacterCreation();
+            Instances.GameController = new GameController();
         }
 
         private bool HasCharacter()
@@ -247,7 +247,7 @@ namespace Adventure
 
         private void BtnManageInventory_Click(object sender, EventArgs e)
         {
-            LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "Attempting to manage inventory");
+            LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.GamePlay, "Attempting to manage inventory");
             Instances.FormManageInventory.ShowDialog();
         }
 
@@ -255,12 +255,12 @@ namespace Adventure
         {
             try
             {
-                LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "Attempting to load Shop");
+                LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.GamePlay, "Attempting to load Shop");
                 Instances.FormShop.ShowDialog();
             }
             catch(Exception ex)
             {
-                LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "Error: " + ex);
+                LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, ex.Message);
             }
         }
 
