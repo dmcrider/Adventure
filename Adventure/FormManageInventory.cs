@@ -13,11 +13,11 @@ namespace Adventure
 {
     public partial class FormManageInventory : Form
     {
-        private CheckBox[] chkArray;
-        private PictureBox[] picArray;
-        private GroupBox[] grpArray;
+        private readonly CheckBox[] chkArray;
+        private readonly PictureBox[] picArray;
+        private readonly GroupBox[] grpArray;
 
-        private List<int> selectedItems;
+        private readonly List<int> selectedItems;
         private int selectedHand = 0;
 
         public FormManageInventory()
@@ -174,7 +174,7 @@ namespace Adventure
             }
             catch(Exception ex)
             {
-                LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "Error: " + ex);
+                LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, ex.Message);
             }
         }
 
@@ -211,7 +211,7 @@ namespace Adventure
             }
             catch(Exception ex)
             {
-                LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "Error: " + ex);
+                LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, ex.Message);
             }
         }
 
@@ -233,7 +233,7 @@ namespace Adventure
             }
             catch(Exception ex)
             {
-                LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "Error: " + ex);
+                LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, ex.Message);
             }
         }
 
@@ -268,17 +268,17 @@ namespace Adventure
                 }
                 catch(Exception ex)
                 {
-                    LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "Error healing: " + ex);
+                    LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, "Healing: " + ex);
                 }
             }
             else if(selectedItems.Count() > 1)
             {
-                LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "More than one item selected");
+                LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.GamePlay, "More than one item selected");
                 MessageBox.Show("You can only use one (1) item at a time!","Too Many Items");
             }
             else if(selectedItems.Count() == 0)
             {
-                LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "No item selected");
+                LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.GamePlay, "No item selected");
                 MessageBox.Show("You must select an item to use.","No Item Selected");
             }
         }
@@ -295,12 +295,12 @@ namespace Adventure
                 }
                 else
                 {
-                    LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "No hand was selected");
+                    LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.GamePlay, "No hand was selected");
                 }
             }
             catch(Exception ex)
             {
-                LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "Error adding item to hand: " + ex);
+                LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, "Adding item to hand: " + ex);
             }
         }
 
@@ -323,7 +323,7 @@ namespace Adventure
             }
             catch(Exception ex)
             {
-                LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "Error saving inventory: " + ex);
+                LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name,  LogWriter.LogType.Error, "Saving inventory: " + ex);
             }
         }
 
@@ -361,7 +361,7 @@ namespace Adventure
                             // Remove item from inventory
                             Inventory itemToDelete = Instances.Character.Inventory.Find(y => y.ItemID == itemsToDelete[j].UniqueID);
                             Instances.Character.Inventory.Remove(itemToDelete);
-                            LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "Deleted inventory object with ID " + itemToDelete.UniqueID);
+                            LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Info, "Deleted inventory object with ID " + itemToDelete.UniqueID);
                         }
                         // Push update via API
                         API.UpdateInventory(Instances.Character.UniqueID);
@@ -371,20 +371,20 @@ namespace Adventure
                     }
                     catch (Exception ex)
                     {
-                        LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "Error deleting items from inventory: " + ex);
+                        LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, "Deleting items from inventory: " + ex);
                     }
                 }
                 else if(result == DialogResult.No)
                 {
                     // Do not delete
                     // Do nothing for now, might add functionality later
-                    LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "User abort - No items deleted from inventory");
+                    LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.GamePlay, "User abort - No items deleted from inventory");
                     return;
                 }
             }
             else
             {
-                LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "No items were selected");
+                LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.GamePlay, "No items were selected");
                 MessageBox.Show("You must select at least one (1) item to delete.", "No Item Selected");
             }
         }

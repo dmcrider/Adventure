@@ -30,12 +30,13 @@ namespace Adventure
 
         public void Save_Click(object sender, EventArgs e)
         {
+            LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Info, "Saving Progress");
             API.SaveProgress(Instances.Player);
         }
 
         public void Logout_Click(object sender, EventArgs e)
         {
-
+            LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Info, "Logging out");
             if (MessageBox.Show(Properties.Resources.ConfirmNoSaveMessage, Properties.Resources.ConfirmNoSaveTitle, MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
                 // Nullify the current user
@@ -53,8 +54,17 @@ namespace Adventure
 
         public void SaveAndExit_Click(object sender, EventArgs e)
         {
-            Save_Click(this, EventArgs.Empty);
-            ExitApplication();
+            DialogResult confirmExit = MessageBox.Show("Do you really want to save and exit the game?","Confirm Exit",MessageBoxButtons.OKCancel);
+
+            if(confirmExit == DialogResult.OK)
+            {
+                Save_Click(this, EventArgs.Empty);
+                ExitApplication();
+            }
+            else
+            {
+                return;
+            }
         }
 
         public void SaveAndLogout_Click(object sender, EventArgs e)
@@ -179,7 +189,7 @@ namespace Adventure
                 if(character != null)
                 {
                     hasCharacter = true;
-                    Instances.Character = character;
+                    Instances.Player.character = Instances.Character = character;
                 }
             }
 
@@ -211,7 +221,6 @@ namespace Adventure
 
         private void ExitToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
             ExitNoSaveConfirm();
         }
 
@@ -220,6 +229,7 @@ namespace Adventure
             if (MessageBox.Show(Properties.Resources.ConfirmNoSaveMessage, Properties.Resources.ConfirmNoSaveTitle, MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
                 // User does not want to save
+                LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Warning, "Player is exiting without saving progress");
                 ExitApplication();
             }
             else
@@ -230,6 +240,7 @@ namespace Adventure
 
         private void ExitApplication()
         {
+            LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Info, "Exiting application");
             if (Application.MessageLoop)
             {
                 Application.Exit();

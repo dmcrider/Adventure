@@ -24,8 +24,8 @@ namespace Adventure
         public static List<QuestReward> questrewardsList = new List<QuestReward>();
 
         // Single WebClient used throughout this class
-        private static WebClient client = new WebClient();
-        private static string storageLocation = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Adventure\\";
+        private static readonly WebClient client = new WebClient();
+        private static readonly string storageLocation = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Adventure\\";
 
         /// <summary>
         /// Checks the local version against the cloud version
@@ -136,7 +136,7 @@ namespace Adventure
         /// <returns>Returns 1 if login was successful, 0 if login failed</returns>
         public static int Login(Player player)
         {
-            string credentials = "";
+            string credentials;
             if (player.HasID())
             {
                 credentials = $"{{\"Username\":\"{player.username}\",\"Password\":\"{player.password}\",\"ID\":\"{player.uniqueID}\"}}";
@@ -325,7 +325,7 @@ namespace Adventure
                 {
                     if (obj.Key == "success")
                     {
-                        int inventoryID = (int)convertedJSON.GetValue("UniqueID");
+                        //int inventoryID = (int)convertedJSON.GetValue("UniqueID");
                         LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Success, $"Item {convertedJSON.GetValue("DisplayName")} added to inventory successfully.");
                         LoadInventory(character.UniqueID);
                     }
@@ -385,12 +385,12 @@ namespace Adventure
                     {
                         if(obj.Key == "success")
                         {
-                            LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Success, "Inventory Updated successfully.");
+                            LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Success, "Updating Inventory");
                             return true;
                         }
                         else
                         {
-                            LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, "Failed to update inventory");
+                            LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, "Updating Inventory");
                             return false;
                         }
                     }
@@ -463,7 +463,7 @@ namespace Adventure
                         }
                     }
                 }
-
+                LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Success, "Updated from database");
                 SaveData();
             }
             catch (Exception e)
@@ -518,7 +518,7 @@ namespace Adventure
         public static bool HasSpellbook(int characterID)
         {
             // Need to add API functionality on server first!!
-            LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.NotYetImplemented, "NOT YET IMPLEMENTED");
+            LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.NotYetImplemented, $"NOT YET IMPLEMENTED - {characterID}");
             return false;
         }
 
@@ -539,7 +539,7 @@ namespace Adventure
         /// <param name="playerID">The ID of the Player associated with the Character</param>
         private static void UpdateCharacter(Character character, int playerID)
         {
-            string charValues = $"{{\"UserID\":\"{playerID}\",\"Name\":\"{character.Name}\",\"RaceID\":\"{character.RaceID}\",\"Gender\":\"{character.Gender}\",\"MaxHP\":\"{character.MaxHP}\",\"CurrentHP\":\"{character.CurrentHP}\",\"MaxMagic\":\"{character.MaxMagic}\",\"CurrentMagic\":\"{character.CurrentMagic}\",\"Strength\":\"{character.Strength}\",\"Intelligence\":\"{character.Intelligence}\",\"Constitution\":\"{character.Constitution}\",\"Gold\":\"{character.Gold}\",\"Level\":\"{character.Level}\",\"ExpPoints\":\"{character.ExpPoints}\"}}";
+            string charValues = $"{{\"UniqueID\":\"{Instances.Player.uniqueID}\",\"UserID\":\"{playerID}\",\"Name\":\"{character.Name}\",\"RaceID\":\"{character.RaceID}\",\"Gender\":\"{character.Gender}\",\"MaxHP\":\"{character.MaxHP}\",\"CurrentHP\":\"{character.CurrentHP}\",\"MaxMagic\":\"{character.MaxMagic}\",\"CurrentMagic\":\"{character.CurrentMagic}\",\"Strength\":\"{character.Strength}\",\"Intelligence\":\"{character.Intelligence}\",\"Constitution\":\"{character.Constitution}\",\"Gold\":\"{character.Gold}\",\"Level\":\"{character.Level}\",\"ExpPoints\":\"{character.ExpPoints}\"}}";
             string response = client.UploadString(Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.CharacterUpdateAPI, charValues);
             JObject convertedJSON = JObject.Parse(response);
 
@@ -589,6 +589,8 @@ namespace Adventure
                 File.WriteAllText(storageLocation + "races.json", racesJSON);
                 File.WriteAllText(storageLocation + "npcs.json", npcsJSON);
                 File.WriteAllText(storageLocation + "questrewards.json", questRewardsJSON);
+
+                LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Info, "Data successfully saved");
             }
             catch(Exception ex)
             {
@@ -622,6 +624,7 @@ namespace Adventure
                                 Player tempPlayer = (Player)jsonInput.ToObject(typeof(Player));
                                 if (tempPlayer.username == player.username)
                                 {
+                                    LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Success, "Loaded Player data");
                                     return true;
                                 }
                             }

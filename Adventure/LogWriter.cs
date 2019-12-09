@@ -19,12 +19,14 @@ namespace Adventure
             {
                 string outputPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Adventure\\";
 
-                using StreamWriter w = File.AppendText(outputPath + "log.txt");
-                string output = "";
-                output += string.Format("{0} {1}", DateTime.Now.ToLongTimeString(), DateTime.Now.ToLongDateString());
-                output += string.Format("\t{0}.{1}() | {2} - {3}", className, methodName, type, logMessage);
+                using (StreamWriter w = File.AppendText(outputPath + "log.txt"))
+                {
+                    string output = "";
+                    output += string.Format("{0} {1}", DateTime.Now.ToLongTimeString(), DateTime.Now.ToLongDateString());
+                    output += string.Format("\t{0}.{1}() | {2} - {3}", className, methodName, type, logMessage);
 
-                w.WriteLine(output);
+                    w.WriteLine(output);
+                }
             }
             catch
             {

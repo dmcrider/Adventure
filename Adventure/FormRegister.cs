@@ -16,7 +16,7 @@ namespace Adventure
     public partial class FormRegister : Form
     {
         // Create an alert label
-        Label invalidRegisterLabel = new Label
+        readonly Label invalidRegisterLabel = new Label
         {
             Location = new Point(0, 0),
             ForeColor = Color.Red,
@@ -68,7 +68,7 @@ namespace Adventure
 
             txtUsername.Text = String.Empty;
             txtUsername.Focus();
-            LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "Player is already registered");
+            LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Warning, "Player is already registered");
         }
 
         private void AlertInvalidRegister()
@@ -76,7 +76,7 @@ namespace Adventure
             invalidRegisterLabel.Width = this.Width;
             // Add the label to the form
             this.Controls.Add(invalidRegisterLabel);
-            LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "Error - Invalid registration");
+            LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, "Invalid registration");
         }
     }
 }

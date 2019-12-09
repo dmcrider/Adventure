@@ -42,7 +42,7 @@ namespace Adventure
         /// </summary>
         private void LoadPlayerList()
         {
-            LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "Loading Player Inventory");
+            LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.GamePlay, "Loading Player Inventory");
             // Set the columns
             listViewPlayer.Columns.Add("Item Name");
             listViewPlayer.Columns.Add("Value");
@@ -63,7 +63,7 @@ namespace Adventure
             }
             catch(Exception ex)
             {
-                LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "Error loading player inventory: " + ex);
+                LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, "Loading player inventory: " + ex);
             }
         }
 
@@ -72,7 +72,7 @@ namespace Adventure
         /// </summary>
         private void LoadShopList()
         {
-            LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "Loading Shop Inventory");
+            LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.GamePlay, "Loading Shop Inventory");
             // Set the columns
             listViewShop.Columns.Add("Item Name");
             listViewShop.Columns.Add("Price");
@@ -91,7 +91,7 @@ namespace Adventure
             }
             catch (Exception ex)
             {
-                LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "Error loading shop inventory: " + ex);
+                LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, "Loading shop inventory: " + ex);
             }
         }
 
@@ -133,7 +133,7 @@ namespace Adventure
                     LoadPlayerList();
 
                     // Log the transaction
-                    LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, $"Player bought Item#{tempItem.UniqueID} - {tempItem.DisplayName} from shop for {total}");
+                    LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.GamePlay, $"Player bought Item#{tempItem.UniqueID} - {tempItem.DisplayName} from shop for {total}");
 
                     // Reset the total
                     total = 0;
@@ -141,7 +141,7 @@ namespace Adventure
                 }
                 catch(Exception ex)
                 {
-                    LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "Error purchasing from shop: " + ex);
+                    LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, "Purchasing from shop: " + ex);
                     MessageBox.Show("There was an error purchasing your items. Please try again later.", "Error Buying");
                 }
             }
@@ -179,7 +179,7 @@ namespace Adventure
                         LoadPlayerList();
 
                         // Log the transaction
-                        LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, $"Player sold Item#{tempItem.UniqueID} - {tempItem.DisplayName} to shop for {total}");
+                        LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.GamePlay, $"Player sold Item#{tempItem.UniqueID} - {tempItem.DisplayName} to shop for {total}");
 
                         // Reset the total
                         total = 0;
@@ -192,7 +192,7 @@ namespace Adventure
                 }
                 catch (Exception ex)
                 {
-                    LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "Error selling to shop: " + ex);
+                    LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, "Selling to shop: " + ex);
                     MessageBox.Show("There was an error selling your items. Please try again later.", "Error Selling");
                 }
             }

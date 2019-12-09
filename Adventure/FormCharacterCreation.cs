@@ -60,7 +60,7 @@ namespace Adventure
             }
             catch (Exception ex)
             {
-                LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "Error: " + ex);
+                LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, ex.Message);
                 return;
             }
         }
@@ -83,7 +83,7 @@ namespace Adventure
             }
             catch(Exception ex)
             {
-                LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "Error: " + ex);
+                LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, ex.Message);
                 return;
             }
         }
@@ -98,16 +98,18 @@ namespace Adventure
             }
             catch (Exception ex)
             {
-                LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "Error: " + ex);
+                LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, ex.Message);
             }
         }
 
         private void BtnSave_Click(object sender, EventArgs e)
         {
             // Create and save the character
-            Instances.Character = new Character(Instances.Player.uniqueID,txtCharacterName.Text,selectedRace);
-            Instances.Character.Gold = selectedGold;
-            Instances.Character.Gender = selectedGender;
+            Instances.Character = new Character(Instances.Player.uniqueID, txtCharacterName.Text, selectedRace)
+            {
+                Gold = selectedGold,
+                Gender = selectedGender
+            };
             bool creationSuccess = false;
             try
             {
@@ -115,7 +117,7 @@ namespace Adventure
             }
             catch (Exception ex)
             {
-                LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "Error creating character: " + ex);
+                LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, "Creating character: " + ex);
             }
 
             if (!creationSuccess)
