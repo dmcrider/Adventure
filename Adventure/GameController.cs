@@ -270,21 +270,36 @@ namespace Adventure
         private void PopulateQuestsPanel()
         {
             LogWriter.Write(LOG_NAME, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.GamePlay, "Populating quests");
-            TabControl tabQuests = (TabControl)Instances.FormMain.Controls["tabQuests"];
+            Panel panelQuest = (Panel)Instances.FormMain.Controls["panelQuest"];
+            TabControl tabQuests = (TabControl)panelQuest.Controls["tabQuests"];
+            tabQuests.TabPages.Clear(); // delete default tabs that we don't want
             ListView listViewComplete = new ListView();
             ListView listViewActive = new ListView();
 
-            listViewComplete.Columns.Add("QuestID").Width = 0;
-            listViewComplete.Columns.Add("Quest Name");
-            listViewComplete.Columns.Add("Description");
-            listViewComplete.Columns.Add("Reward");
-            listViewComplete.Columns.Add("Gold");
+            listViewComplete.View = View.Details;
+            listViewComplete.Width = tabQuests.Width;
+            listViewComplete.Height = tabQuests.Height;
 
-            listViewActive.Columns.Add("QuestID").Width = 0;
+            listViewActive.View = View.Details;
+            listViewActive.Width = tabQuests.Width;
+            listViewActive.Height = tabQuests.Height;
+
+            listViewComplete.Click += ListViewComplete_Click;
+            listViewActive.Click += ListViewActive_Click;
+
+
+            listViewComplete.Columns.Add("Quest Name");
+            listViewComplete.Columns.Add("QuestID").Width = 0;
+            /*listViewComplete.Columns.Add("Description");
+            listViewComplete.Columns.Add("Reward");
+            listViewComplete.Columns.Add("Gold");*/
+
+
             listViewActive.Columns.Add("Quest Name");
-            listViewActive.Columns.Add("Description");
+            listViewActive.Columns.Add("QuestID").Width = 0;
+            /*listViewActive.Columns.Add("Description");
             listViewActive.Columns.Add("Reward");
-            listViewActive.Columns.Add("Gold");
+            listViewActive.Columns.Add("Gold");*/
 
             // Create the tab pages
             TabPage currentQuest = new TabPage
@@ -314,7 +329,11 @@ namespace Adventure
 
                     if (log.StateID == State.IN_PROGRESS) // Only one active quest at a time
                     {
-                        ControlActiveQuest ctrlActive = new ControlActiveQuest();
+                        ControlActiveQuest ctrlActive = new ControlActiveQuest
+                        {
+                            Quest = tempQuest
+                        };
+
                         ctrlActive.Controls["lblQuestName"].Text = tempQuest.Name;
                         ctrlActive.Controls["txtDescription"].Text = tempQuest.Description;
 
@@ -341,13 +360,17 @@ namespace Adventure
                     }
                     else if (log.StateID == State.NEW) // New quests not yet started
                     {
-                        tempReward = API.questrewardsList.Find(x => x.UniqueID == tempQuest.QuestRewardID);
-                        rewardItem = API.itemsList.Find(y => y.UniqueID == tempReward.ItemID);
-                        string[] rowBuilder = { tempQuest.UniqueID.ToString(), tempQuest.Name, tempQuest.Description, rewardItem.DisplayName, tempReward.Gold.ToString() };
-                        ListViewItem row = new ListViewItem(rowBuilder);
-                        listViewActive.Items.Add(row);
+                        // We don't have enough space to show all details - should probably have a popup view
+                        // that shows the details with a button to 'Make Active'
+                        //tempReward = API.questrewardsList.Find(x => x.UniqueID == tempQuest.QuestRewardID);
+                        //rewardItem = API.itemsList.Find(y => y.UniqueID == tempReward.ItemID);
 
-                        completedQuests.Controls.Add(listViewActive);
+                        string[] rowBuilder = { tempQuest.Name, tempQuest.UniqueID.ToString() };
+
+                        listViewActive.Items.Add(new ListViewItem(rowBuilder));
+                        listViewActive.Columns[0].Width = -1;
+
+                        activeQuests.Controls.Add(listViewActive);
                     }
                     else if(log.StateID == State.COMPLETE_NO_REWARD || log.StateID == State.COMPLETE_REWARD_AVAIL) // completed quests
                     {
@@ -367,17 +390,49 @@ namespace Adventure
                             row = new ListViewItem(rowBuilder);
                         }
                         listViewComplete.Items.Add(row);
+                        listViewComplete.Columns[0].Width = -1;
 
                         completedQuests.Controls.Add(listViewComplete);
                     }
                 }
                 
             }
-
             // Add the tab pages to the tab control
             tabQuests.TabPages.Add(currentQuest);
             tabQuests.TabPages.Add(activeQuests);
             tabQuests.TabPages.Add(completedQuests);
+        }
+
+        private void ListViewActive_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                ListView listView = (ListView)sender;
+                string questIDstring = listView.SelectedItems[0].SubItems[1].Text;
+                int.TryParse(questIDstring, out int questID);
+                Quest quest = API.questsList.Find(x => x.UniqueID == questID);
+
+                LogWriter.Write(LOG_NAME, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Info, "Displaying Quest Details for " + quest.Name);
+
+                DialogResult makeActive = new FormQuestDetail(quest).ShowDialog();
+
+                if (makeActive == DialogResult.Yes)
+                {
+                    // TODO: Update active quest
+                    // Set it as the active quest
+                    // and change the tab to show it
+                    LogWriter.Write(LOG_NAME, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.NotYetImplemented, "Cannot set quest as active");
+                }
+            }
+            catch (Exception ex)
+            {
+                LogWriter.Write(LOG_NAME, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, ex.Message);
+            }
+        }
+
+        private void ListViewComplete_Click(object sender, EventArgs e)
+        {
+            throw new NotImplementedException();
         }
 
         private void PopulateSpellsPanel()

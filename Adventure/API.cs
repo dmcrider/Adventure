@@ -152,7 +152,6 @@ namespace Adventure
                     credentials = $"{{\"Username\":\"{player.username}\",\"Password\":\"{player.password}\"}}";
                 }
             }
-            
             string response = client.UploadString(Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.LoginAPI, credentials);
             JObject convertedJSON = JObject.Parse(response);
 
@@ -411,7 +410,7 @@ namespace Adventure
         /// </summary>
         public static void UpdateFromDatabase()
         {
-
+            WebClient updateClient = new WebClient();
             string[] apiStrings = new string[8];
             apiStrings[0] = Properties.Settings.Default.ItemReadAPI;
             apiStrings[1] = Properties.Settings.Default.QuestReadAPI;
@@ -427,7 +426,7 @@ namespace Adventure
                 foreach (string apiName in apiStrings)
                 {
                     string fullAPI = Properties.Settings.Default.APIBaseAddress + apiName;
-                    string response = client.DownloadString(fullAPI);
+                    string response = updateClient.DownloadString(fullAPI);
                     JObject convertedJSON = JObject.Parse(response);
 
                     foreach (var obj in convertedJSON)

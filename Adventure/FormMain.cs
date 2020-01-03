@@ -21,6 +21,7 @@ namespace Adventure
         public FormMain()
         {
             InitializeComponent();
+            SetInstances();
         }
 
         public static void InventoryFullMessageBox()
@@ -121,7 +122,7 @@ namespace Adventure
 
         private void FormMain_Shown(object sender, EventArgs e)
         {
-            SetInstances();
+            //SetInstances();
 
             // Disable the main form until the user has sucesfully logged in
             this.Enabled = false;
