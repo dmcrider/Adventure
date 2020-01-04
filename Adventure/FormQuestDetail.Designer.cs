@@ -38,6 +38,7 @@
             this.btnClose = new System.Windows.Forms.Button();
             this.lblEXPValue = new System.Windows.Forms.Label();
             this.lblEXP = new System.Windows.Forms.Label();
+            this.btnRejectQuest = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // lblQuestName
@@ -100,21 +101,21 @@
             // 
             this.btnMakeActive.Location = new System.Drawing.Point(17, 345);
             this.btnMakeActive.Name = "btnMakeActive";
-            this.btnMakeActive.Size = new System.Drawing.Size(111, 34);
+            this.btnMakeActive.Size = new System.Drawing.Size(133, 34);
             this.btnMakeActive.TabIndex = 6;
             this.btnMakeActive.Text = "Make Active";
             this.btnMakeActive.UseVisualStyleBackColor = true;
-            this.btnMakeActive.Click += new System.EventHandler(this.btnMakeActive_Click);
+            this.btnMakeActive.Click += new System.EventHandler(this.BtnMakeActive_Click);
             // 
             // btnClose
             // 
-            this.btnClose.Location = new System.Drawing.Point(267, 345);
+            this.btnClose.Location = new System.Drawing.Point(297, 345);
             this.btnClose.Name = "btnClose";
-            this.btnClose.Size = new System.Drawing.Size(111, 34);
+            this.btnClose.Size = new System.Drawing.Size(81, 34);
             this.btnClose.TabIndex = 7;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
-            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
+            this.btnClose.Click += new System.EventHandler(this.BtnClose_Click);
             // 
             // lblEXPValue
             // 
@@ -135,11 +136,22 @@
             this.lblEXP.TabIndex = 8;
             this.lblEXP.Text = "Experience:";
             // 
+            // btnRejectQuest
+            // 
+            this.btnRejectQuest.Location = new System.Drawing.Point(169, 345);
+            this.btnRejectQuest.Name = "btnRejectQuest";
+            this.btnRejectQuest.Size = new System.Drawing.Size(111, 34);
+            this.btnRejectQuest.TabIndex = 10;
+            this.btnRejectQuest.Text = "Reject Quest";
+            this.btnRejectQuest.UseVisualStyleBackColor = true;
+            this.btnRejectQuest.Click += new System.EventHandler(this.BtnRejectQuest_Click);
+            // 
             // FormQuestDetail
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(390, 391);
+            this.Controls.Add(this.btnRejectQuest);
             this.Controls.Add(this.lblEXPValue);
             this.Controls.Add(this.lblEXP);
             this.Controls.Add(this.btnClose);
@@ -174,5 +186,6 @@
         private System.Windows.Forms.Button btnClose;
         private System.Windows.Forms.Label lblEXPValue;
         private System.Windows.Forms.Label lblEXP;
+        private System.Windows.Forms.Button btnRejectQuest;
     }
 }

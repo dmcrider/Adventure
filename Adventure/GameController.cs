@@ -26,6 +26,9 @@ namespace Adventure
         public static List<Inventory> inventoryList = new List<Inventory>();
         public static List<Item> shopItems = new List<Item>();
         public static List<QuestLog> questLog = new List<QuestLog>();
+        public static List<Quest> questLogList = new List<Quest>();
+        public static ListView listViewCompletedQuests = new ListView();
+        public static ListView listViewAcceptedQuests = new ListView();
         // Private variables
         private PictureBox pboxLeft;
         private PictureBox pboxRight;
@@ -230,6 +233,28 @@ namespace Adventure
             }
         }
 
+        public static void AddActiveQuest(Quest q, State state)
+        {
+            try
+            {
+                LogWriter.Write(LOG_NAME, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.GamePlay, "Player accepted Quest: " + q.Name);
+
+                // Create a questlog entry
+                QuestLog questLog = new QuestLog(-1,Instances.Character.UniqueID, q.UniqueID, state, 1);
+                if (API.CreateQuestLog(questLog))
+                {
+                    Quest tempQuest = API.questsList.Find(x => x.UniqueID == questLog.QuestID);
+                    string[] rowBuilder = { tempQuest.Name, tempQuest.UniqueID.ToString() };
+                    listViewAcceptedQuests.Items.Add(new ListViewItem(rowBuilder));
+                    questLogList.Add(tempQuest);
+                }
+            }
+            catch(Exception ex)
+            {
+                LogWriter.Write(LOG_NAME, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.GamePlay, ex.Message);
+            }
+        }
+
         /// <summary>
         /// Display relevant Panels
         /// </summary>
@@ -267,39 +292,43 @@ namespace Adventure
             }
         }
 
+        /// <summary>
+        /// Populate a searchable list of Quests from the QuestLog
+        /// </summary>
+        private void ExtrapolateQuestList()
+        {
+            foreach(QuestLog ql in questLog)
+            {
+                questLogList.Add(API.questsList.Find(x => x.UniqueID == ql.QuestID));
+            }
+        }
+
         private void PopulateQuestsPanel()
         {
             LogWriter.Write(LOG_NAME, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.GamePlay, "Populating quests");
+            ExtrapolateQuestList();
             Panel panelQuest = (Panel)Instances.FormMain.Controls["panelQuest"];
             TabControl tabQuests = (TabControl)panelQuest.Controls["tabQuests"];
             tabQuests.TabPages.Clear(); // delete default tabs that we don't want
-            ListView listViewComplete = new ListView();
-            ListView listViewActive = new ListView();
 
-            listViewComplete.View = View.Details;
-            listViewComplete.Width = tabQuests.Width;
-            listViewComplete.Height = tabQuests.Height;
+            listViewCompletedQuests.View = View.Details;
+            listViewCompletedQuests.Width = tabQuests.Width;
+            listViewCompletedQuests.Height = tabQuests.Height;
 
-            listViewActive.View = View.Details;
-            listViewActive.Width = tabQuests.Width;
-            listViewActive.Height = tabQuests.Height;
+            listViewAcceptedQuests.View = View.Details;
+            listViewAcceptedQuests.Width = tabQuests.Width;
+            listViewAcceptedQuests.Height = tabQuests.Height;
 
-            listViewComplete.Click += ListViewComplete_Click;
-            listViewActive.Click += ListViewActive_Click;
+            listViewCompletedQuests.Click += ListViewComplete_Click;
+            listViewAcceptedQuests.Click += ListViewActive_Click;
 
 
-            listViewComplete.Columns.Add("Quest Name");
-            listViewComplete.Columns.Add("QuestID").Width = 0;
-            /*listViewComplete.Columns.Add("Description");
-            listViewComplete.Columns.Add("Reward");
-            listViewComplete.Columns.Add("Gold");*/
+            listViewCompletedQuests.Columns.Add("Quest Name");
+            listViewCompletedQuests.Columns.Add("QuestID").Width = 0;
 
 
-            listViewActive.Columns.Add("Quest Name");
-            listViewActive.Columns.Add("QuestID").Width = 0;
-            /*listViewActive.Columns.Add("Description");
-            listViewActive.Columns.Add("Reward");
-            listViewActive.Columns.Add("Gold");*/
+            listViewAcceptedQuests.Columns.Add("Quest Name");
+            listViewAcceptedQuests.Columns.Add("QuestID").Width = 0;
 
             // Create the tab pages
             TabPage currentQuest = new TabPage
@@ -355,22 +384,14 @@ namespace Adventure
                         // Add the gold
                         ctrlActive.Controls["txtGoldReward"].Text = tempReward.Gold.ToString();
 
-                        // Add the control to the tabpage
                         currentQuest.Controls.Add(ctrlActive);
                     }
                     else if (log.StateID == State.NEW) // New quests not yet started
                     {
-                        // We don't have enough space to show all details - should probably have a popup view
-                        // that shows the details with a button to 'Make Active'
-                        //tempReward = API.questrewardsList.Find(x => x.UniqueID == tempQuest.QuestRewardID);
-                        //rewardItem = API.itemsList.Find(y => y.UniqueID == tempReward.ItemID);
-
                         string[] rowBuilder = { tempQuest.Name, tempQuest.UniqueID.ToString() };
 
-                        listViewActive.Items.Add(new ListViewItem(rowBuilder));
-                        listViewActive.Columns[0].Width = -1;
-
-                        activeQuests.Controls.Add(listViewActive);
+                        listViewAcceptedQuests.Items.Add(new ListViewItem(rowBuilder));
+                        listViewAcceptedQuests.Columns[0].Width = -1;
                     }
                     else if(log.StateID == State.COMPLETE_NO_REWARD || log.StateID == State.COMPLETE_REWARD_AVAIL) // completed quests
                     {
@@ -382,21 +403,23 @@ namespace Adventure
                         {
                             row = new ListViewItem(rowBuilder)
                             {
-                                Font = new Font(listViewComplete.Font, FontStyle.Bold)
+                                Font = new Font(listViewCompletedQuests.Font, FontStyle.Bold)
                             };
                         }
                         else
                         {
                             row = new ListViewItem(rowBuilder);
                         }
-                        listViewComplete.Items.Add(row);
-                        listViewComplete.Columns[0].Width = -1;
-
-                        completedQuests.Controls.Add(listViewComplete);
+                        listViewCompletedQuests.Items.Add(row);
+                        listViewCompletedQuests.Columns[0].Width = -1;
                     }
                 }
                 
             }
+            // Add the control to the tabpage
+            activeQuests.Controls.Add(listViewAcceptedQuests);
+            completedQuests.Controls.Add(listViewCompletedQuests);
+
             // Add the tab pages to the tab control
             tabQuests.TabPages.Add(currentQuest);
             tabQuests.TabPages.Add(activeQuests);

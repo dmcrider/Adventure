@@ -509,6 +509,73 @@ namespace Adventure
             }
         }
 
+        public static bool UpdateQuestLog(QuestLog ql)
+        {
+            try
+            {
+                string dataString = $"{{\"UniqueID\":{ql.UniqueID},\"StateID\":{(int)ql.StateID}}}";
+                string response = client.UploadString(Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.QuestLogUpdateAPI, dataString);
+                JObject convertedJSON = JObject.Parse(response);
+
+                foreach(var obj in convertedJSON)
+                {
+                    if (obj.Key == "success")
+                    {
+                        LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Success, "Updating QuestLog");
+                        return true;
+                    }
+                    else
+                    {
+                        LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, "Updating QuestLog");
+                        return false;
+                    }
+                }
+            }
+            catch(Exception ex)
+            {
+                LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, ex.Message);
+                return false;
+            }
+
+            // This should never get hit
+            return false;
+        }
+
+        public static bool CreateQuestLog(QuestLog ql)
+        {
+            try
+            {
+                string dataString = $"{{\"CharacterID\":{Instances.Character.UniqueID},\"QuestID\":{ql.QuestID},\"StateID\":{(int)ql.StateID},\"IsActive\":{ql.IsActive}}}";
+                string response = client.UploadString(Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.QuestLogCreateAPI, dataString);
+                JObject convertedJSON = JObject.Parse(response);
+
+                foreach (var obj in convertedJSON)
+                {
+                    if (obj.Key == "success")
+                    {
+                        LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Success, "Creating QuestLog");
+                        int.TryParse(convertedJSON.GetValue("UniqueID").ToString(), out int uniqueID);
+                        ql.UniqueID = uniqueID;
+                        GameController.questLog.Add(ql);
+                        return true;
+                    }
+                    else
+                    {
+                        LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, "Creating QuestLog");
+                        return false;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, ex.Message);
+                return false;
+            }
+
+            // This should never get hit
+            return false;
+        }
+
         /// <summary>
         /// Determines if the Character has access to Spells
         /// </summary>

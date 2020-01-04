@@ -32,7 +32,12 @@ namespace Adventure
 
         private void BtnNewQuest_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Not Yet Implemented", "NYI");
+            DialogResult r = new FormQuestDetail(API.questsList[1]).ShowDialog();
+
+            if(r == DialogResult.Yes)
+            {
+                GameController.AddActiveQuest(API.questsList[1], State.NEW);
+            }
         }
 
         private void BtnOpenShop_Click(object sender, EventArgs e)
