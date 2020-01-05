@@ -13,6 +13,9 @@ namespace Adventure
     public partial class FormQuestDetail : Form
     {
         private bool IsNewQuest;
+        private readonly Quest CurrentQuest;
+        private QuestReward CurrentReward;
+        private Item CurrentItem;
 
         public FormQuestDetail()
         {
@@ -21,7 +24,8 @@ namespace Adventure
 
         public FormQuestDetail(Quest q) : this()
         {
-            PopulateValues(q);
+            CurrentQuest = q;
+            PopulateValues();
         }
 
         private void FormQuestDetail_Load(object sender, EventArgs e)
@@ -30,30 +34,59 @@ namespace Adventure
             this.CenterToScreen();
         }
 
-        private void PopulateValues(Quest q)
+        private void PopulateValues()
         {
-            lblQuestName.Text = q.Name;
-            lblDescription.Text = q.Description;
+            lblQuestName.Text = CurrentQuest.Name;
+            lblDescription.Text = CurrentQuest.Description;
 
             // Check if this is a new quest
-            CheckForNewQuest(q);
+            CheckForNewQuest();
 
-            PopulateRewards(q);
+            SetButtons();
+
+            PopulateDetails();
         }
 
-        private void PopulateRewards(Quest q)
+        private void SetButtons()
         {
-            QuestReward reward = API.questrewardsList.Find(x => x.UniqueID == q.QuestRewardID);
-            lblEXPValue.Text = q.ExpAwarded.ToString();
-
-            if (reward != null)
+            if (IsNewQuest)
             {
-                lblGoldValue.Text = reward.Gold.ToString();
-
-                if (reward.ItemID != 0)
+                btnMakeActive.Text = "Accept Quest";
+                btnClose.Text = "Reject Quest";
+                btnReward.Visible = false;
+            }
+            else
+            {
+                if(CurrentQuest.GetQuestLog().StateID == State.COMPLETE_REWARD_AVAIL)
                 {
-                    Item item = API.itemsList.Find(x => x.UniqueID == reward.ItemID);
-                    lblRewardValue.Text = item.DisplayName;
+                    btnMakeActive.Visible = false;
+                    btnClose.Text = "Close";
+                    btnReward.Visible = true;
+                }
+                else
+                {
+                    btnMakeActive.Text = "Make Active";
+                    btnClose.Text = "Close";
+                    btnReward.Visible = false;
+                }
+            }
+
+            
+        }
+
+        private void PopulateDetails()
+        {
+            CurrentReward = API.questrewardsList.Find(x => x.UniqueID == CurrentQuest.QuestRewardID);
+            lblEXPValue.Text = CurrentQuest.ExpAwarded.ToString();
+
+            if (CurrentReward != null)
+            {
+                lblGoldValue.Text = CurrentReward.Gold.ToString();
+
+                if (CurrentReward.ItemID != 0)
+                {
+                    CurrentItem = API.itemsList.Find(x => x.UniqueID == CurrentReward.ItemID);
+                    lblRewardValue.Text = CurrentItem.DisplayName;
                 }
                 else
                 {
@@ -66,20 +99,12 @@ namespace Adventure
             }
         }
 
-        private void CheckForNewQuest(Quest q)
+        private void CheckForNewQuest()
         {
-            IsNewQuest = GameController.questLogList.Contains(q);
-
-            if (IsNewQuest)
-            {
-                btnMakeActive.Text = "Make Active";
-                btnRejectQuest.Visible = false;
-            }
-            else
-            {
-                btnMakeActive.Text = "Accept Quest";
-                btnRejectQuest.Visible = true;
-            }
+            // If the questLogList does NOT contain the Quest,
+            // then the parameter is a new quest and
+            // IsNewQuest should be set to TRUE
+            IsNewQuest = !GameController.questLogList.Contains(CurrentQuest);
         }
 
         private void BtnClose_Click(object sender, EventArgs e)
@@ -94,11 +119,79 @@ namespace Adventure
             this.Close();
         }
 
-        private void BtnRejectQuest_Click(object sender, EventArgs e)
+        private void BtnReward_Click(object sender, EventArgs e)
         {
-            // Right now we don't do anything else with a rejected quest
-            // TODO: Log reject quest
-            BtnClose_Click(this, EventArgs.Empty);
+            if(ClaimRewardGold() && ClaimRewardEXP())
+            {
+                if(CurrentReward.IsItem == 1)
+                {
+                    if (ClaimRewardItem())
+                    {
+                        // Update the questlog to show to reward has been claimed
+                        CurrentQuest.GetQuestLog().StateID = State.COMPLETE_NO_REWARD;
+                        API.UpdateQuestLog(CurrentQuest.GetQuestLog());
+                    }
+                    else
+                    {
+                        // Item not claimed, but don't claim gold/exp again
+                        CurrentQuest.GetQuestLog().StateID = State.COMPLETE_ONLY_ITEM;
+                        API.UpdateQuestLog(CurrentQuest.GetQuestLog());
+                    }
+                }
+                else
+                {
+                    // No item to claim, only gold/exp
+                    CurrentQuest.GetQuestLog().StateID = State.COMPLETE_NO_REWARD;
+                    API.UpdateQuestLog(CurrentQuest.GetQuestLog());
+                }
+            }
+            // else, do nothing - gold and exp should never throw an error
+        }
+
+        private bool ClaimRewardGold()
+        {
+            Instances.Character.Gold += CurrentReward.Gold;
+            return true;
+        }
+
+        private bool ClaimRewardEXP()
+        {
+            Instances.Character.ExpPoints += CurrentQuest.ExpAwarded;
+            return true;
+        }
+
+        private bool ClaimRewardItem()
+        {
+            APIStatusCode code = API.AddInventoryItem(Instances.Character, CurrentReward.ItemID);
+            string message = "Reward(s) ";
+            bool status = false;
+
+            if (code == APIStatusCode.SECONDARY_SUCCESS)
+            {
+                // Item Succesfully added AND inventory has been refreshed
+                message += "successfully added to inventory.";
+                status = true;
+            }
+            else if(code == APIStatusCode.SECONDARY_FAIL)
+            {
+                // Inventory was not refreshed from database
+                message += " were added, but there was an error saving. Please save the game or risk losing your reward(s).";
+                status = true;
+            }
+            else if(code == APIStatusCode.OUT_OF_SPACE)
+            {
+                // Something needs to be deleted
+                // User was alerted, so show inventory manage form
+                Instances.FormManageInventory.ShowDialog();
+            }
+            else
+            {
+                // Something went wrong adding item to inventory at the database transaction
+                message += "not added. Please try again later.";
+            }
+
+            MessageBox.Show(message, "Quest Complete");
+            return status;
         }
     }
 }

@@ -308,7 +308,7 @@ namespace Adventure
         {
             try
             {
-                bool updateSuccess = API.UpdateInventory(Instances.Character.UniqueID);
+                bool updateSuccess = API.IsSuccess(API.UpdateInventory(Instances.Character.UniqueID));
 
                 if (updateSuccess)
                 {

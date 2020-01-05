@@ -11,6 +11,7 @@ namespace Adventure
         NEW = 1,
         IN_PROGRESS = 2,
         COMPLETE_REWARD_AVAIL = 3,
-        COMPLETE_NO_REWARD = 4
+        COMPLETE_NO_REWARD = 4,
+        COMPLETE_ONLY_ITEM = 5
     }
 }

@@ -40,7 +40,7 @@ namespace Adventure
 
             if (pwd.Equals(pwd2))
             {
-                if (API.Register(username, pwd))
+                if (API.IsSuccess(API.Register(username, pwd)))
                 {
                     // Close the form so user can login
                     this.Close();

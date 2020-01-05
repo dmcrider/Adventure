@@ -241,7 +241,7 @@ namespace Adventure
 
                 // Create a questlog entry
                 QuestLog questLog = new QuestLog(-1,Instances.Character.UniqueID, q.UniqueID, state, 1);
-                if (API.CreateQuestLog(questLog))
+                if (API.IsSuccess(API.CreateQuestLog(questLog)))
                 {
                     Quest tempQuest = API.questsList.Find(x => x.UniqueID == questLog.QuestID);
                     string[] rowBuilder = { tempQuest.Name, tempQuest.UniqueID.ToString() };
@@ -274,7 +274,7 @@ namespace Adventure
 #endif
 
                 // Only show these panels if applicable
-                if (API.LoadQuestLog(Instances.Character.UniqueID))
+                if (API.IsSuccess(API.LoadQuestLog(Instances.Character.UniqueID)))
                 {
                     LogWriter.Write(LOG_NAME, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.GamePlay, "Loading QuestLog panel");
                     panelQuest.Visible = true;
@@ -282,7 +282,7 @@ namespace Adventure
                 }
                 //else, no questlogs for this player
 
-                if (API.HasSpellbook(Instances.Character.UniqueID))
+                if (API.IsSuccess(API.HasSpellbook(Instances.Character.UniqueID)))
                 {
                     LogWriter.Write(LOG_NAME, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.GamePlay, "Loading Spellbook panel");
                     panelSpells.Visible = true;
