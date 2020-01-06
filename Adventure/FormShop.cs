@@ -33,7 +33,7 @@ namespace Adventure
         /// </summary>
         private void SetGold()
         {
-            txtGoldPlayer.Text = Instances.Character.GetGold();
+            txtGoldPlayer.Text = Instances.Character.Gold.ToString();
             txtGoldShop.Text = GameController.SHOP_GOLD;
         }
 

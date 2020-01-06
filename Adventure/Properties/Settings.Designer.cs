@@ -232,5 +232,14 @@ namespace Adventure.Properties {
                 return ((string)(this["QuestLogCreateAPI"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("levels/read.php")]
+        public string LevelReadAPI {
+            get {
+                return ((string)(this["LevelReadAPI"]));
+            }
+        }
     }
 }

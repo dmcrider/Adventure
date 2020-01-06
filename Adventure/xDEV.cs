@@ -7,12 +7,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Reflection;
 
 namespace Adventure
 {
     public partial class xDEV : UserControl
     {
-        static Random rand = new Random();
+        static readonly Random rand = new Random();
+
         public xDEV()
         {
             InitializeComponent();
@@ -36,13 +38,24 @@ namespace Adventure
 
             if(r == DialogResult.Yes)
             {
-                GameController.AddActiveQuest(API.questsList[1], State.NEW);
+                GameController.AddAcceptedQuest(API.questsList[1], State.NEW);
             }
         }
 
         private void BtnOpenShop_Click(object sender, EventArgs e)
         {
             MessageBox.Show("Not Yet Implemented", "NYI");
+        }
+
+        private void BtnCompleteQuest_Click(object sender, EventArgs e)
+        {
+            LogWriter.Write("xDEV", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Debug, "Setting active quest to be completed.");
+            Panel panelQuest = (Panel)Instances.FormMain.Controls["panelQuest"];
+            TabControl tabQuests = (TabControl)panelQuest.Controls["tabQuests"];
+            TabPage activePage = (TabPage)tabQuests.Controls["active"];
+            ControlActiveQuest ctrlQuest = (ControlActiveQuest)activePage.Controls["questCtrl"];
+
+            ctrlQuest.Quest.GetQuestLog().StateID = State.CAN_COMPLETE;
         }
     }
 }

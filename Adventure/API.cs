@@ -22,6 +22,7 @@ namespace Adventure
         public static List<Race> racesList = new List<Race>();
         public static List<Npc> npcsList = new List<Npc>();
         public static List<QuestReward> questrewardsList = new List<QuestReward>();
+        public static List<LevelUp> levelList = new List<LevelUp>();
 
         // Single WebClient used throughout this class
         private static readonly WebClient client = new WebClient();
@@ -86,7 +87,7 @@ namespace Adventure
         {
             try
             {
-                string[] filesArray = {"items.json","quests.json","spells.json","stats.json","races.json","npcs.json","questrewards.json"};
+                string[] filesArray = {"items.json","quests.json","spells.json","stats.json","races.json","npcs.json","questrewards.json","levels.json"};
                 
 
                 foreach (string file in filesArray)
@@ -98,6 +99,7 @@ namespace Adventure
                     {
                         JsonSerializer serializer = new JsonSerializer();
                         JArray response = (JArray)serializer.Deserialize(inputFile, typeof(JObject));
+                        LogWriter.Write("API",MethodBase.GetCurrentMethod().Name,LogWriter.LogType.Debug,type + "\n" + response.ToString());
 
                         foreach(JObject obj in response)
                         {
@@ -123,6 +125,9 @@ namespace Adventure
                                     break;
                                 case "questrewards":
                                     questrewardsList.Add((QuestReward)obj.ToObject(typeof(QuestReward)));
+                                    break;
+                                case "levels":
+                                    levelList.Add((LevelUp)obj.ToObject(typeof(LevelUp)));
                                     break;
                                 default:
                                     break;
@@ -448,6 +453,7 @@ namespace Adventure
             apiStrings[5] = Properties.Settings.Default.StateReadAPI;
             apiStrings[6] = Properties.Settings.Default.NPCReadAPI;
             apiStrings[7] = Properties.Settings.Default.QuestRewardReadAPI;
+            //TODO: add level here
 
             try
             {
@@ -688,6 +694,7 @@ namespace Adventure
                 string racesJSON = JsonConvert.SerializeObject(racesList);
                 string npcsJSON = JsonConvert.SerializeObject(npcsList);
                 string questRewardsJSON = JsonConvert.SerializeObject(questrewardsList);
+                string levelJSON = JsonConvert.SerializeObject(levelList);
 
                 // Make sure the path exists before we try to save there
                 if (!Directory.Exists(storageLocation))
@@ -704,6 +711,7 @@ namespace Adventure
                 File.WriteAllText(storageLocation + "races.json", racesJSON);
                 File.WriteAllText(storageLocation + "npcs.json", npcsJSON);
                 File.WriteAllText(storageLocation + "questrewards.json", questRewardsJSON);
+                File.WriteAllText(storageLocation + "levels.json", levelJSON);
 
                 LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Info, "Data successfully saved");
                 return APIStatusCode.SECONDARY_SUCCESS;

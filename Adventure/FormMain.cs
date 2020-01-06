@@ -18,9 +18,11 @@ namespace Adventure
 {
     public partial class FormMain : Form
     {
+        public static bool IsLoading = true;
         public FormMain()
         {
             InitializeComponent();
+            IsLoading = true;
             SetInstances();
         }
 
@@ -74,6 +76,23 @@ namespace Adventure
             Logout_Click(this, EventArgs.Empty);
         }
 
+        /// <summary>
+        /// 'Refresh' the UI so any values that have updated will be displayed correctly
+        /// </summary>
+        public void UpdatePlayerInfoUI()
+        {
+            if(Instances.Character != null && API.levelList.Count() > 0)
+            {
+                LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Info, "Refreshing Player Info.");
+                txtInventoryGold.Text = Instances.Character.Gold.ToString();
+                txtSTRValue.Text = Instances.Character.Strength.ToString();
+                txtINTValue.Text = Instances.Character.Intelligence.ToString();
+                txtCONValue.Text = Instances.Character.Constitution.ToString();
+                lblLevelValue.Text = Instances.Character.Level.ToString();
+                lblEXPValue.Text = Instances.Character.ExpPoints.ToString() + "/" + API.levelList.Find(x => x.UniqueID == Instances.Character.Level).ExpNeeded;
+            }
+        }
+
         private void FormMain_Load(object sender, EventArgs e)
         {
             // Load some basic instances
@@ -122,8 +141,6 @@ namespace Adventure
 
         private void FormMain_Shown(object sender, EventArgs e)
         {
-            //SetInstances();
-
             // Disable the main form until the user has sucesfully logged in
             this.Enabled = false;
 
@@ -159,6 +176,7 @@ namespace Adventure
                     // Already has a character
                     // Load the inventory
                     API.LoadInventory(Instances.Character.UniqueID);
+                    UpdatePlayerInfoUI();
                 }
 
                 // Start the game
@@ -191,6 +209,7 @@ namespace Adventure
                 {
                     hasCharacter = true;
                     Instances.Player.character = Instances.Character = character;
+                    IsLoading = false;
                 }
             }
 

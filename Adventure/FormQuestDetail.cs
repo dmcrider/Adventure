@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -12,7 +13,6 @@ namespace Adventure
 {
     public partial class FormQuestDetail : Form
     {
-        private bool IsNewQuest;
         private readonly Quest CurrentQuest;
         private QuestReward CurrentReward;
         private Item CurrentItem;
@@ -39,9 +39,6 @@ namespace Adventure
             lblQuestName.Text = CurrentQuest.Name;
             lblDescription.Text = CurrentQuest.Description;
 
-            // Check if this is a new quest
-            CheckForNewQuest();
-
             SetButtons();
 
             PopulateDetails();
@@ -49,29 +46,30 @@ namespace Adventure
 
         private void SetButtons()
         {
-            if (IsNewQuest)
+            State state = CurrentQuest.GetQuestLog().StateID;
+            switch (state)
             {
-                btnMakeActive.Text = "Accept Quest";
-                btnClose.Text = "Reject Quest";
-                btnReward.Visible = false;
-            }
-            else
-            {
-                if(CurrentQuest.GetQuestLog().StateID == State.COMPLETE_REWARD_AVAIL)
-                {
-                    btnMakeActive.Visible = false;
-                    btnClose.Text = "Close";
-                    btnReward.Visible = true;
-                }
-                else
-                {
-                    btnMakeActive.Text = "Make Active";
-                    btnClose.Text = "Close";
+                case State.NEW:
+                    btnMakeActive.Text = "Accept Quest";
                     btnReward.Visible = false;
-                }
+                    btnClose.Text = "Reject Quest";
+                    break;
+                case State.CAN_COMPLETE:
+                    btnMakeActive.Visible = false;
+                    btnReward.Visible = true;
+                    btnClose.Text = "Close";
+                    break;
+                case State.ACCEPTED:
+                    btnMakeActive.Text = "Make Active";
+                    btnReward.Visible = false;
+                    btnClose.Text = "Close";
+                    break;
+                default:
+                    btnMakeActive.Visible = false;
+                    btnReward.Visible = false;
+                    btnClose.Text = "Close";
+                    break;
             }
-
-            
         }
 
         private void PopulateDetails()
@@ -99,14 +97,6 @@ namespace Adventure
             }
         }
 
-        private void CheckForNewQuest()
-        {
-            // If the questLogList does NOT contain the Quest,
-            // then the parameter is a new quest and
-            // IsNewQuest should be set to TRUE
-            IsNewQuest = !GameController.questLogList.Contains(CurrentQuest);
-        }
-
         private void BtnClose_Click(object sender, EventArgs e)
         {
             this.DialogResult = DialogResult.Cancel;
@@ -121,6 +111,7 @@ namespace Adventure
 
         private void BtnReward_Click(object sender, EventArgs e)
         {
+            LogWriter.Write("FormQuestDetail",MethodBase.GetCurrentMethod().Name, LogWriter.LogType.GamePlay, "Claiming reward for Quest " + CurrentQuest.Name);
             if(ClaimRewardGold() && ClaimRewardEXP())
             {
                 if(CurrentReward.IsItem == 1)
@@ -129,20 +120,41 @@ namespace Adventure
                     {
                         // Update the questlog to show to reward has been claimed
                         CurrentQuest.GetQuestLog().StateID = State.COMPLETE_NO_REWARD;
-                        API.UpdateQuestLog(CurrentQuest.GetQuestLog());
+                        if (API.IsSuccess(API.UpdateQuestLog(CurrentQuest.GetQuestLog())))
+                        {
+                            this.DialogResult = DialogResult.OK;
+                            return;
+                        }
+
+                        this.DialogResult = DialogResult.No;
+                        return;
                     }
                     else
                     {
                         // Item not claimed, but don't claim gold/exp again
                         CurrentQuest.GetQuestLog().StateID = State.COMPLETE_ONLY_ITEM;
-                        API.UpdateQuestLog(CurrentQuest.GetQuestLog());
+                        if (API.IsSuccess(API.UpdateQuestLog(CurrentQuest.GetQuestLog())))
+                        {
+                            this.DialogResult = DialogResult.OK;
+                            return;
+                        }
+
+                        this.DialogResult = DialogResult.No;
+                        return;
                     }
                 }
                 else
                 {
                     // No item to claim, only gold/exp
                     CurrentQuest.GetQuestLog().StateID = State.COMPLETE_NO_REWARD;
-                    API.UpdateQuestLog(CurrentQuest.GetQuestLog());
+                    if (API.IsSuccess(API.UpdateQuestLog(CurrentQuest.GetQuestLog())))
+                    {
+                        this.DialogResult = DialogResult.OK;
+                        return;
+                    }
+
+                    this.DialogResult = DialogResult.No;
+                    return;
                 }
             }
             // else, do nothing - gold and exp should never throw an error

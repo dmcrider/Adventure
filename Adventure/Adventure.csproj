@@ -138,6 +138,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Items.resx</DependentUpon>
     </Compile>
+    <Compile Include="LevelUp.cs" />
     <Compile Include="LogWriter.cs" />
     <Compile Include="Npc.cs" />
     <Compile Include="Player.cs" />

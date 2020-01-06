@@ -233,7 +233,7 @@ namespace Adventure
             }
         }
 
-        public static void AddActiveQuest(Quest q, State state)
+        public static void AddAcceptedQuest(Quest q, State state)
         {
             try
             {
@@ -243,10 +243,11 @@ namespace Adventure
                 QuestLog questLog = new QuestLog(-1,Instances.Character.UniqueID, q.UniqueID, state, 1);
                 if (API.IsSuccess(API.CreateQuestLog(questLog)))
                 {
-                    Quest tempQuest = API.questsList.Find(x => x.UniqueID == questLog.QuestID);
-                    string[] rowBuilder = { tempQuest.Name, tempQuest.UniqueID.ToString() };
+                    string[] rowBuilder = { q.Name, q.UniqueID.ToString() };
                     listViewAcceptedQuests.Items.Add(new ListViewItem(rowBuilder));
-                    questLogList.Add(tempQuest);
+                    listViewAcceptedQuests.Columns[0].Width = -1; // Resize
+
+                    questLogList.Add(q);
                 }
             }
             catch(Exception ex)
@@ -320,7 +321,7 @@ namespace Adventure
             listViewAcceptedQuests.Height = tabQuests.Height;
 
             listViewCompletedQuests.Click += ListViewComplete_Click;
-            listViewAcceptedQuests.Click += ListViewActive_Click;
+            listViewAcceptedQuests.Click += ListViewAccepted_Click;
 
 
             listViewCompletedQuests.Columns.Add("Quest Name");
@@ -331,20 +332,23 @@ namespace Adventure
             listViewAcceptedQuests.Columns.Add("QuestID").Width = 0;
 
             // Create the tab pages
-            TabPage currentQuest = new TabPage
-            {
-                Name = "current",
-                Text = "Current"
-            };
-            TabPage activeQuests = new TabPage
+            TabPage activeQuest = new TabPage
             {
                 Name = "active",
-                Text = "Active"
+                Text = "Active",
+                Width = tabQuests.Width
+            };
+            TabPage acceptedQuests = new TabPage
+            {
+                Name = "accepted",
+                Text = "Accepted",
+                Width = tabQuests.Width
             };
             TabPage completedQuests = new TabPage
             {
                 Name = "completed",
-                Text = "Completed"
+                Text = "Completed",
+                Width = tabQuests.Width
             };
 
             // Load Quests
@@ -358,35 +362,10 @@ namespace Adventure
 
                     if (log.StateID == State.IN_PROGRESS) // Only one active quest at a time
                     {
-                        ControlActiveQuest ctrlActive = new ControlActiveQuest
-                        {
-                            Quest = tempQuest
-                        };
-
-                        ctrlActive.Controls["lblQuestName"].Text = tempQuest.Name;
-                        ctrlActive.Controls["txtDescription"].Text = tempQuest.Description;
-
-                        // Get the reward(s)
-                        tempReward = API.questrewardsList.Find(y => y.UniqueID == tempQuest.QuestRewardID);
-                        if (tempReward.IsItem == 1)
-                        {
-                            // Show the item
-                            rewardItem = API.itemsList.Find(z => z.UniqueID == tempReward.ItemID);
-                            ctrlActive.Controls["txtRewardItem"].Text = rewardItem.DisplayName;
-                        }
-                        else
-                        {
-                            // Hide item fields since we won't have anything to show
-                            ctrlActive.Controls["lblReward"].Visible = false;
-                            ctrlActive.Controls["txtRewardItem"].Visible = false;
-                        }
-
-                        // Add the gold
-                        ctrlActive.Controls["txtGoldReward"].Text = tempReward.Gold.ToString();
-
-                        currentQuest.Controls.Add(ctrlActive);
+                        activeQuest.Controls.Add(SetActiveQuest(log));
+                        AddActiveQuestButtons(activeQuest);
                     }
-                    else if (log.StateID == State.NEW) // New quests not yet started
+                    else if (log.StateID == State.ACCEPTED) // New quests not yet started
                     {
                         string[] rowBuilder = { tempQuest.Name, tempQuest.UniqueID.ToString() };
 
@@ -397,8 +376,9 @@ namespace Adventure
                     {
                         tempReward = API.questrewardsList.Find(x => x.UniqueID == tempQuest.QuestRewardID);
                         rewardItem = API.itemsList.Find(y => y.UniqueID == tempReward.ItemID);
-                        string[] rowBuilder = {tempQuest.UniqueID.ToString(), tempQuest.Name, tempQuest.Description, rewardItem.DisplayName, tempReward.Gold.ToString()};
+                        string[] rowBuilder = {tempQuest.Name, tempQuest.UniqueID.ToString() };
                         ListViewItem row = new ListViewItem();
+
                         if(log.StateID == State.COMPLETE_REWARD_AVAIL)
                         {
                             row = new ListViewItem(rowBuilder)
@@ -410,6 +390,7 @@ namespace Adventure
                         {
                             row = new ListViewItem(rowBuilder);
                         }
+
                         listViewCompletedQuests.Items.Add(row);
                         listViewCompletedQuests.Columns[0].Width = -1;
                     }
@@ -417,16 +398,136 @@ namespace Adventure
                 
             }
             // Add the control to the tabpage
-            activeQuests.Controls.Add(listViewAcceptedQuests);
+            acceptedQuests.Controls.Add(listViewAcceptedQuests);
             completedQuests.Controls.Add(listViewCompletedQuests);
 
             // Add the tab pages to the tab control
-            tabQuests.TabPages.Add(currentQuest);
-            tabQuests.TabPages.Add(activeQuests);
+            tabQuests.TabPages.Add(activeQuest);
+            tabQuests.TabPages.Add(acceptedQuests);
             tabQuests.TabPages.Add(completedQuests);
         }
 
-        private void ListViewActive_Click(object sender, EventArgs e)
+        private void AddActiveQuestButtons(TabPage active)
+        {
+            Point location = new Point(active.Controls["questCtrl"].Location.X, active.Controls["questCtrl"].Location.Y + active.Controls["questCtrl"].Height);
+            Button btnDetails = new Button
+            {
+                Name = "btnDetails",
+                Text = "Show Details",
+                Location = location,
+                Height = 30,
+                Width = 125
+            };
+
+            btnDetails.Click += BtnDetails_Click;
+
+            active.Controls.Add(btnDetails);
+        }
+
+        private void BtnDetails_Click(object sender, EventArgs e)
+        {
+            Panel panelQuest = (Panel)Instances.FormMain.Controls["panelQuest"];
+            TabControl tabQuests = (TabControl)panelQuest.Controls["tabQuests"];
+            TabPage activePage = (TabPage)tabQuests.Controls["active"];
+            ControlActiveQuest ctrlQuest = (ControlActiveQuest)activePage.Controls["questCtrl"];
+
+            // Valid responses are OK and No
+            DialogResult makeActive = new FormQuestDetail(ctrlQuest.Quest).ShowDialog();
+
+            if(makeActive == DialogResult.OK)
+            {
+                // Reward was claimed, quest set to complete
+                // Move it to the correct tab
+                listViewCompletedQuests.Items.Add(new ListViewItem(new string[] { ctrlQuest.Quest.Name, ctrlQuest.Quest.UniqueID.ToString() }));
+                listViewCompletedQuests.Columns[0].Width = -1; // Resize the columns just in case
+
+                activePage.Controls.Clear(); // Remove the active quest and the button
+                tabQuests.SelectedTab = tabQuests.TabPages[1]; // Select the accepted quests page
+            }
+        }
+
+        private ControlActiveQuest SetActiveQuest(QuestLog log)
+        {
+            Quest tempQuest = API.questsList.Find(x => x.UniqueID == log.QuestID);
+            QuestReward tempReward = new QuestReward();
+            Item rewardItem = new Item();
+
+            ControlActiveQuest ctrlActive = new ControlActiveQuest
+            {
+                Quest = tempQuest,
+                Name = "questCtrl"
+            };
+
+            ctrlActive.Controls["lblQuestName"].Text = tempQuest.Name;
+            ctrlActive.Controls["lblDescription"].Text = tempQuest.Description;
+
+            // Get the reward(s)
+            tempReward = API.questrewardsList.Find(y => y.UniqueID == tempQuest.QuestRewardID);
+            if (tempReward.IsItem == 1)
+            {
+                // Show the item
+                rewardItem = API.itemsList.Find(z => z.UniqueID == tempReward.ItemID);
+                ctrlActive.Controls["lblRewardItem"].Text = rewardItem.DisplayName;
+            }
+            else
+            {
+                // Hide item fields since we won't have anything to show
+                ctrlActive.Controls["lblReward"].Visible = false;
+                ctrlActive.Controls["lblRewardItem"].Visible = false;
+            }
+
+            // Add the gold and exp
+            ctrlActive.Controls["lblGoldReward"].Text = tempReward.Gold.ToString();
+            ctrlActive.Controls["lblEXPValue"].Text = tempQuest.ExpAwarded.ToString();
+
+            return ctrlActive;
+        }
+
+        private void ListViewAccepted_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                ListView listView = (ListView)sender;
+                ListViewItem item = listView.SelectedItems[0];
+                string questIDstring = item.SubItems[1].Text;
+                int.TryParse(questIDstring, out int questID);
+                Quest quest = API.questsList.Find(x => x.UniqueID == questID);
+
+                LogWriter.Write(LOG_NAME, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Info, "Displaying Quest Details for " + quest.Name);
+
+                DialogResult makeActive = new FormQuestDetail(quest).ShowDialog();
+
+                if (makeActive == DialogResult.Yes)
+                {
+                    LogWriter.Write(LOG_NAME, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.GamePlay, $"Setting Quest {quest.Name} as the active Quest.");
+
+                    QuestLog ql = quest.GetQuestLog();
+                    ql.StateID = State.ACCEPTED;
+
+                    if (API.IsSuccess(API.UpdateQuestLog(ql)))
+                    {
+                        LogWriter.Write(LOG_NAME, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.GamePlay, "Quest successfully activated.");
+                        // Remove quest from acceptedList
+                        listView.Items.Remove(item);
+
+                        Panel panelQuest = (Panel)Instances.FormMain.Controls["panelQuest"];
+                        TabControl tabQuests = (TabControl)panelQuest.Controls["tabQuests"];
+                        tabQuests.TabPages[0].Controls.Clear(); // Remove the pervious quest, if any
+                        tabQuests.TabPages[0].Controls.Add(SetActiveQuest(ql)); // Set the new quest
+
+                        // Show the Active Quest tab
+                        tabQuests.SelectedTab = tabQuests.TabPages[0];
+                        AddActiveQuestButtons(tabQuests.TabPages[0]);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                LogWriter.Write(LOG_NAME, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, ex.Message);
+            }
+        }
+
+        private void ListViewComplete_Click(object sender, EventArgs e)
         {
             try
             {
@@ -441,21 +542,28 @@ namespace Adventure
 
                 if (makeActive == DialogResult.Yes)
                 {
-                    // TODO: Update active quest
-                    // Set it as the active quest
-                    // and change the tab to show it
-                    LogWriter.Write(LOG_NAME, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.NotYetImplemented, "Cannot set quest as active");
+                    LogWriter.Write(LOG_NAME, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.GamePlay, $"Setting Quest {quest.Name} as the active Quest.");
+
+                    QuestLog ql = quest.GetQuestLog();
+                    ql.StateID = State.ACCEPTED;
+
+                    if (API.IsSuccess(API.UpdateQuestLog(ql)))
+                    {
+                        LogWriter.Write(LOG_NAME, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.GamePlay, "Quest successfully activated.");
+                        Panel panelQuest = (Panel)Instances.FormMain.Controls["panelQuest"];
+                        TabControl tabQuests = (TabControl)panelQuest.Controls["tabQuests"];
+                        tabQuests.TabPages[0].Controls.Clear(); // Remove the pervious quest, if any
+                        tabQuests.TabPages[0].Controls.Add(SetActiveQuest(ql)); // Set the new quest
+
+                        // Show the Active Quest tab
+                        tabQuests.SelectedTab = tabQuests.TabPages[0];
+                    }
                 }
             }
             catch (Exception ex)
             {
                 LogWriter.Write(LOG_NAME, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, ex.Message);
             }
-        }
-
-        private void ListViewComplete_Click(object sender, EventArgs e)
-        {
-            throw new NotImplementedException();
         }
 
         private void PopulateSpellsPanel()

@@ -82,15 +82,44 @@ namespace Adventure
         public int Strength { get => strength; set => strength = value; }
         public int Intelligence { get => intelligence; set => intelligence = value; }
         public int Constitution { get => constitution; set => constitution = value; }
-        public int Gold { get => gold; set => gold = value; }
-        public int Level { get => level; set => level = value; }
-        public int ExpPoints { get => expPoints; set => expPoints = value; }
         public int Active { get => active; set => active = value; }
         public int Gender { get => gender; set => gender = value; }
 
-        public string GetGold()
+        // TODO: Add more level-up logic, especially for spells
+        public int Level { get => level; set => level = value; }
+
+        public int Gold
         {
-            return Gold.ToString();
+            get => gold;
+            set
+            {
+                LogWriter.Write("Character", "Gold", LogWriter.LogType.GamePlay, $"Gold changed from {gold} to {value}");
+                gold = value;
+
+                Instances.FormMain.UpdatePlayerInfoUI();
+            }
+        }
+
+        public int ExpPoints
+        {
+            get => expPoints;
+            set
+            {
+                LogWriter.Write("Character", "ExpPoints", LogWriter.LogType.GamePlay, $"EXP increased from {expPoints} to {value}");
+                expPoints = value;
+
+                if(API.levelList.Count() > 0)
+                {
+                    LevelUp level = API.levelList.Find(x => x.UniqueID == Instances.Character.Level);
+
+                    if (expPoints >= level.ExpNeeded)
+                    {
+                        this.Level++;
+                        expPoints -= level.ExpNeeded;
+                    }
+                    Instances.FormMain.UpdatePlayerInfoUI();
+                }
+            }
         }
 
         public List<Inventory> Inventory
