@@ -33,7 +33,7 @@ namespace Adventure
         /// </summary>
         private void SetGold()
         {
-            txtGoldPlayer.Text = Instances.Character.GetGold();
+            txtGoldPlayer.Text = Instances.Character.Gold.ToString();
             txtGoldShop.Text = GameController.SHOP_GOLD;
         }
 
@@ -173,7 +173,7 @@ namespace Adventure
                     // Remove the item from the player's inventory
                     Instances.Character.Inventory.Remove(Instances.Character.Inventory.Find(y => y.ItemID == tempItem.UniqueID));
 
-                    if (API.UpdateInventory(Instances.Character.UniqueID))
+                    if (API.IsSuccess(API.UpdateInventory(Instances.Character.UniqueID)))
                     {
                         // Show the item in the list
                         LoadPlayerList();

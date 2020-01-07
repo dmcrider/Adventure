@@ -18,9 +18,14 @@ namespace Adventure
 {
     public partial class FormMain : Form
     {
+        public static bool IsLoading = true;
+        private bool CloseNoSave = false;
+
         public FormMain()
         {
             InitializeComponent();
+            IsLoading = true;
+            SetInstances();
         }
 
         public static void InventoryFullMessageBox()
@@ -58,6 +63,7 @@ namespace Adventure
 
             if(confirmExit == DialogResult.OK)
             {
+                CloseNoSave = false;
                 Save_Click(this, EventArgs.Empty);
                 ExitApplication();
             }
@@ -69,8 +75,28 @@ namespace Adventure
 
         public void SaveAndLogout_Click(object sender, EventArgs e)
         {
+            CloseNoSave = false;
             Save_Click(this, EventArgs.Empty);
             Logout_Click(this, EventArgs.Empty);
+        }
+
+        /// <summary>
+        /// 'Refresh' the UI so any values that have updated will be displayed correctly
+        /// </summary>
+        public void UpdatePlayerInfoUI()
+        {
+            if(Instances.Character != null && API.levelList.Count() > 0)
+            {
+                LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Info, "Refreshing Player Info.");
+                lblHPValue.Text = Instances.Character.CurrentHP + "/" + Instances.Character.MaxHP;
+                lblMagicValue.Text = Instances.Character.CurrentMagic + "/" + Instances.Character.MaxMagic;
+                txtInventoryGold.Text = Instances.Character.Gold.ToString();
+                txtSTRValue.Text = Instances.Character.Strength.ToString();
+                txtINTValue.Text = Instances.Character.Intelligence.ToString();
+                txtCONValue.Text = Instances.Character.Constitution.ToString();
+                lblLevelValue.Text = Instances.Character.Level.ToString();
+                lblEXPValue.Text = Instances.Character.ExpPoints.ToString() + "/" + API.levelList.Find(x => x.UniqueID == Instances.Character.Level).ExpNeeded;
+            }
         }
 
         private void FormMain_Load(object sender, EventArgs e)
@@ -121,8 +147,6 @@ namespace Adventure
 
         private void FormMain_Shown(object sender, EventArgs e)
         {
-            SetInstances();
-
             // Disable the main form until the user has sucesfully logged in
             this.Enabled = false;
 
@@ -158,6 +182,7 @@ namespace Adventure
                     // Already has a character
                     // Load the inventory
                     API.LoadInventory(Instances.Character.UniqueID);
+                    UpdatePlayerInfoUI();
                 }
 
                 // Start the game
@@ -190,6 +215,7 @@ namespace Adventure
                 {
                     hasCharacter = true;
                     Instances.Player.character = Instances.Character = character;
+                    IsLoading = false;
                 }
             }
 
@@ -229,6 +255,7 @@ namespace Adventure
             if (MessageBox.Show(Properties.Resources.ConfirmNoSaveMessage, Properties.Resources.ConfirmNoSaveTitle, MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
                 // User does not want to save
+                CloseNoSave = true;
                 LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Warning, "Player is exiting without saving progress");
                 ExitApplication();
             }
@@ -277,12 +304,10 @@ namespace Adventure
 
         private void FormMain_FormClosing(object sender, FormClosingEventArgs e)
         {
-#if !DEBUG
-            if(e.CloseReason != CloseReason.ApplicationExitCall)
+            if (CloseNoSave)
             {
-                ExitNoSaveConfirm();
+                LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Warning, "Exiting the game without saving.");
             }
-#endif
         }
     }
 }

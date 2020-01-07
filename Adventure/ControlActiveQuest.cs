@@ -12,6 +12,8 @@ namespace Adventure
 {
     public partial class ControlActiveQuest : UserControl
     {
+        public Quest Quest { get; set; }
+
         public ControlActiveQuest()
         {
             InitializeComponent();

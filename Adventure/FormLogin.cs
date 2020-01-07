@@ -43,14 +43,12 @@ namespace Adventure
 
             Instances.Player = new Player(username, pwd);
 
-            int loginType = API.Login(Instances.Player);
-
-            if (loginType == 1)
+            if (API.IsSuccess(API.Login(Instances.Player)))
             {
                 // Successful login
                 this.Close();
             }
-            else if(loginType == 0)
+            else
             {
                 // Bad credentials
                 Instances.Player = null;

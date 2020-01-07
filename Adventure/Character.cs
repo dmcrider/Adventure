@@ -82,15 +82,55 @@ namespace Adventure
         public int Strength { get => strength; set => strength = value; }
         public int Intelligence { get => intelligence; set => intelligence = value; }
         public int Constitution { get => constitution; set => constitution = value; }
-        public int Gold { get => gold; set => gold = value; }
-        public int Level { get => level; set => level = value; }
-        public int ExpPoints { get => expPoints; set => expPoints = value; }
         public int Active { get => active; set => active = value; }
         public int Gender { get => gender; set => gender = value; }
 
-        public string GetGold()
+        public int Level { get => level; set => level = value; }
+
+        public int Gold
         {
-            return Gold.ToString();
+            get => gold;
+            set
+            {
+                LogWriter.Write("Character", "Gold", LogWriter.LogType.GamePlay, $"Gold changed from {gold} to {value}");
+                gold = value;
+
+                Instances.FormMain.UpdatePlayerInfoUI();
+            }
+        }
+
+        public int ExpPoints
+        {
+            get => expPoints;
+            set
+            {
+                LogWriter.Write("Character", "ExpPoints", LogWriter.LogType.GamePlay, $"EXP increased from {expPoints} to {value}");
+                expPoints = value;
+
+                if(API.levelList.Count() > 0 && Instances.Character != null)
+                {
+                    LevelUp level = API.levelList.Find(x => x.UniqueID == Instances.Character.Level);
+
+                    if (expPoints >= level.ExpNeeded)
+                    {
+                        LogWriter.Write("Character", "ExpPoints", LogWriter.LogType.GamePlay, "LEVEL UP!");
+                        expPoints -= level.ExpNeeded;
+                        new FormLevelUp(level).ShowDialog();
+                        // Save after level up
+                        API.SaveProgress(Instances.Player);
+                    }
+                    Instances.FormMain.UpdatePlayerInfoUI();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Fully heal HP and Magic
+        /// </summary>
+        public void RestoreHPAndMagic()
+        {
+            CurrentHP = MaxHP;
+            CurrentMagic = MaxMagic;
         }
 
         public List<Inventory> Inventory

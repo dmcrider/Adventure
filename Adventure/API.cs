@@ -22,10 +22,21 @@ namespace Adventure
         public static List<Race> racesList = new List<Race>();
         public static List<Npc> npcsList = new List<Npc>();
         public static List<QuestReward> questrewardsList = new List<QuestReward>();
+        public static List<LevelUp> levelList = new List<LevelUp>();
 
         // Single WebClient used throughout this class
         private static readonly WebClient client = new WebClient();
         private static readonly string storageLocation = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Adventure\\";
+
+        /// <summary>
+        /// Determines if an APIStatusCode is a successful code
+        /// </summary>
+        /// <param name="code">APIStatusCode to validate</param>
+        /// <returns>TRUE if code is one of the success values</returns>
+        public static bool IsSuccess(APIStatusCode code)
+        {
+            return code == APIStatusCode.SUCCESS || code == APIStatusCode.SECONDARY_SUCCESS;
+        }
 
         /// <summary>
         /// Checks the local version against the cloud version
@@ -72,11 +83,11 @@ namespace Adventure
         /// <summary>
         /// Loads local data into the appropriate list
         /// </summary>
-        public static void LoadData()
+        public static APIStatusCode LoadData()
         {
             try
             {
-                string[] filesArray = {"items.json","quests.json","spells.json","stats.json","races.json","npcs.json","questrewards.json"};
+                string[] filesArray = {"items.json","quests.json","spells.json","stats.json","races.json","npcs.json","questrewards.json","levels.json"};
                 
 
                 foreach (string file in filesArray)
@@ -114,18 +125,21 @@ namespace Adventure
                                 case "questrewards":
                                     questrewardsList.Add((QuestReward)obj.ToObject(typeof(QuestReward)));
                                     break;
+                                case "levels":
+                                    levelList.Add((LevelUp)obj.ToObject(typeof(LevelUp)));
+                                    break;
                                 default:
                                     break;
                             }
                         }
                     }
                 }
-                return;
+                return APIStatusCode.SUCCESS;
             }
             catch (Exception e)
             {
                 LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, "Loading local data: " + e);
-                return;
+                return APIStatusCode.FAIL;
             }
         }
 
@@ -134,7 +148,7 @@ namespace Adventure
         /// </summary>
         /// <param name="player"></param>
         /// <returns>Returns 1 if login was successful, 0 if login failed</returns>
-        public static int Login(Player player)
+        public static APIStatusCode Login(Player player)
         {
             string credentials;
             if (player.HasID())
@@ -143,7 +157,8 @@ namespace Adventure
             }
             else
             {
-                if (PlayerExistsLocally(ref player))
+                APIStatusCode playerExists = PlayerExistsLocally(ref player);
+                if (playerExists != APIStatusCode.FAIL && playerExists != APIStatusCode.SECONDARY_FAIL)
                 {
                     credentials = $"{{\"Username\":\"{player.username}\",\"Password\":\"{player.password}\",\"ID\":\"{player.uniqueID}\"}}";
                 }
@@ -152,7 +167,6 @@ namespace Adventure
                     credentials = $"{{\"Username\":\"{player.username}\",\"Password\":\"{player.password}\"}}";
                 }
             }
-            
             string response = client.UploadString(Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.LoginAPI, credentials);
             JObject convertedJSON = JObject.Parse(response);
 
@@ -161,15 +175,15 @@ namespace Adventure
                 if(obj.Key == "success")
                 {
                     player.uniqueID = (int)convertedJSON.GetValue("UniqueID");
-                    return 1; // Login was successful
+                    return APIStatusCode.SUCCESS;
                 }
                 else if (obj.Key == "fail" || obj.Key == "error")
                 {
-                    return 0; // Bad login attempt
+                    return APIStatusCode.FAIL;
                 }
             }
 
-            return 0; // Bad login attempt
+            return APIStatusCode.FAIL;
         }
 
         /// <summary>
@@ -178,7 +192,7 @@ namespace Adventure
         /// <param name="username"></param>
         /// <param name="pwd"></param>
         /// <returns>Returns true if registration was successful, false otherwise</returns>
-        public static bool Register(string username, string pwd)
+        public static APIStatusCode Register(string username, string pwd)
         {
             string credentials = $"{{\"Username\":\"{username}\",\"Password\":\"{pwd}\"}}";
             string response = client.UploadString(Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.RegisterAPI,credentials);
@@ -248,11 +262,11 @@ namespace Adventure
                     }
                     // Return true because the database transaction was successful
                     // Even if saving the player locally wasn't - we can just get it from the database
-                    return true;
+                    return APIStatusCode.SUCCESS;
                 }
             }
             // Database transaction failed
-            return false;
+            return APIStatusCode.FAIL;
         }
 
         /// <summary>
@@ -271,6 +285,7 @@ namespace Adventure
                 {
                     if (userID == (int)character.SelectToken("UserID"))
                     {
+                        //LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Debug, character.ToString());
                         return new Character((int)character.GetValue("UniqueID"), (int)character.GetValue("UserID"), (string)character.GetValue("Name"), (int)character.GetValue("RaceID"), (int)character.GetValue("MaxHP"), (int)character.GetValue("CurrentHP"), (int)character.GetValue("MaxMagic"), (int)character.GetValue("CurrentMagic"), (int)character.GetValue("Strength"), (int)character.GetValue("Intelligence"), (int)character.GetValue("Constitution"), (int)character.GetValue("Gold"), (int)character.GetValue("Level"), (int)character.GetValue("ExpPoints"), (int)character.GetValue("IsActive"));
                     }
                 }
@@ -285,25 +300,34 @@ namespace Adventure
         /// <param name="character"></param>
         /// <param name="playerID"></param>
         /// <returns>Returns true if database transaction was successful, false otherwise</returns>
-        public static bool CreateCharacter(Character character, int playerID)
+        public static APIStatusCode CreateCharacter(Character character, int playerID)
         {
-            string charValues = $"{{\"UserID\":\"{playerID}\",\"Name\":\"{character.Name}\",\"RaceID\":\"{character.RaceID}\",\"Gender\":\"{character.Gender}\",\"MaxHP\":\"{character.MaxHP}\",\"CurrentHP\":\"{character.CurrentHP}\",\"MaxMagic\":\"{character.MaxMagic}\",\"CurrentMagic\":\"{character.CurrentMagic}\",\"Strength\":\"{character.Strength}\",\"Intelligence\":\"{character.Intelligence}\",\"Constitution\":\"{character.Constitution}\",\"Gold\":\"{character.Gold}\",\"Level\":\"{character.Level}\",\"ExpPoints\":\"{character.ExpPoints}\"}}";
-            string response = client.UploadString(Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.CharacterCreateAPI, charValues);
-            JObject convertedJSON = JObject.Parse(response);
-
-            foreach(var obj in convertedJSON)
+            try
             {
-                //LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, "Response from API: " + response);
-                if (obj.Key == "success")
+                string charValues = $"{{\"UserID\":\"{playerID}\",\"Name\":\"{character.Name}\",\"RaceID\":\"{character.RaceID}\",\"Gender\":\"{character.Gender}\",\"MaxHP\":\"{character.MaxHP}\",\"CurrentHP\":\"{character.CurrentHP}\",\"MaxMagic\":\"{character.MaxMagic}\",\"CurrentMagic\":\"{character.CurrentMagic}\",\"Strength\":\"{character.Strength}\",\"Intelligence\":\"{character.Intelligence}\",\"Constitution\":\"{character.Constitution}\",\"Gold\":\"{character.Gold}\",\"Level\":\"{character.Level}\",\"ExpPoints\":\"{character.ExpPoints}\"}}";
+                string response = client.UploadString(Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.CharacterCreateAPI, charValues);
+                JObject convertedJSON = JObject.Parse(response);
+
+                foreach (var obj in convertedJSON)
                 {
-                    character.UniqueID = (int)convertedJSON.GetValue("UniqueID");
-                    return true;
-                }else if(obj.Key == "error")
-                {
-                    LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, "Creating character: " + obj.Value);
+                    if (obj.Key == "success")
+                    {
+                        character.UniqueID = (int)convertedJSON.GetValue("UniqueID");
+                        return APIStatusCode.SUCCESS;
+                    }
+                    else if (obj.Key == "error")
+                    {
+                        LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, "Creating character: " + obj.Value);
+                        return APIStatusCode.FAIL;
+                    }
                 }
+                return APIStatusCode.FAIL;
             }
-            return false;
+            catch (Exception ex)
+            {
+                LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, ex.Message);
+                return APIStatusCode.FAIL;
+            }
         }
 
         /// <summary>
@@ -312,7 +336,7 @@ namespace Adventure
         /// <param name="character"></param>
         /// <param name="itemID"></param>
         /// <param name="quantity"></param>
-        public static void AddInventoryItem(Character character, int itemID, int quantity=1)
+        public static APIStatusCode AddInventoryItem(Character character, int itemID, int quantity=1)
         {
             // Check that the character has space left
             if (GameController.HasInventorySpace())
@@ -325,9 +349,13 @@ namespace Adventure
                 {
                     if (obj.Key == "success")
                     {
-                        //int inventoryID = (int)convertedJSON.GetValue("UniqueID");
                         LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Success, $"Item {convertedJSON.GetValue("DisplayName")} added to inventory successfully.");
-                        LoadInventory(character.UniqueID);
+                        return LoadInventory(character.UniqueID);
+                    }
+                    else if(obj.Key == "fail")
+                    {
+                        LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, "Failed to add item to inventory: " + convertedJSON.GetValue("fail"));
+                        return APIStatusCode.FAIL;
                     }
                 }
             }
@@ -335,7 +363,10 @@ namespace Adventure
             {
                 LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, "Inventory full for character with ID " + character.UniqueID);
                 FormMain.InventoryFullMessageBox();
+                return APIStatusCode.OUT_OF_SPACE;
             }
+
+            return APIStatusCode.FAIL;
         }
 
         /// <summary>
@@ -343,7 +374,7 @@ namespace Adventure
         /// </summary>
         /// <param name="characterID"></param>
         /// <returns>Returns a List of Items</returns>
-        public static void LoadInventory(int characterID)
+        public static APIStatusCode LoadInventory(int characterID)
         {
             try
             {
@@ -359,10 +390,12 @@ namespace Adventure
                     }
                 }
                 LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Success, "Inventory successfully loaded. Item Count: " + GameController.inventoryList.Count);
+                return APIStatusCode.SECONDARY_SUCCESS;
             }
             catch(Exception e)
             {
                 LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, e.Message);
+                return APIStatusCode.SECONDARY_FAIL;
             }
         }
 
@@ -371,7 +404,7 @@ namespace Adventure
         /// </summary>
         /// <param name="characterID">The ID of a Character</param>
         /// <returns></returns>
-        public static bool UpdateInventory(int characterID)
+        public static APIStatusCode UpdateInventory(int characterID)
         {
             try
             {
@@ -386,12 +419,12 @@ namespace Adventure
                         if(obj.Key == "success")
                         {
                             LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Success, "Updating Inventory");
-                            return true;
+                            return APIStatusCode.SUCCESS;
                         }
                         else
                         {
                             LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, "Updating Inventory");
-                            return false;
+                            return APIStatusCode.FAIL;
                         }
                     }
                 }
@@ -399,20 +432,19 @@ namespace Adventure
             catch(Exception e)
             {
                 LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, "Updating inventory: " + e);
-                return false;
+                return APIStatusCode.FAIL;
             }
 
-            // Something went massively wrong if this is the one getting returned
-            return false;
+            return APIStatusCode.FAIL;
         }
 
         /// <summary>
         /// Connects to the cloud database to update the appropriate list
         /// </summary>
-        public static void UpdateFromDatabase()
+        public static APIStatusCode UpdateFromDatabase()
         {
-
-            string[] apiStrings = new string[8];
+            WebClient updateClient = new WebClient();
+            string[] apiStrings = new string[9];
             apiStrings[0] = Properties.Settings.Default.ItemReadAPI;
             apiStrings[1] = Properties.Settings.Default.QuestReadAPI;
             apiStrings[2] = Properties.Settings.Default.SpellReadAPI;
@@ -421,13 +453,14 @@ namespace Adventure
             apiStrings[5] = Properties.Settings.Default.StateReadAPI;
             apiStrings[6] = Properties.Settings.Default.NPCReadAPI;
             apiStrings[7] = Properties.Settings.Default.QuestRewardReadAPI;
+            apiStrings[8] = Properties.Settings.Default.LevelReadAPI;
 
             try
             {
                 foreach (string apiName in apiStrings)
                 {
                     string fullAPI = Properties.Settings.Default.APIBaseAddress + apiName;
-                    string response = client.DownloadString(fullAPI);
+                    string response = updateClient.DownloadString(fullAPI);
                     JObject convertedJSON = JObject.Parse(response);
 
                     foreach (var obj in convertedJSON)
@@ -457,6 +490,9 @@ namespace Adventure
                                 case 7: // QuestRewards
                                     questrewardsList.Add(new QuestReward((int)item.SelectToken("UniqueID"), (int)item.SelectToken("IsItem"), (int)item.SelectToken("ItemID"), (int)item.SelectToken("Gold")));
                                     break;
+                                case 8: // LevelUp
+                                    levelList.Add(new LevelUp((int)item.SelectToken("UniqueID"),(int)item.SelectToken("ExpNeeded"),(int)item.SelectToken("NumberOfSpells"), (int)item.SelectToken("STRIncrease"), (int)item.SelectToken("INTIncrease"), (int)item.SelectToken("CONIncrease"), (int)item.SelectToken("HPIncrease"), (int)item.SelectToken("MagicIncrease")));
+                                    break;
                                 default: // Shouldn't ever happen
                                     break;
                             }
@@ -464,11 +500,12 @@ namespace Adventure
                     }
                 }
                 LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Success, "Updated from database");
-                SaveData();
+                return SaveData();
             }
             catch (Exception e)
             {
                 LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, "Updating from database: " + e);
+                return APIStatusCode.FAIL;
             }
         }
 
@@ -477,7 +514,7 @@ namespace Adventure
         /// </summary>
         /// <param name="characterID">The ID of a Character</param>
         /// <returns>True if the Character has Quests, false otherwise</returns>
-        public static bool LoadQuestLog(int characterID)
+        public static APIStatusCode LoadQuestLog(int characterID)
         {
             try
             {
@@ -497,17 +534,94 @@ namespace Adventure
                     else
                     {
                         LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.GamePlay, "No questlog entries for this character.");
-                        return false; // No questlogs for this player
+                        return APIStatusCode.FAIL; // No questlogs for this player
                     }
                 }
                 LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Success, "QuestLog successfully loaded");
-                return true;
+                return APIStatusCode.SUCCESS;
             }
             catch(Exception ex)
             {
                 LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, "Reading questlog: " + ex);
-                return false;
+                return APIStatusCode.FAIL;
             }
+        }
+
+        /// <summary>
+        /// Update the StateID of the QuestLog parameter
+        /// </summary>
+        /// <param name="ql">QuestLog to update</param>
+        /// <returns>Enum of APIStatusCode that determines success or failure</returns>
+        public static APIStatusCode UpdateQuestLog(QuestLog ql)
+        {
+            try
+            {
+                string dataString = $"{{\"UniqueID\":{ql.UniqueID},\"StateID\":{(int)ql.StateID}}}";
+                string response = client.UploadString(Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.QuestLogUpdateAPI, dataString);
+                JObject convertedJSON = JObject.Parse(response);
+
+                foreach(var obj in convertedJSON)
+                {
+                    if (obj.Key == "success")
+                    {
+                        LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Success, "Updating QuestLog");
+                        return APIStatusCode.SUCCESS;
+                    }
+                    else
+                    {
+                        LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, "Updating QuestLog");
+                        return APIStatusCode.FAIL;
+                    }
+                }
+            }
+            catch(Exception ex)
+            {
+                LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, ex.Message);
+                return APIStatusCode.FAIL;
+            }
+
+            // This should never get hit
+            return APIStatusCode.FAIL;
+        }
+
+        /// <summary>
+        /// Creates a QuestLog entry in the database
+        /// </summary>
+        /// <param name="ql">QuestLog to save to the database</param>
+        /// <returns>Enum of APIStatusCode that indicates success/failure</returns>
+        public static APIStatusCode CreateQuestLog(QuestLog ql)
+        {
+            try
+            {
+                string dataString = $"{{\"CharacterID\":{Instances.Character.UniqueID},\"QuestID\":{ql.QuestID},\"StateID\":{(int)ql.StateID},\"IsActive\":{ql.IsActive}}}";
+                string response = client.UploadString(Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.QuestLogCreateAPI, dataString);
+                JObject convertedJSON = JObject.Parse(response);
+
+                foreach (var obj in convertedJSON)
+                {
+                    if (obj.Key == "success")
+                    {
+                        LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Success, "Creating QuestLog");
+                        int.TryParse(convertedJSON.GetValue("UniqueID").ToString(), out int uniqueID);
+                        ql.UniqueID = uniqueID;
+                        GameController.questLog.Add(ql);
+                        return APIStatusCode.SUCCESS;
+                    }
+                    else
+                    {
+                        LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, "Creating QuestLog");
+                        return APIStatusCode.FAIL;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, ex.Message);
+                return APIStatusCode.FAIL;
+            }
+
+            // This should never get hit
+            return APIStatusCode.FAIL;
         }
 
         /// <summary>
@@ -515,21 +629,20 @@ namespace Adventure
         /// </summary>
         /// <param name="characterID">The ID of a Character</param>
         /// <returns>True if the Character has Spells, false otherwise</returns>
-        public static bool HasSpellbook(int characterID)
+        public static APIStatusCode HasSpellbook(int characterID)
         {
             // Need to add API functionality on server first!!
             LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.NotYetImplemented, $"NOT YET IMPLEMENTED - {characterID}");
-            return false;
+            return APIStatusCode.FAIL;
         }
 
         /// <summary>
         /// Save a Player's settings and Character progress
         /// </summary>
         /// <param name="player">A Player object referencing the current user</param>
-        public static void SaveProgress(Player player)
+        public static APIStatusCode SaveProgress(Player player)
         {
-            // UpdateSettings();
-            UpdateCharacter(player.character, player.uniqueID);
+            return UpdateCharacter(player.character, player.uniqueID);
         }
 
         /// <summary>
@@ -537,31 +650,42 @@ namespace Adventure
         /// </summary>
         /// <param name="character">A Character object referencing the Character to be saved</param>
         /// <param name="playerID">The ID of the Player associated with the Character</param>
-        private static void UpdateCharacter(Character character, int playerID)
+        private static APIStatusCode UpdateCharacter(Character character, int playerID)
         {
-            string charValues = $"{{\"UniqueID\":\"{Instances.Player.uniqueID}\",\"UserID\":\"{playerID}\",\"Name\":\"{character.Name}\",\"RaceID\":\"{character.RaceID}\",\"Gender\":\"{character.Gender}\",\"MaxHP\":\"{character.MaxHP}\",\"CurrentHP\":\"{character.CurrentHP}\",\"MaxMagic\":\"{character.MaxMagic}\",\"CurrentMagic\":\"{character.CurrentMagic}\",\"Strength\":\"{character.Strength}\",\"Intelligence\":\"{character.Intelligence}\",\"Constitution\":\"{character.Constitution}\",\"Gold\":\"{character.Gold}\",\"Level\":\"{character.Level}\",\"ExpPoints\":\"{character.ExpPoints}\"}}";
-            string response = client.UploadString(Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.CharacterUpdateAPI, charValues);
-            JObject convertedJSON = JObject.Parse(response);
-
-            foreach (var obj in convertedJSON)
+            try
             {
-                //LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, "Response from API: " + response);
-                if (obj.Key == "success")
+                string charValues = $"{{\"UniqueID\":\"{Instances.Character.UniqueID}\",\"UserID\":\"{playerID}\",\"Name\":\"{character.Name}\",\"RaceID\":\"{character.RaceID}\",\"Gender\":\"{character.Gender}\",\"MaxHP\":\"{character.MaxHP}\",\"CurrentHP\":\"{character.CurrentHP}\",\"MaxMagic\":\"{character.MaxMagic}\",\"CurrentMagic\":\"{character.CurrentMagic}\",\"Strength\":\"{character.Strength}\",\"Intelligence\":\"{character.Intelligence}\",\"Constitution\":\"{character.Constitution}\",\"Gold\":\"{character.Gold}\",\"Level\":\"{character.Level}\",\"ExpPoints\":\"{character.ExpPoints}\",\"IsActive\":\"{character.Active}\"}}";
+                string response = client.UploadString(Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.CharacterUpdateAPI, charValues);
+                JObject convertedJSON = JObject.Parse(response);
+                //LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Debug, charValues);
+
+                foreach (var obj in convertedJSON)
                 {
-                    LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Success, "Updating character: " + character.Name);
-                    return;
-                }
-                else if (obj.Key == "error")
-                {
-                    LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, "Updating character: " + obj.Value);
+                    if (obj.Key == "success")
+                    {
+                        LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Success, "Updating character: " + character.Name);
+                        return APIStatusCode.SECONDARY_SUCCESS;
+                    }
+                    else if (obj.Key == "error")
+                    {
+                        LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, "Updating character: " + obj.Value);
+                        return APIStatusCode.SECONDARY_FAIL;
+                    }
                 }
             }
+            catch(Exception ex)
+            {
+                LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, ex.Message);
+                return APIStatusCode.SECONDARY_FAIL;
+            }
+
+            return APIStatusCode.SECONDARY_FAIL;
         }
 
         /// <summary>
         /// Saves each list locally as a json file
         /// </summary>
-        private static void SaveData()
+        private static APIStatusCode SaveData()
         {
             try
             {
@@ -573,6 +697,7 @@ namespace Adventure
                 string racesJSON = JsonConvert.SerializeObject(racesList);
                 string npcsJSON = JsonConvert.SerializeObject(npcsList);
                 string questRewardsJSON = JsonConvert.SerializeObject(questrewardsList);
+                string levelJSON = JsonConvert.SerializeObject(levelList);
 
                 // Make sure the path exists before we try to save there
                 if (!Directory.Exists(storageLocation))
@@ -589,12 +714,15 @@ namespace Adventure
                 File.WriteAllText(storageLocation + "races.json", racesJSON);
                 File.WriteAllText(storageLocation + "npcs.json", npcsJSON);
                 File.WriteAllText(storageLocation + "questrewards.json", questRewardsJSON);
+                File.WriteAllText(storageLocation + "levels.json", levelJSON);
 
                 LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Info, "Data successfully saved");
+                return APIStatusCode.SECONDARY_SUCCESS;
             }
             catch(Exception ex)
             {
                 LogWriter.Write("API",MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Critical, "Cannot convert data to be saved: " + ex.Message);
+                return APIStatusCode.SECONDARY_FAIL;
             }
         }
 
@@ -603,7 +731,7 @@ namespace Adventure
         /// </summary>
         /// <param name="player"></param>
         /// <returns>Returns true if player information was found, false otherwise</returns>
-        private static bool PlayerExistsLocally(ref Player player)
+        private static APIStatusCode PlayerExistsLocally(ref Player player)
         {
             string path = storageLocation + "player.json";
 
@@ -625,19 +753,28 @@ namespace Adventure
                                 if (tempPlayer.username == player.username)
                                 {
                                     LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Success, "Loaded Player data");
-                                    return true;
+                                    return APIStatusCode.SECONDARY_SUCCESS;
                                 }
                             }
                             catch (Exception e)
                             {
                                 LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, "Parsing JSON: " + e);
-                                return false;
+                                return APIStatusCode.SECONDARY_FAIL;
                             }
                         }
                     }
                 }
             }
-            return false;
+            return APIStatusCode.FAIL;
         }
+    }
+
+    public enum APIStatusCode
+    {
+        SUCCESS = 100,
+        SECONDARY_SUCCESS = 105,
+        FAIL = 200,
+        SECONDARY_FAIL = 205,
+        OUT_OF_SPACE = 210
     }
 }

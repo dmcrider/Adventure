@@ -6,11 +6,14 @@ using System.Threading.Tasks;
 
 namespace Adventure
 {
-    public class State
+    public enum State
     {
-        public const int NEW = 1;
-        public const int IN_PROGRESS = 2;
-        public const int COMPLETE_REWARD_AVAIL = 3;
-        public const int COMPLETE_NO_REWARD = 4;
+        NEW = 1,
+        ACCEPTED = 2,
+        IN_PROGRESS = 3,
+        COMPLETE_REWARD_AVAIL = 4,
+        COMPLETE_NO_REWARD = 5,
+        COMPLETE_ONLY_ITEM = 6,
+        CAN_COMPLETE = 7
     }
 }

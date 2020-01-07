@@ -113,7 +113,7 @@ namespace Adventure
             bool creationSuccess = false;
             try
             {
-                creationSuccess = API.CreateCharacter(Instances.Character, Instances.Player.uniqueID);
+                creationSuccess = API.IsSuccess(API.CreateCharacter(Instances.Character, Instances.Player.uniqueID));
             }
             catch (Exception ex)
             {

@@ -38,5 +38,14 @@ namespace Adventure
         public int MaxCharLevel { get => maxCharLevel; set => maxCharLevel = value; }
         public int NpcID { get => npcID; set => npcID = value; }
         public string Description { get => description; set => description = value; }
+
+        /// <summary>
+        /// Return the QuestLog associated with this Quest
+        /// </summary>
+        /// <returns></returns>
+        public QuestLog GetQuestLog()
+        {
+            return GameController.questLog.Find(x => x.QuestID == this.UniqueID);
+        }
     }
 }

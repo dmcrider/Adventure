@@ -13,6 +13,8 @@ namespace Adventure
 {
     public static class LogWriter
     {
+        private static bool IsFirstLog = true;
+
         public static void Write(string className, string methodName, LogType type, string logMessage)
         {
             try
@@ -21,11 +23,16 @@ namespace Adventure
 
                 using (StreamWriter w = File.AppendText(outputPath + "log.txt"))
                 {
-                    string output = "";
+                    string output = IsFirstLog ? "******************************************\n" : "";
                     output += string.Format("{0} {1}", DateTime.Now.ToLongTimeString(), DateTime.Now.ToLongDateString());
                     output += string.Format("\t{0}.{1}() | {2} - {3}", className, methodName, type, logMessage);
 
                     w.WriteLine(output);
+                }
+
+                if (IsFirstLog)
+                {
+                    IsFirstLog = false;
                 }
             }
             catch

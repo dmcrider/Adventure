@@ -34,6 +34,7 @@
             this.btnOpenShop = new System.Windows.Forms.Button();
             this.txtOutput = new System.Windows.Forms.TextBox();
             this.txtDamage = new System.Windows.Forms.TextBox();
+            this.btnCompleteQuest = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // btnReduceHP
@@ -93,10 +94,21 @@
             this.txtDamage.TabIndex = 5;
             this.txtDamage.Text = "10";
             // 
+            // btnCompleteQuest
+            // 
+            this.btnCompleteQuest.Location = new System.Drawing.Point(427, 153);
+            this.btnCompleteQuest.Name = "btnCompleteQuest";
+            this.btnCompleteQuest.Size = new System.Drawing.Size(129, 50);
+            this.btnCompleteQuest.TabIndex = 6;
+            this.btnCompleteQuest.Text = "Complete Quest";
+            this.btnCompleteQuest.UseVisualStyleBackColor = true;
+            this.btnCompleteQuest.Click += new System.EventHandler(this.BtnCompleteQuest_Click);
+            // 
             // xDEV
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.btnCompleteQuest);
             this.Controls.Add(this.txtDamage);
             this.Controls.Add(this.txtOutput);
             this.Controls.Add(this.btnOpenShop);
@@ -120,5 +132,6 @@
         private System.Windows.Forms.Button btnOpenShop;
         private System.Windows.Forms.TextBox txtOutput;
         private System.Windows.Forms.TextBox txtDamage;
+        private System.Windows.Forms.Button btnCompleteQuest;
     }
 }

@@ -11,10 +11,10 @@ namespace Adventure
         private int uniqueID;
         private int characterID;
         private int questID;
-        private int stateID;
+        private State stateID;
         private int isActive;
 
-        public QuestLog(int uniqueID, int characterID, int questID, int stateID, int isActive)
+        public QuestLog(int uniqueID, int characterID, int questID, State stateID, int isActive)
         {
             UniqueID = uniqueID;
             CharacterID = characterID;
@@ -26,7 +26,7 @@ namespace Adventure
         public int UniqueID { get => uniqueID; set => uniqueID = value; }
         public int CharacterID { get => characterID; set => characterID = value; }
         public int QuestID { get => questID; set => questID = value; }
-        public int StateID { get => stateID; set => stateID = value; }
+        public State StateID { get => stateID; set => stateID = value; }
         public int IsActive { get => isActive; set => isActive = value; }
     }
 }

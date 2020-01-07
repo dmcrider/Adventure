@@ -68,5 +68,11 @@
     <Setting Name="QuestLogUpdateAPI" Type="System.String" Scope="Application">
       <Value Profile="(Default)">questlog/update.php</Value>
     </Setting>
+    <Setting Name="QuestLogCreateAPI" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">questlog/create.php</Value>
+    </Setting>
+    <Setting Name="LevelReadAPI" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">levels/read.php</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
