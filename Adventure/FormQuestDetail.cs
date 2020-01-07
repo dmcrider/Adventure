@@ -157,7 +157,8 @@ namespace Adventure
                     return;
                 }
             }
-            // else, do nothing - gold and exp should never throw an error
+            // Save the updates
+            API.SaveProgress(Instances.Player);
         }
 
         private bool ClaimRewardGold()

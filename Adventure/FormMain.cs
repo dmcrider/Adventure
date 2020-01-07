@@ -19,6 +19,8 @@ namespace Adventure
     public partial class FormMain : Form
     {
         public static bool IsLoading = true;
+        private bool CloseNoSave = false;
+
         public FormMain()
         {
             InitializeComponent();
@@ -61,6 +63,7 @@ namespace Adventure
 
             if(confirmExit == DialogResult.OK)
             {
+                CloseNoSave = false;
                 Save_Click(this, EventArgs.Empty);
                 ExitApplication();
             }
@@ -72,6 +75,7 @@ namespace Adventure
 
         public void SaveAndLogout_Click(object sender, EventArgs e)
         {
+            CloseNoSave = false;
             Save_Click(this, EventArgs.Empty);
             Logout_Click(this, EventArgs.Empty);
         }
@@ -84,6 +88,8 @@ namespace Adventure
             if(Instances.Character != null && API.levelList.Count() > 0)
             {
                 LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Info, "Refreshing Player Info.");
+                lblHPValue.Text = Instances.Character.CurrentHP + "/" + Instances.Character.MaxHP;
+                lblMagicValue.Text = Instances.Character.CurrentMagic + "/" + Instances.Character.MaxMagic;
                 txtInventoryGold.Text = Instances.Character.Gold.ToString();
                 txtSTRValue.Text = Instances.Character.Strength.ToString();
                 txtINTValue.Text = Instances.Character.Intelligence.ToString();
@@ -249,6 +255,7 @@ namespace Adventure
             if (MessageBox.Show(Properties.Resources.ConfirmNoSaveMessage, Properties.Resources.ConfirmNoSaveTitle, MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
                 // User does not want to save
+                CloseNoSave = true;
                 LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Warning, "Player is exiting without saving progress");
                 ExitApplication();
             }
@@ -297,12 +304,10 @@ namespace Adventure
 
         private void FormMain_FormClosing(object sender, FormClosingEventArgs e)
         {
-#if !DEBUG
-            if(e.CloseReason != CloseReason.ApplicationExitCall)
+            if (CloseNoSave)
             {
-                ExitNoSaveConfirm();
+                LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Warning, "Exiting the game without saving.");
             }
-#endif
         }
     }
 }

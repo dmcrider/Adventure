@@ -99,7 +99,6 @@ namespace Adventure
                     {
                         JsonSerializer serializer = new JsonSerializer();
                         JArray response = (JArray)serializer.Deserialize(inputFile, typeof(JObject));
-                        LogWriter.Write("API",MethodBase.GetCurrentMethod().Name,LogWriter.LogType.Debug,type + "\n" + response.ToString());
 
                         foreach(JObject obj in response)
                         {
@@ -286,6 +285,7 @@ namespace Adventure
                 {
                     if (userID == (int)character.SelectToken("UserID"))
                     {
+                        //LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Debug, character.ToString());
                         return new Character((int)character.GetValue("UniqueID"), (int)character.GetValue("UserID"), (string)character.GetValue("Name"), (int)character.GetValue("RaceID"), (int)character.GetValue("MaxHP"), (int)character.GetValue("CurrentHP"), (int)character.GetValue("MaxMagic"), (int)character.GetValue("CurrentMagic"), (int)character.GetValue("Strength"), (int)character.GetValue("Intelligence"), (int)character.GetValue("Constitution"), (int)character.GetValue("Gold"), (int)character.GetValue("Level"), (int)character.GetValue("ExpPoints"), (int)character.GetValue("IsActive"));
                     }
                 }
@@ -444,7 +444,7 @@ namespace Adventure
         public static APIStatusCode UpdateFromDatabase()
         {
             WebClient updateClient = new WebClient();
-            string[] apiStrings = new string[8];
+            string[] apiStrings = new string[9];
             apiStrings[0] = Properties.Settings.Default.ItemReadAPI;
             apiStrings[1] = Properties.Settings.Default.QuestReadAPI;
             apiStrings[2] = Properties.Settings.Default.SpellReadAPI;
@@ -453,7 +453,7 @@ namespace Adventure
             apiStrings[5] = Properties.Settings.Default.StateReadAPI;
             apiStrings[6] = Properties.Settings.Default.NPCReadAPI;
             apiStrings[7] = Properties.Settings.Default.QuestRewardReadAPI;
-            //TODO: add level here
+            apiStrings[8] = Properties.Settings.Default.LevelReadAPI;
 
             try
             {
@@ -489,6 +489,9 @@ namespace Adventure
                                     break;
                                 case 7: // QuestRewards
                                     questrewardsList.Add(new QuestReward((int)item.SelectToken("UniqueID"), (int)item.SelectToken("IsItem"), (int)item.SelectToken("ItemID"), (int)item.SelectToken("Gold")));
+                                    break;
+                                case 8: // LevelUp
+                                    levelList.Add(new LevelUp((int)item.SelectToken("UniqueID"),(int)item.SelectToken("ExpNeeded"),(int)item.SelectToken("NumberOfSpells"), (int)item.SelectToken("STRIncrease"), (int)item.SelectToken("INTIncrease"), (int)item.SelectToken("CONIncrease"), (int)item.SelectToken("HPIncrease"), (int)item.SelectToken("MagicIncrease")));
                                     break;
                                 default: // Shouldn't ever happen
                                     break;
@@ -651,13 +654,13 @@ namespace Adventure
         {
             try
             {
-                string charValues = $"{{\"UniqueID\":\"{Instances.Player.uniqueID}\",\"UserID\":\"{playerID}\",\"Name\":\"{character.Name}\",\"RaceID\":\"{character.RaceID}\",\"Gender\":\"{character.Gender}\",\"MaxHP\":\"{character.MaxHP}\",\"CurrentHP\":\"{character.CurrentHP}\",\"MaxMagic\":\"{character.MaxMagic}\",\"CurrentMagic\":\"{character.CurrentMagic}\",\"Strength\":\"{character.Strength}\",\"Intelligence\":\"{character.Intelligence}\",\"Constitution\":\"{character.Constitution}\",\"Gold\":\"{character.Gold}\",\"Level\":\"{character.Level}\",\"ExpPoints\":\"{character.ExpPoints}\"}}";
+                string charValues = $"{{\"UniqueID\":\"{Instances.Character.UniqueID}\",\"UserID\":\"{playerID}\",\"Name\":\"{character.Name}\",\"RaceID\":\"{character.RaceID}\",\"Gender\":\"{character.Gender}\",\"MaxHP\":\"{character.MaxHP}\",\"CurrentHP\":\"{character.CurrentHP}\",\"MaxMagic\":\"{character.MaxMagic}\",\"CurrentMagic\":\"{character.CurrentMagic}\",\"Strength\":\"{character.Strength}\",\"Intelligence\":\"{character.Intelligence}\",\"Constitution\":\"{character.Constitution}\",\"Gold\":\"{character.Gold}\",\"Level\":\"{character.Level}\",\"ExpPoints\":\"{character.ExpPoints}\",\"IsActive\":\"{character.Active}\"}}";
                 string response = client.UploadString(Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.CharacterUpdateAPI, charValues);
                 JObject convertedJSON = JObject.Parse(response);
+                //LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Debug, charValues);
 
                 foreach (var obj in convertedJSON)
                 {
-                    //LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, "Response from API: " + response);
                     if (obj.Key == "success")
                     {
                         LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Success, "Updating character: " + character.Name);

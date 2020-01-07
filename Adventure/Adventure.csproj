@@ -75,6 +75,12 @@
     <Compile Include="ControlActiveQuest.Designer.cs">
       <DependentUpon>ControlActiveQuest.cs</DependentUpon>
     </Compile>
+    <Compile Include="FormLevelUp.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormLevelUp.Designer.cs">
+      <DependentUpon>FormLevelUp.cs</DependentUpon>
+    </Compile>
     <Compile Include="FormQuestDetail.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -162,6 +168,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FormCharacterCreation.resx">
       <DependentUpon>FormCharacterCreation.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormLevelUp.resx">
+      <DependentUpon>FormLevelUp.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FormLogin.resx">
       <DependentUpon>FormLogin.cs</DependentUpon>
