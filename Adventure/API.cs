@@ -16,9 +16,6 @@ namespace Adventure
         // TODO: Encrypt passwords sent
         // TODO: Decrypt passwords received
 
-        // Lists that the rest of the application can access
-        public static List<Enemy> enemyList = new List<Enemy>();
-
         // Single WebClient used throughout this class
         private static readonly WebClient client = new WebClient();
         public static readonly string storageLocation = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Adventure\\";
@@ -82,7 +79,7 @@ namespace Adventure
         {
             try
             {
-                string[] filesArray = {"enemies.json"};
+                string[] filesArray = {};
                 
 
                 foreach (string file in filesArray)
@@ -99,9 +96,6 @@ namespace Adventure
                         {
                             switch (type)
                             {
-                                case "enemies":
-                                    enemyList.Add((Enemy)obj.ToObject(typeof(Enemy)));
-                                    break;
                                 default:
                                     break;
                             }
@@ -435,9 +429,6 @@ namespace Adventure
                         {
                             switch (Array.IndexOf(apiStrings, apiName))
                             {
-                                case 9: // Enemy
-                                    enemyList.Add(new Enemy((int)item.SelectToken("UniqueID"),(string)item.SelectToken("Name"), (string)item.SelectToken("Race"), (int)item.SelectToken("CurrentHP"), (int)item.SelectToken("MaxHP"), (int)item.SelectToken("CurrentMagic"), (int)item.SelectToken("MaxMagic"), (int)item.SelectToken("AttackDamage"), (int)item.SelectToken("ExpAwarded"), (int)item.SelectToken("IsActive")));
-                                    break;
                                 default: // Shouldn't ever happen
                                     break;
                             }
@@ -635,7 +626,6 @@ namespace Adventure
             try
             {
                 // Convert each List to a JSON Object so we can save it
-                string enemyJSON = JsonConvert.SerializeObject(enemyList);
 
                 // Make sure the path exists before we try to save there
                 if (!Directory.Exists(storageLocation))
@@ -645,7 +635,6 @@ namespace Adventure
 
                 // Save each converted json string
                 // WriteAllText overwrites any existing data, if the file exists
-                File.WriteAllText(storageLocation + "enemies.json", enemyJSON);
 
                 LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Info, "Data successfully saved");
                 return APIStatusCode.SECONDARY_SUCCESS;
