@@ -300,7 +300,7 @@ namespace Adventure
         {
             foreach(QuestLog ql in questLog)
             {
-                questLogList.Add(API.questsList.Find(x => x.UniqueID == ql.QuestID));
+                questLogList.Add(Quest.Quests.Find(x => x.UniqueID == ql.QuestID));
             }
         }
 
@@ -356,7 +356,7 @@ namespace Adventure
             {
                 if (log.IsActive == 1)
                 {
-                    Quest tempQuest = API.questsList.Find(x => x.UniqueID == log.QuestID);
+                    Quest tempQuest = Quest.Quests.Find(x => x.UniqueID == log.QuestID);
                     QuestReward tempReward = new QuestReward();
                     Item rewardItem = new Item();
 
@@ -448,7 +448,7 @@ namespace Adventure
 
         private ControlActiveQuest SetActiveQuest(QuestLog log)
         {
-            Quest tempQuest = API.questsList.Find(x => x.UniqueID == log.QuestID);
+            Quest tempQuest = Quest.Quests.Find(x => x.UniqueID == log.QuestID);
             QuestReward tempReward = new QuestReward();
             Item rewardItem = new Item();
 
@@ -491,7 +491,7 @@ namespace Adventure
                 ListViewItem item = listView.SelectedItems[0];
                 string questIDstring = item.SubItems[1].Text;
                 int.TryParse(questIDstring, out int questID);
-                Quest quest = API.questsList.Find(x => x.UniqueID == questID);
+                Quest quest = Quest.Quests.Find(x => x.UniqueID == questID);
 
                 LogWriter.Write(LOG_NAME, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Info, "Displaying Quest Details for " + quest.Name);
 
@@ -534,7 +534,7 @@ namespace Adventure
                 ListView listView = (ListView)sender;
                 string questIDstring = listView.SelectedItems[0].SubItems[1].Text;
                 int.TryParse(questIDstring, out int questID);
-                Quest quest = API.questsList.Find(x => x.UniqueID == questID);
+                Quest quest = Quest.Quests.Find(x => x.UniqueID == questID);
 
                 LogWriter.Write(LOG_NAME, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Info, "Displaying Quest Details for " + quest.Name);
 

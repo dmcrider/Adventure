@@ -89,7 +89,7 @@ namespace Adventure
         {
             try
             {
-                string[] filesArray = {"quests.json","spells.json","stats.json","races.json","npcs.json","questrewards.json","levels.json", "enemies.json"};
+                string[] filesArray = {"spells.json","stats.json","races.json","npcs.json","questrewards.json","levels.json", "enemies.json"};
                 
 
                 foreach (string file in filesArray)
@@ -106,9 +106,6 @@ namespace Adventure
                         {
                             switch (type)
                             {
-                                case "quests":
-                                    questsList.Add((Quest)obj.ToObject(typeof(Quest)));
-                                    break;
                                 case "spells":
                                     spellsList.Add((Spell)obj.ToObject(typeof(Spell)));
                                     break;
@@ -446,16 +443,15 @@ namespace Adventure
         public static APIStatusCode UpdateFromDatabase()
         {
             WebClient updateClient = new WebClient();
-            string[] apiStrings = new string[8];
-            apiStrings[0] = Properties.Settings.Default.QuestReadAPI;
-            apiStrings[1] = Properties.Settings.Default.SpellReadAPI;
-            apiStrings[2] = Properties.Settings.Default.StatReadAPI;
-            apiStrings[3] = Properties.Settings.Default.RaceReadAPI;
-            apiStrings[4] = Properties.Settings.Default.StateReadAPI;
-            apiStrings[5] = Properties.Settings.Default.NPCReadAPI;
-            apiStrings[6] = Properties.Settings.Default.QuestRewardReadAPI;
-            apiStrings[7] = Properties.Settings.Default.LevelReadAPI;
-            apiStrings[8] = Properties.Settings.Default.EnemyReadAPI;
+            string[] apiStrings = new string[7];
+            apiStrings[0] = Properties.Settings.Default.SpellReadAPI;
+            apiStrings[1] = Properties.Settings.Default.StatReadAPI;
+            apiStrings[2] = Properties.Settings.Default.RaceReadAPI;
+            apiStrings[3] = Properties.Settings.Default.StateReadAPI;
+            apiStrings[4] = Properties.Settings.Default.NPCReadAPI;
+            apiStrings[5] = Properties.Settings.Default.QuestRewardReadAPI;
+            apiStrings[6] = Properties.Settings.Default.LevelReadAPI;
+            apiStrings[7] = Properties.Settings.Default.EnemyReadAPI;
 
             try
             {
@@ -471,9 +467,6 @@ namespace Adventure
                         {
                             switch (Array.IndexOf(apiStrings, apiName))
                             {
-                                case 1: // Quests
-                                    questsList.Add(new Quest((int)item.SelectToken("UniqueID"), (string)item.SelectToken("Name"), (int)item.SelectToken("ExpAwarded"), (int)item.SelectToken("QuestRewardID"), (int)item.SelectToken("MinCharacterLevel"), (int)item.SelectToken("MaxCharacterLevel"), (int)item.SelectToken("NPC_ID"), (string)item.SelectToken("Description")));
-                                    break;
                                 case 2: // Spells
                                     spellsList.Add(new Spell((int)item.SelectToken("UniqueID"), (string)item.SelectToken("Name"), (int)item.SelectToken("HealAmount"), (int)item.SelectToken("DamageAmount"), (int)item.SelectToken("Bonus"), (int)item.SelectToken("MagicCost"), (int)item.SelectToken("MinLevel")));
                                     break;
@@ -692,7 +685,6 @@ namespace Adventure
             try
             {
                 // Convert each List to a JSON Object so we can save it
-                string questsJSON = JsonConvert.SerializeObject(questsList);
                 string spellsJSON = JsonConvert.SerializeObject(spellsList);
                 string statsJSON = JsonConvert.SerializeObject(statsList);
                 string racesJSON = JsonConvert.SerializeObject(racesList);
@@ -709,7 +701,6 @@ namespace Adventure
 
                 // Save each converted json string
                 // WriteAllText overwrites any existing data, if the file exists
-                File.WriteAllText(storageLocation + "quests.json", questsJSON);
                 File.WriteAllText(storageLocation + "spells.json", spellsJSON);
                 File.WriteAllText(storageLocation + "stats.json", statsJSON);
                 File.WriteAllText(storageLocation + "races.json", racesJSON);
