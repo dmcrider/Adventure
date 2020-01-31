@@ -127,6 +127,7 @@ namespace Adventure
         public static APIStatusCode LoadFromDatabase()
         {
             WebClient client = new WebClient();
+            Items = new List<Item>();
             string api = Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.ItemReadAPI;
 
             try

@@ -89,7 +89,7 @@ namespace Adventure
         {
             try
             {
-                string[] filesArray = {"spells.json","stats.json","races.json","npcs.json","questrewards.json","levels.json", "enemies.json"};
+                string[] filesArray = {"stats.json","races.json","npcs.json","questrewards.json","levels.json", "enemies.json"};
                 
 
                 foreach (string file in filesArray)
@@ -106,9 +106,6 @@ namespace Adventure
                         {
                             switch (type)
                             {
-                                case "spells":
-                                    spellsList.Add((Spell)obj.ToObject(typeof(Spell)));
-                                    break;
                                 case "stats":
                                     statsList.Add((Stat)obj.ToObject(typeof(Stat)));
                                     break;
