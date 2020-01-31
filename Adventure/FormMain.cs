@@ -207,7 +207,7 @@ namespace Adventure
             // Verify the player has an ID - it's necessary for the API call
             if(Instances.Player != null && Instances.Player.uniqueID != 0)
             {
-                Character character = API.GetCharacter(Instances.Player.uniqueID);
+                Character character = Character.GetCharacter();
 
                 if(character != null)
                 {

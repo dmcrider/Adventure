@@ -120,6 +120,79 @@ namespace Adventure
             CurrentMagic = MaxMagic;
         }
 
+        /// <summary>
+        /// Gets the Character associated with the parameter from the database
+        /// </summary>
+        /// <returns>Returns a Character object if one is found, null otherwise</returns>
+        public static Character GetCharacter()
+        {
+            WebClient client = new WebClient();
+
+            try
+            {
+                string response = client.DownloadString(Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.CharacterReadAPI);
+                JObject convertedJSON = JObject.Parse(response);
+
+                foreach (var item in convertedJSON)
+                {
+                    foreach (JObject obj in item.Value)
+                    {
+                        if (Instances.Player.uniqueID == (int)obj.SelectToken("UserID"))
+                        {
+                            LogWriter.Write(typeof(Character).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Success, "Character was found for Player " + Instances.Player.uniqueID);
+                            return new Character((int)obj.GetValue("UniqueID"), (int)obj.GetValue("UserID"), (string)obj.GetValue("Name"), (int)obj.GetValue("RaceID"), (int)obj.GetValue("MaxHP"), (int)obj.GetValue("CurrentHP"), (int)obj.GetValue("MaxMagic"), (int)obj.GetValue("CurrentMagic"), (int)obj.GetValue("Strength"), (int)obj.GetValue("Intelligence"), (int)obj.GetValue("Constitution"), (int)obj.GetValue("Gold"), (int)obj.GetValue("Level"), (int)obj.GetValue("ExpPoints"), (int)obj.GetValue("IsActive"));
+                        }
+                    }
+                }
+            }
+            catch(Exception ex)
+            {
+                LogWriter.Write(typeof(Character).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, ex.Message);
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Gets a UniqueID for a Character that has not yet been saved to the database
+        /// </summary>
+        /// <param name="character">A Character that has not yet been saved to the database</param>
+        /// <returns>Returns an APIStatusCode</returns>
+        public static APIStatusCode GetUniqueID(Character character)
+        {
+            try
+            {
+                WebClient client = new WebClient();
+                string charValues = $"{{\"UserID\":\"{Instances.Player.uniqueID}\",\"Name\":\"{character.Name}\",\"RaceID\":\"{character.RaceID}\",\"Gender\":\"{character.Gender}\",\"MaxHP\":\"{character.MaxHP}\",\"CurrentHP\":\"{character.CurrentHP}\",\"MaxMagic\":\"{character.MaxMagic}\",\"CurrentMagic\":\"{character.CurrentMagic}\",\"Strength\":\"{character.Strength}\",\"Intelligence\":\"{character.Intelligence}\",\"Constitution\":\"{character.Constitution}\",\"Gold\":\"{character.Gold}\",\"Level\":\"{character.Level}\",\"ExpPoints\":\"{character.ExpPoints}\"}}";
+                string response = client.UploadString(Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.CharacterCreateAPI, charValues);
+                JObject convertedJSON = JObject.Parse(response);
+
+                foreach (var obj in convertedJSON)
+                {
+                    if (obj.Key == "success")
+                    {
+                        character.UniqueID = (int)convertedJSON.GetValue("UniqueID");
+                        LogWriter.Write(typeof(Character).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Success, "Got UniqueID for Character");
+                        return APIStatusCode.SUCCESS;
+                    }
+                    else if (obj.Key == "error")
+                    {
+                        LogWriter.Write(typeof(Character).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, ""+obj.Value);
+                        return APIStatusCode.FAIL;
+                    }
+                }
+                return APIStatusCode.FAIL;
+            }
+            catch (Exception ex)
+            {
+                LogWriter.Write(typeof(Character).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, ex.Message);
+                return APIStatusCode.FAIL;
+            }
+        }
+
+        /// <summary>
+        /// Saves the current Character to the database
+        /// </summary>
         public void Save()
         {
             WebClient client = new WebClient();

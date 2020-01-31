@@ -257,67 +257,6 @@ namespace Adventure
         }
 
         /// <summary>
-        /// Gets the Character associated with the parameter from the database
-        /// </summary>
-        /// <param name="userID"></param>
-        /// <returns>Returns a Character object if one is found, null otherwise</returns>
-        public static Character GetCharacter(int userID)
-        {
-            string response = client.DownloadString(Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.CharacterReadAPI);
-            JObject convertedJSON = JObject.Parse(response);
-
-            foreach (var item in convertedJSON)
-            {
-                foreach (JObject character in item.Value)
-                {
-                    if (userID == (int)character.SelectToken("UserID"))
-                    {
-                        //LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Debug, character.ToString());
-                        return new Character((int)character.GetValue("UniqueID"), (int)character.GetValue("UserID"), (string)character.GetValue("Name"), (int)character.GetValue("RaceID"), (int)character.GetValue("MaxHP"), (int)character.GetValue("CurrentHP"), (int)character.GetValue("MaxMagic"), (int)character.GetValue("CurrentMagic"), (int)character.GetValue("Strength"), (int)character.GetValue("Intelligence"), (int)character.GetValue("Constitution"), (int)character.GetValue("Gold"), (int)character.GetValue("Level"), (int)character.GetValue("ExpPoints"), (int)character.GetValue("IsActive"));
-                    }
-                }
-            }
-
-            return null;
-        }
-
-        /// <summary>
-        /// Saves the character to the database
-        /// </summary>
-        /// <param name="character"></param>
-        /// <param name="playerID"></param>
-        /// <returns>Returns true if database transaction was successful, false otherwise</returns>
-        public static APIStatusCode CreateCharacter(Character character, int playerID)
-        {
-            try
-            {
-                string charValues = $"{{\"UserID\":\"{playerID}\",\"Name\":\"{character.Name}\",\"RaceID\":\"{character.RaceID}\",\"Gender\":\"{character.Gender}\",\"MaxHP\":\"{character.MaxHP}\",\"CurrentHP\":\"{character.CurrentHP}\",\"MaxMagic\":\"{character.MaxMagic}\",\"CurrentMagic\":\"{character.CurrentMagic}\",\"Strength\":\"{character.Strength}\",\"Intelligence\":\"{character.Intelligence}\",\"Constitution\":\"{character.Constitution}\",\"Gold\":\"{character.Gold}\",\"Level\":\"{character.Level}\",\"ExpPoints\":\"{character.ExpPoints}\"}}";
-                string response = client.UploadString(Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.CharacterCreateAPI, charValues);
-                JObject convertedJSON = JObject.Parse(response);
-
-                foreach (var obj in convertedJSON)
-                {
-                    if (obj.Key == "success")
-                    {
-                        character.UniqueID = (int)convertedJSON.GetValue("UniqueID");
-                        return APIStatusCode.SUCCESS;
-                    }
-                    else if (obj.Key == "error")
-                    {
-                        LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, "Creating character: " + obj.Value);
-                        return APIStatusCode.FAIL;
-                    }
-                }
-                return APIStatusCode.FAIL;
-            }
-            catch (Exception ex)
-            {
-                LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, ex.Message);
-                return APIStatusCode.FAIL;
-            }
-        }
-
-        /// <summary>
         /// Adds an Item to the character's inventory
         /// </summary>
         /// <param name="character"></param>
