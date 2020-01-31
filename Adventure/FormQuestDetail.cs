@@ -158,7 +158,7 @@ namespace Adventure
                 }
             }
             // Save the updates
-            API.SaveProgress(Instances.Player);
+            Instances.Character.Save();
         }
 
         private bool ClaimRewardGold()

@@ -34,7 +34,7 @@ namespace Adventure
         public void Save_Click(object sender, EventArgs e)
         {
             LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Info, "Saving Progress");
-            API.SaveProgress(Instances.Player);
+            Instances.Character.Save();
         }
 
         public void Logout_Click(object sender, EventArgs e)

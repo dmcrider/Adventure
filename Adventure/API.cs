@@ -610,52 +610,6 @@ namespace Adventure
         }
 
         /// <summary>
-        /// Save a Player's settings and Character progress
-        /// </summary>
-        /// <param name="player">A Player object referencing the current user</param>
-        public static APIStatusCode SaveProgress(Player player)
-        {
-            return UpdateCharacter(player.character, player.uniqueID);
-        }
-
-        /// <summary>
-        /// Update a Character's database entry
-        /// </summary>
-        /// <param name="character">A Character object referencing the Character to be saved</param>
-        /// <param name="playerID">The ID of the Player associated with the Character</param>
-        private static APIStatusCode UpdateCharacter(Character character, int playerID)
-        {
-            try
-            {
-                string charValues = $"{{\"UniqueID\":\"{Instances.Character.UniqueID}\",\"UserID\":\"{playerID}\",\"Name\":\"{character.Name}\",\"RaceID\":\"{character.RaceID}\",\"Gender\":\"{character.Gender}\",\"MaxHP\":\"{character.MaxHP}\",\"CurrentHP\":\"{character.CurrentHP}\",\"MaxMagic\":\"{character.MaxMagic}\",\"CurrentMagic\":\"{character.CurrentMagic}\",\"Strength\":\"{character.Strength}\",\"Intelligence\":\"{character.Intelligence}\",\"Constitution\":\"{character.Constitution}\",\"Gold\":\"{character.Gold}\",\"Level\":\"{character.Level}\",\"ExpPoints\":\"{character.ExpPoints}\",\"IsActive\":\"{character.Active}\"}}";
-                string response = client.UploadString(Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.CharacterUpdateAPI, charValues);
-                JObject convertedJSON = JObject.Parse(response);
-                //LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Debug, charValues);
-
-                foreach (var obj in convertedJSON)
-                {
-                    if (obj.Key == "success")
-                    {
-                        LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Success, "Updating character: " + character.Name);
-                        return APIStatusCode.SECONDARY_SUCCESS;
-                    }
-                    else if (obj.Key == "error")
-                    {
-                        LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, "Updating character: " + obj.Value);
-                        return APIStatusCode.SECONDARY_FAIL;
-                    }
-                }
-            }
-            catch(Exception ex)
-            {
-                LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, ex.Message);
-                return APIStatusCode.SECONDARY_FAIL;
-            }
-
-            return APIStatusCode.SECONDARY_FAIL;
-        }
-
-        /// <summary>
         /// Check if the player information is stored locally and load it if it exists
         /// </summary>
         /// <param name="player"></param>

@@ -1,6 +1,9 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -8,24 +11,8 @@ namespace Adventure
 {
     public class Character
     {
-        // UniqueID, UserID, Name, RaceID, MaxHP, CurrentHP, MaxMagic, CurrentMagic
-        // Strength, Intelligence, Constitution, Gold, Level, ExperiencePoints, IsActive
-        private int uniqueID;
-        private int userID;
-        private string name;
-        private int raceID;
-        private int gender;
-        private int maxHP;
-        private int currentHP;
-        private int maxMagic;
-        private int currentMagic;
-        private int strength;
-        private int intelligence;
-        private int constitution;
         private int gold;
-        private int level;
         private int expPoints;
-        private int active;
 
         private const int DEFAULT_HP = 20;
         private const int DEFAULT_MAGIC = 20;
@@ -71,40 +58,37 @@ namespace Adventure
             Active = DEFAULT_ACTIVE;
         }
 
-        public int UniqueID { get => uniqueID; set => uniqueID = value; }
-        public int UserID { get => userID; set => userID = value; }
-        public string Name { get => name; set => name = value; }
-        public int RaceID { get => raceID; set => raceID = value; }
-        public int MaxHP { get => maxHP; set => maxHP = value; }
-        public int CurrentHP { get => currentHP; set => currentHP = value; }
-        public int MaxMagic { get => maxMagic; set => maxMagic = value; }
-        public int CurrentMagic { get => currentMagic; set => currentMagic = value; }
-        public int Strength { get => strength; set => strength = value; }
-        public int Intelligence { get => intelligence; set => intelligence = value; }
-        public int Constitution { get => constitution; set => constitution = value; }
-        public int Active { get => active; set => active = value; }
-        public int Gender { get => gender; set => gender = value; }
-
-        public int Level { get => level; set => level = value; }
-
+        public int UniqueID { get; set; }
+        public int UserID { get; set; }
+        public string Name { get; set; }
+        public int RaceID { get; set; }
+        public int MaxHP { get; set; }
+        public int CurrentHP { get; set; }
+        public int MaxMagic { get; set; }
+        public int CurrentMagic { get; set; }
+        public int Strength { get; set; }
+        public int Intelligence { get; set; }
+        public int Constitution { get; set; }
+        public int Active { get; set; }
+        public int Gender { get; set; }
+        public int Level { get; set; }
         public int Gold
         {
             get => gold;
             set
             {
-                LogWriter.Write("Character", "Gold", LogWriter.LogType.GamePlay, $"Gold changed from {gold} to {value}");
+                LogWriter.Write(typeof(Character).Name, "Gold", LogWriter.LogType.GamePlay, $"Gold changed from {gold} to {value}");
                 gold = value;
 
                 Instances.FormMain.UpdatePlayerInfoUI();
             }
         }
-
         public int ExpPoints
         {
             get => expPoints;
             set
             {
-                LogWriter.Write("Character", "ExpPoints", LogWriter.LogType.GamePlay, $"EXP increased from {expPoints} to {value}");
+                LogWriter.Write(typeof(Character).Name, "ExpPoints", LogWriter.LogType.GamePlay, $"EXP increased from {expPoints} to {value}");
                 expPoints = value;
 
                 if(CharacterLevel.CharacterLevels.Count() > 0 && Instances.Character != null)
@@ -113,15 +97,18 @@ namespace Adventure
 
                     if (expPoints >= level.ExpNeeded)
                     {
-                        LogWriter.Write("Character", "ExpPoints", LogWriter.LogType.GamePlay, "LEVEL UP!");
+                        LogWriter.Write(typeof(Character).Name, "ExpPoints", LogWriter.LogType.GamePlay, "LEVEL UP!");
                         expPoints -= level.ExpNeeded;
                         new FormLevelUp(level).ShowDialog();
                         // Save after level up
-                        API.SaveProgress(Instances.Player);
+                        Save();
                     }
                     Instances.FormMain.UpdatePlayerInfoUI();
                 }
             }
+        }
+        public List<Inventory> Inventory {
+            get => GameController.inventoryList;
         }
 
         /// <summary>
@@ -133,9 +120,31 @@ namespace Adventure
             CurrentMagic = MaxMagic;
         }
 
-        public List<Inventory> Inventory
+        public void Save()
         {
-            get => GameController.inventoryList;
+            WebClient client = new WebClient();
+            try
+            {
+                string charValues = $"{{\"UniqueID\":\"{UniqueID}\",\"UserID\":\"{Instances.Player.uniqueID}\",\"Name\":\"{Name}\",\"RaceID\":\"{RaceID}\",\"Gender\":\"{Gender}\",\"MaxHP\":\"{MaxHP}\",\"CurrentHP\":\"{CurrentHP}\",\"MaxMagic\":\"{MaxMagic}\",\"CurrentMagic\":\"{CurrentMagic}\",\"Strength\":\"{Strength}\",\"Intelligence\":\"{Intelligence}\",\"Constitution\":\"{Constitution}\",\"Gold\":\"{Gold}\",\"Level\":\"{Level}\",\"ExpPoints\":\"{ExpPoints}\",\"IsActive\":\"{Active}\"}}";
+                string response = client.UploadString(Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.CharacterUpdateAPI, charValues);
+                JObject convertedJSON = JObject.Parse(response);
+
+                foreach (var obj in convertedJSON)
+                {
+                    if (obj.Key == "success")
+                    {
+                        LogWriter.Write(typeof(Character).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Success, "Updating character: " + this.Name);
+                    }
+                    else if (obj.Key == "error")
+                    {
+                        LogWriter.Write(typeof(Character).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, "Updating character: " + obj.Value);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                LogWriter.Write(typeof(Character).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, ex.Message);
+            }
         }
     }
 }
