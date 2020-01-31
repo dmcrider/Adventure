@@ -86,11 +86,11 @@ namespace Adventure
         /// <summary>
         /// Loads all items from the local file into the Items list.
         /// </summary>
-        /// <returns>Returns an APIStatusCode that indicates if the method was successful or not.</returns>
-        public static APIStatusCode LoadFromFile()
+        public static void LoadFromFile()
         {
             try
             {
+                LogWriter.Write(typeof(Item).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Info, "Loading Items from file");
                 Items = new List<Item>();
                 string path = API.storageLocation + "items.json";
 
@@ -108,23 +108,19 @@ namespace Adventure
                 if(Items.Count() > 0)
                 {
                     LogWriter.Write(typeof(Item).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Success, "Items loaded successfully");
-                    return APIStatusCode.SUCCESS;
                 }
                 LogWriter.Write(typeof(Item).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Warning, "No Items to load");
-                return APIStatusCode.FAIL;
             }
             catch(Exception ex)
             {
                 LogWriter.Write(typeof(Item).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, ex.Message + "\n\t" + ex.StackTrace);
-                return APIStatusCode.FAIL;
             }
         }
 
         /// <summary>
         /// Loads all items from the database into the Items list.
         /// </summary>
-        /// <returns>Returns an APIStatusCode that indicates if the method was successful or not.</returns>
-        public static APIStatusCode LoadFromDatabase()
+        public static void LoadFromDatabase()
         {
             WebClient client = new WebClient();
             Items = new List<Item>();
@@ -132,6 +128,7 @@ namespace Adventure
 
             try
             {
+                LogWriter.Write(typeof(Item).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Info, "Loading Items from database");
                 string response = client.DownloadString(api);
                 JObject convertedJSON = JObject.Parse(response);
 
@@ -144,12 +141,10 @@ namespace Adventure
                 }
                 LogWriter.Write(typeof(Item).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Success, "Items successfully updated from database");
                 Save();
-                return APIStatusCode.SUCCESS;
             }
             catch (Exception ex)
             {
                 LogWriter.Write(typeof(Item).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, ex.Message + "\n\t" + ex.StackTrace);
-                return APIStatusCode.FAIL;
             }
         }
 

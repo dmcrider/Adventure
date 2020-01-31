@@ -41,11 +41,11 @@ namespace Adventure
         /// <summary>
         /// Loads all quests from the local file into the Quests list.
         /// </summary>
-        /// <returns>Returns an APIStatusCode that indicates if the method was successful or not.</returns>
-        public static APIStatusCode LoadFromFile()
+        public static void LoadFromFile()
         {
             try
             {
+                LogWriter.Write(typeof(Race).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Info, "Loading Spells from file");
                 Spells = new List<Spell>();
                 string path = API.storageLocation + "spells.json";
 
@@ -62,24 +62,20 @@ namespace Adventure
 
                 if (Spells.Count() > 0)
                 {
-                    LogWriter.Write(typeof(Item).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Success, "Spells loaded successfully");
-                    return APIStatusCode.SUCCESS;
+                    LogWriter.Write(typeof(Race).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Success, "Spells loaded successfully");
                 }
-                LogWriter.Write(typeof(Item).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Warning, "No Spells to load");
-                return APIStatusCode.FAIL;
+                LogWriter.Write(typeof(Race).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Warning, "No Spells to load");
             }
             catch (Exception ex)
             {
-                LogWriter.Write(typeof(Item).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, ex.Message + "\n\t" + ex.StackTrace);
-                return APIStatusCode.FAIL;
+                LogWriter.Write(typeof(Race).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, ex.Message + "\n\t" + ex.StackTrace);
             }
         }
 
         /// <summary>
         /// Loads all items from the database into the Items list.
         /// </summary>
-        /// <returns>Returns an APIStatusCode that indicates if the method was successful or not.</returns>
-        public static APIStatusCode LoadFromDatabase()
+        public static void LoadFromDatabase()
         {
             WebClient client = new WebClient();
             Spells = new List<Spell>();
@@ -87,6 +83,7 @@ namespace Adventure
 
             try
             {
+                LogWriter.Write(typeof(Race).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Info, "Loading Spells from database");
                 string response = client.DownloadString(api);
                 JObject convertedJSON = JObject.Parse(response);
 
@@ -97,14 +94,12 @@ namespace Adventure
                         Spells.Add(new Spell((int)item.SelectToken("UniqueID"), (string)item.SelectToken("Name"), (int)item.SelectToken("HealAmount"), (int)item.SelectToken("DamageAmount"), (int)item.SelectToken("Bonus"), (int)item.SelectToken("MagicCost"), (int)item.SelectToken("MinLevel")));
                     }
                 }
-                LogWriter.Write(typeof(Item).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Success, "Spells successfully updated from database");
+                LogWriter.Write(typeof(Race).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Success, "Spells successfully updated from database");
                 Save();
-                return APIStatusCode.SUCCESS;
             }
             catch (Exception ex)
             {
-                LogWriter.Write(typeof(Item).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, ex.Message + "\n\t" + ex.StackTrace);
-                return APIStatusCode.FAIL;
+                LogWriter.Write(typeof(Race).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, ex.Message + "\n\t" + ex.StackTrace);
             }
         }
 
@@ -125,11 +120,11 @@ namespace Adventure
 
                 File.WriteAllText(API.storageLocation + "spells.json", json);
 
-                LogWriter.Write(typeof(Item).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Success, "Spells successfully saved locally");
+                LogWriter.Write(typeof(Race).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Success, "Spells successfully saved locally");
             }
             catch (Exception ex)
             {
-                LogWriter.Write(typeof(Item).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, ex.Message + "\n\t" + ex.StackTrace);
+                LogWriter.Write(typeof(Race).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, ex.Message + "\n\t" + ex.StackTrace);
             }
         }
     }

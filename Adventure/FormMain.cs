@@ -12,8 +12,6 @@ using System.Threading;
 using System.Windows.Forms;
 using System.Reflection;
 
-//LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "message");
-
 namespace Adventure
 {
     public partial class FormMain : Form
@@ -139,7 +137,7 @@ namespace Adventure
             {
                 // Load local data
                 LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Info, "Loading local data");
-                API.LoadData();
+                API.LoadLocalData();
             }
 
             LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Success, "Everything is loaded");

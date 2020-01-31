@@ -43,11 +43,11 @@ namespace Adventure
         /// <summary>
         /// Loads all quests from the local file into the Quests list.
         /// </summary>
-        /// <returns>Returns an APIStatusCode that indicates if the method was successful or not.</returns>
-        public static APIStatusCode LoadFromFile()
+        public static void LoadFromFile()
         {
             try
             {
+                LogWriter.Write(typeof(CharacterLevel).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Info, "Loading Levels from file");
                 CharacterLevels = new List<CharacterLevel>();
                 string path = API.storageLocation + "levels.json";
 
@@ -64,24 +64,20 @@ namespace Adventure
 
                 if (CharacterLevels.Count() > 0)
                 {
-                    LogWriter.Write(typeof(Item).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Success, "Levels loaded successfully");
-                    return APIStatusCode.SUCCESS;
+                    LogWriter.Write(typeof(CharacterLevel).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Success, "Levels loaded successfully");
                 }
-                LogWriter.Write(typeof(Item).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Warning, "No Levels to load");
-                return APIStatusCode.FAIL;
+                LogWriter.Write(typeof(CharacterLevel).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Warning, "No Levels to load");
             }
             catch (Exception ex)
             {
-                LogWriter.Write(typeof(Item).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, ex.Message + "\n\t" + ex.StackTrace);
-                return APIStatusCode.FAIL;
+                LogWriter.Write(typeof(CharacterLevel).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, ex.Message + "\n\t" + ex.StackTrace);
             }
         }
 
         /// <summary>
-        /// Loads all items from the database into the Items list.
+        /// Loads all CharacterLevels from the database into the CharacterLevels list.
         /// </summary>
-        /// <returns>Returns an APIStatusCode that indicates if the method was successful or not.</returns>
-        public static APIStatusCode LoadFromDatabase()
+        public static void LoadFromDatabase()
         {
             WebClient client = new WebClient();
             CharacterLevels = new List<CharacterLevel>();
@@ -89,29 +85,28 @@ namespace Adventure
 
             try
             {
+                LogWriter.Write(typeof(CharacterLevel).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Info, "Loading Levels from database");
                 string response = client.DownloadString(api);
                 JObject convertedJSON = JObject.Parse(response);
 
                 foreach (var obj in convertedJSON)
                 {
-                    foreach (var item in obj.Value)
+                    foreach (var CharacterLevel in obj.Value)
                     {
-                        CharacterLevels.Add(new CharacterLevel((int)item.SelectToken("UniqueID"), (int)item.SelectToken("ExpNeeded"), (int)item.SelectToken("NumberOfSpells"), (int)item.SelectToken("STRIncrease"), (int)item.SelectToken("INTIncrease"), (int)item.SelectToken("CONIncrease"), (int)item.SelectToken("HPIncrease"), (int)item.SelectToken("MagicIncrease")));
+                        CharacterLevels.Add(new CharacterLevel((int)CharacterLevel.SelectToken("UniqueID"), (int)CharacterLevel.SelectToken("ExpNeeded"), (int)CharacterLevel.SelectToken("NumberOfSpells"), (int)CharacterLevel.SelectToken("STRIncrease"), (int)CharacterLevel.SelectToken("INTIncrease"), (int)CharacterLevel.SelectToken("CONIncrease"), (int)CharacterLevel.SelectToken("HPIncrease"), (int)CharacterLevel.SelectToken("MagicIncrease")));
                     }
                 }
-                LogWriter.Write(typeof(Item).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Success, "Levels successfully updated from database");
+                LogWriter.Write(typeof(CharacterLevel).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Success, "Levels successfully updated from database");
                 Save();
-                return APIStatusCode.SUCCESS;
             }
             catch (Exception ex)
             {
-                LogWriter.Write(typeof(Item).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, ex.Message + "\n\t" + ex.StackTrace);
-                return APIStatusCode.FAIL;
+                LogWriter.Write(typeof(CharacterLevel).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, ex.Message + "\n\t" + ex.StackTrace);
             }
         }
 
         /// <summary>
-        /// Saves the list of items to a local file.
+        /// Saves the list of CharacterLevels to a local file.
         /// </summary>
         private static void Save()
         {
@@ -127,11 +122,11 @@ namespace Adventure
 
                 File.WriteAllText(API.storageLocation + "levels.json", json);
 
-                LogWriter.Write(typeof(Item).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Success, "Levels successfully saved locally");
+                LogWriter.Write(typeof(CharacterLevel).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Success, "Levels successfully saved locally");
             }
             catch (Exception ex)
             {
-                LogWriter.Write(typeof(Item).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, ex.Message + "\n\t" + ex.StackTrace);
+                LogWriter.Write(typeof(CharacterLevel).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, ex.Message + "\n\t" + ex.StackTrace);
             }
         }
     }

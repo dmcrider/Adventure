@@ -37,11 +37,11 @@ namespace Adventure
         /// <summary>
         /// Loads all quests from the local file into the Quests list.
         /// </summary>
-        /// <returns>Returns an APIStatusCode that indicates if the method was successful or not.</returns>
-        public static APIStatusCode LoadFromFile()
+        public static void LoadFromFile()
         {
             try
             {
+                LogWriter.Write(typeof(QuestReward).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Info, "Loading QuestRewards from file");
                 QuestRewards = new List<QuestReward>();
                 string path = API.storageLocation + "questrewards.json";
 
@@ -58,24 +58,20 @@ namespace Adventure
 
                 if (QuestRewards.Count() > 0)
                 {
-                    LogWriter.Write(typeof(Item).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Success, "QuestRewards loaded successfully");
-                    return APIStatusCode.SUCCESS;
+                    LogWriter.Write(typeof(QuestReward).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Success, "QuestRewards loaded successfully");
                 }
-                LogWriter.Write(typeof(Item).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Warning, "No QuestRewards to load");
-                return APIStatusCode.FAIL;
+                LogWriter.Write(typeof(QuestReward).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Warning, "No QuestRewards to load");
             }
             catch (Exception ex)
             {
-                LogWriter.Write(typeof(Item).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, ex.Message + "\n\t" + ex.StackTrace);
-                return APIStatusCode.FAIL;
+                LogWriter.Write(typeof(QuestReward).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, ex.Message + "\n\t" + ex.StackTrace);
             }
         }
 
         /// <summary>
         /// Loads all items from the database into the Items list.
         /// </summary>
-        /// <returns>Returns an APIStatusCode that indicates if the method was successful or not.</returns>
-        public static APIStatusCode LoadFromDatabase()
+        public static void LoadFromDatabase()
         {
             WebClient client = new WebClient();
             QuestRewards = new List<QuestReward>();
@@ -83,6 +79,7 @@ namespace Adventure
 
             try
             {
+                LogWriter.Write(typeof(QuestReward).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Info, "Loading QuestRewards from database");
                 string response = client.DownloadString(api);
                 JObject convertedJSON = JObject.Parse(response);
 
@@ -93,14 +90,12 @@ namespace Adventure
                         QuestRewards.Add(new QuestReward((int)item.SelectToken("UniqueID"), (int)item.SelectToken("IsItem"), (int)item.SelectToken("ItemID"), (int)item.SelectToken("Gold")));
                     }
                 }
-                LogWriter.Write(typeof(Item).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Success, "QuestRewards successfully updated from database");
+                LogWriter.Write(typeof(QuestReward).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Success, "QuestRewards successfully updated from database");
                 Save();
-                return APIStatusCode.SUCCESS;
             }
             catch (Exception ex)
             {
-                LogWriter.Write(typeof(Item).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, ex.Message + "\n\t" + ex.StackTrace);
-                return APIStatusCode.FAIL;
+                LogWriter.Write(typeof(QuestReward).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, ex.Message + "\n\t" + ex.StackTrace);
             }
         }
 
@@ -121,11 +116,11 @@ namespace Adventure
 
                 File.WriteAllText(API.storageLocation + "questrewards.json", json);
 
-                LogWriter.Write(typeof(Item).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Success, "QuestRewards successfully saved locally");
+                LogWriter.Write(typeof(QuestReward).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Success, "QuestRewards successfully saved locally");
             }
             catch (Exception ex)
             {
-                LogWriter.Write(typeof(Item).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, ex.Message + "\n\t" + ex.StackTrace);
+                LogWriter.Write(typeof(QuestReward).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, ex.Message + "\n\t" + ex.StackTrace);
             }
         }
     }

@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Reflection;
+using System.Threading;
 
 namespace Adventure
 {
@@ -75,38 +76,56 @@ namespace Adventure
         /// <summary>
         /// Loads local data into the appropriate list
         /// </summary>
-        public static APIStatusCode LoadData()
+        public static APIStatusCode LoadLocalData()
         {
             try
             {
-                string[] filesArray = {};
-                
+                // Instantiate each thread
+                Thread statThread = new Thread(new ThreadStart(Stat.LoadFromFile));
+                Thread spellThread = new Thread(new ThreadStart(Spell.LoadFromFile));
+                Thread raceThread = new Thread(new ThreadStart(Race.LoadFromFile));
+                Thread questRewardThread = new Thread(new ThreadStart(QuestReward.LoadFromFile));
+                Thread questThread = new Thread(new ThreadStart(Quest.LoadFromFile));
+                Thread npcThread = new Thread(new ThreadStart(Npc.LoadFromFile));
+                Thread itemThread = new Thread(new ThreadStart(Item.LoadFromFile));
+                Thread enemyThread = new Thread(new ThreadStart(Enemy.LoadFromFile));
+                Thread characterLevelThread = new Thread(new ThreadStart(CharacterLevel.LoadFromFile));
 
-                foreach (string file in filesArray)
-                {
-                    string path = storageLocation + file;
-                    string type = file.Split('.')[0];
-                    // Read the file in and add an appropriate object to the arrays we got from the main class
-                    using(StreamReader inputFile = File.OpenText(path))
-                    {
-                        JsonSerializer serializer = new JsonSerializer();
-                        JArray response = (JArray)serializer.Deserialize(inputFile, typeof(JObject));
+                // Start each thread after the previous one has ended
+                statThread.Start();
+                statThread.Join();
 
-                        foreach(JObject obj in response)
-                        {
-                            switch (type)
-                            {
-                                default:
-                                    break;
-                            }
-                        }
-                    }
-                }
+                spellThread.Start();
+                spellThread.Join();
+
+                raceThread.Start();
+                raceThread.Join();
+
+                questRewardThread.Start();
+                questRewardThread.Join();
+
+                questThread.Start();
+                questThread.Join();
+
+                npcThread.Start();
+                npcThread.Join();
+
+                itemThread.Start();
+                itemThread.Join();
+
+                enemyThread.Start();
+                enemyThread.Join();
+
+                characterLevelThread.Start();
+                characterLevelThread.Join();
+
+                // Now that all threads have completed, return success
+                LogWriter.Write(typeof(API).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Success, "All threads completed");
                 return APIStatusCode.SUCCESS;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, "Loading local data: " + e);
+                LogWriter.Write(typeof(API).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, "Loading local data: " + ex);
                 return APIStatusCode.FAIL;
             }
         }
@@ -411,36 +430,54 @@ namespace Adventure
         /// </summary>
         public static APIStatusCode UpdateFromDatabase()
         {
-            WebClient updateClient = new WebClient();
-            string[] apiStrings = new string[7];
-            apiStrings[7] = Properties.Settings.Default.EnemyReadAPI;
-
             try
             {
-                foreach (string apiName in apiStrings)
-                {
-                    string fullAPI = Properties.Settings.Default.APIBaseAddress + apiName;
-                    string response = updateClient.DownloadString(fullAPI);
-                    JObject convertedJSON = JObject.Parse(response);
+                // Instantiate each thread
+                Thread statThread = new Thread(new ThreadStart(Stat.LoadFromDatabase));
+                Thread spellThread = new Thread(new ThreadStart(Spell.LoadFromDatabase));
+                Thread raceThread = new Thread(new ThreadStart(Race.LoadFromDatabase));
+                Thread questRewardThread = new Thread(new ThreadStart(QuestReward.LoadFromDatabase));
+                Thread questThread = new Thread(new ThreadStart(Quest.LoadFromDatabase));
+                Thread npcThread = new Thread(new ThreadStart(Npc.LoadFromDatabase));
+                Thread itemThread = new Thread(new ThreadStart(Item.LoadFromDatabase));
+                Thread enemyThread = new Thread(new ThreadStart(Enemy.LoadFromDatabase));
+                Thread characterLevelThread = new Thread(new ThreadStart(CharacterLevel.LoadFromDatabase));
 
-                    foreach (var obj in convertedJSON)
-                    {
-                        foreach (var item in obj.Value)
-                        {
-                            switch (Array.IndexOf(apiStrings, apiName))
-                            {
-                                default: // Shouldn't ever happen
-                                    break;
-                            }
-                        }
-                    }
-                }
-                LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Success, "Updated from database");
-                return SaveData();
+                // Start each thread after the previous one has ended
+                statThread.Start();
+                statThread.Join();
+
+                spellThread.Start();
+                spellThread.Join();
+
+                raceThread.Start();
+                raceThread.Join();
+
+                questRewardThread.Start();
+                questRewardThread.Join();
+
+                questThread.Start();
+                questThread.Join();
+
+                npcThread.Start();
+                npcThread.Join();
+
+                itemThread.Start();
+                itemThread.Join();
+
+                enemyThread.Start();
+                enemyThread.Join();
+
+                characterLevelThread.Start();
+                characterLevelThread.Join();
+
+                // Now that all threads have completed, return success
+                LogWriter.Write(typeof(API).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Success, "All threads completed");
+                return APIStatusCode.SUCCESS;
             }
             catch (Exception e)
             {
-                LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, "Updating from database: " + e);
+                LogWriter.Write(typeof(API).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, "Updating from database: " + e);
                 return APIStatusCode.FAIL;
             }
         }
@@ -616,34 +653,6 @@ namespace Adventure
             }
 
             return APIStatusCode.SECONDARY_FAIL;
-        }
-
-        /// <summary>
-        /// Saves each list locally as a json file
-        /// </summary>
-        private static APIStatusCode SaveData()
-        {
-            try
-            {
-                // Convert each List to a JSON Object so we can save it
-
-                // Make sure the path exists before we try to save there
-                if (!Directory.Exists(storageLocation))
-                {
-                    Directory.CreateDirectory(storageLocation);
-                }
-
-                // Save each converted json string
-                // WriteAllText overwrites any existing data, if the file exists
-
-                LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Info, "Data successfully saved");
-                return APIStatusCode.SECONDARY_SUCCESS;
-            }
-            catch(Exception ex)
-            {
-                LogWriter.Write("API",MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Critical, "Cannot convert data to be saved: " + ex.Message);
-                return APIStatusCode.SECONDARY_FAIL;
-            }
         }
 
         /// <summary>
