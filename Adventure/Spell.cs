@@ -83,7 +83,7 @@ namespace Adventure
         {
             WebClient client = new WebClient();
             Spells = new List<Spell>();
-            string api = Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.ItemReadAPI;
+            string api = Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.SpellReadAPI;
 
             try
             {

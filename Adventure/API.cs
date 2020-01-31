@@ -17,7 +17,6 @@ namespace Adventure
         // TODO: Decrypt passwords received
 
         // Lists that the rest of the application can access
-        public static List<Race> racesList = new List<Race>();
         public static List<Npc> npcsList = new List<Npc>();
         public static List<QuestReward> questrewardsList = new List<QuestReward>();
         public static List<LevelUp> levelList = new List<LevelUp>();
@@ -86,7 +85,7 @@ namespace Adventure
         {
             try
             {
-                string[] filesArray = {"races.json","npcs.json","questrewards.json","levels.json", "enemies.json"};
+                string[] filesArray = {"npcs.json","questrewards.json","levels.json", "enemies.json"};
                 
 
                 foreach (string file in filesArray)
@@ -103,9 +102,6 @@ namespace Adventure
                         {
                             switch (type)
                             {
-                                case "races":
-                                    racesList.Add((Race)obj.ToObject(typeof(Race)));
-                                    break;
                                 case "npcs":
                                     npcsList.Add((Npc)obj.ToObject(typeof(Npc)));
                                     break;
@@ -435,7 +431,6 @@ namespace Adventure
         {
             WebClient updateClient = new WebClient();
             string[] apiStrings = new string[7];
-            apiStrings[2] = Properties.Settings.Default.RaceReadAPI;
             apiStrings[3] = Properties.Settings.Default.StateReadAPI;
             apiStrings[4] = Properties.Settings.Default.NPCReadAPI;
             apiStrings[5] = Properties.Settings.Default.QuestRewardReadAPI;
@@ -456,9 +451,6 @@ namespace Adventure
                         {
                             switch (Array.IndexOf(apiStrings, apiName))
                             {
-                                case 4: // Races
-                                    racesList.Add(new Race((int)item.SelectToken("UniqueID"), (string)item.SelectToken("Name"), (int)item.SelectToken("BaseSTR"), (int)item.SelectToken("BaseINT"), (int)item.SelectToken("BaseCON"), (int)item.SelectToken("IsActive")));
-                                    break;
                                 case 6: // NPCs
                                     npcsList.Add(new Npc((int)item.SelectToken("UniqueID"), (string)item.SelectToken("Name")));
                                     break;
@@ -668,7 +660,6 @@ namespace Adventure
             try
             {
                 // Convert each List to a JSON Object so we can save it
-                string racesJSON = JsonConvert.SerializeObject(racesList);
                 string npcsJSON = JsonConvert.SerializeObject(npcsList);
                 string questRewardsJSON = JsonConvert.SerializeObject(questrewardsList);
                 string levelJSON = JsonConvert.SerializeObject(levelList);
@@ -682,7 +673,6 @@ namespace Adventure
 
                 // Save each converted json string
                 // WriteAllText overwrites any existing data, if the file exists
-                File.WriteAllText(storageLocation + "races.json", racesJSON);
                 File.WriteAllText(storageLocation + "npcs.json", npcsJSON);
                 File.WriteAllText(storageLocation + "questrewards.json", questRewardsJSON);
                 File.WriteAllText(storageLocation + "levels.json", levelJSON);

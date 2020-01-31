@@ -94,7 +94,7 @@ namespace Adventure
         {
             WebClient client = new WebClient();
             Quests = new List<Quest>();
-            string api = Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.ItemReadAPI;
+            string api = Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.QuestReadAPI;
 
             try
             {

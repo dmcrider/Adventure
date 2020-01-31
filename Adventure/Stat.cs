@@ -73,7 +73,7 @@ namespace Adventure
         {
             WebClient client = new WebClient();
             Stats = new List<Stat>();
-            string api = Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.ItemReadAPI;
+            string api = Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.StatReadAPI;
 
             try
             {
