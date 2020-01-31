@@ -75,6 +75,7 @@
     <Compile Include="ControlActiveQuest.Designer.cs">
       <DependentUpon>ControlActiveQuest.cs</DependentUpon>
     </Compile>
+    <Compile Include="Enemy.cs" />
     <Compile Include="FormLevelUp.cs">
       <SubType>Form</SubType>
     </Compile>
