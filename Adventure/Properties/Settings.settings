@@ -74,5 +74,8 @@
     <Setting Name="LevelReadAPI" Type="System.String" Scope="Application">
       <Value Profile="(Default)">levels/read.php</Value>
     </Setting>
+    <Setting Name="EnemyReadAPI" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">enemy/read.php</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

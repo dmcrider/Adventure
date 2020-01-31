@@ -13,7 +13,8 @@ namespace Adventure
 {
     public static class API
     {
-
+        // TODO: Encrypt passwords sent
+        // TODO: Decrypt passwords received
         // Lists that the rest of the application can access
         public static List<Item> itemsList = new List<Item>();
         public static List<Quest> questsList = new List<Quest>();
@@ -23,6 +24,7 @@ namespace Adventure
         public static List<Npc> npcsList = new List<Npc>();
         public static List<QuestReward> questrewardsList = new List<QuestReward>();
         public static List<LevelUp> levelList = new List<LevelUp>();
+        public static List<Enemy> enemyList = new List<Enemy>();
 
         // Single WebClient used throughout this class
         private static readonly WebClient client = new WebClient();
@@ -87,7 +89,7 @@ namespace Adventure
         {
             try
             {
-                string[] filesArray = {"items.json","quests.json","spells.json","stats.json","races.json","npcs.json","questrewards.json","levels.json"};
+                string[] filesArray = {"items.json","quests.json","spells.json","stats.json","races.json","npcs.json","questrewards.json","levels.json", "enemies.json"};
                 
 
                 foreach (string file in filesArray)
@@ -127,6 +129,9 @@ namespace Adventure
                                     break;
                                 case "levels":
                                     levelList.Add((LevelUp)obj.ToObject(typeof(LevelUp)));
+                                    break;
+                                case "enemies":
+                                    enemyList.Add((Enemy)obj.ToObject(typeof(Enemy)));
                                     break;
                                 default:
                                     break;
@@ -454,6 +459,7 @@ namespace Adventure
             apiStrings[6] = Properties.Settings.Default.NPCReadAPI;
             apiStrings[7] = Properties.Settings.Default.QuestRewardReadAPI;
             apiStrings[8] = Properties.Settings.Default.LevelReadAPI;
+            apiStrings[9] = Properties.Settings.Default.EnemyReadAPI;
 
             try
             {
@@ -492,6 +498,9 @@ namespace Adventure
                                     break;
                                 case 8: // LevelUp
                                     levelList.Add(new LevelUp((int)item.SelectToken("UniqueID"),(int)item.SelectToken("ExpNeeded"),(int)item.SelectToken("NumberOfSpells"), (int)item.SelectToken("STRIncrease"), (int)item.SelectToken("INTIncrease"), (int)item.SelectToken("CONIncrease"), (int)item.SelectToken("HPIncrease"), (int)item.SelectToken("MagicIncrease")));
+                                    break;
+                                case 9: // Enemy
+                                    enemyList.Add(new Enemy((int)item.SelectToken("UniqueID"),(string)item.SelectToken("Name"), (string)item.SelectToken("Race"), (int)item.SelectToken("CurrentHP"), (int)item.SelectToken("MaxHP"), (int)item.SelectToken("CurrentMagic"), (int)item.SelectToken("MaxMagic"), (int)item.SelectToken("AttackDamage"), (int)item.SelectToken("ExpAwarded"), (int)item.SelectToken("IsActive")));
                                     break;
                                 default: // Shouldn't ever happen
                                     break;
@@ -698,6 +707,7 @@ namespace Adventure
                 string npcsJSON = JsonConvert.SerializeObject(npcsList);
                 string questRewardsJSON = JsonConvert.SerializeObject(questrewardsList);
                 string levelJSON = JsonConvert.SerializeObject(levelList);
+                string enemyJSON = JsonConvert.SerializeObject(enemyList);
 
                 // Make sure the path exists before we try to save there
                 if (!Directory.Exists(storageLocation))
@@ -715,6 +725,7 @@ namespace Adventure
                 File.WriteAllText(storageLocation + "npcs.json", npcsJSON);
                 File.WriteAllText(storageLocation + "questrewards.json", questRewardsJSON);
                 File.WriteAllText(storageLocation + "levels.json", levelJSON);
+                File.WriteAllText(storageLocation + "enemies.json", enemyJSON);
 
                 LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Info, "Data successfully saved");
                 return APIStatusCode.SECONDARY_SUCCESS;

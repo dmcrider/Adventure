@@ -241,5 +241,14 @@ namespace Adventure.Properties {
                 return ((string)(this["LevelReadAPI"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("enemy/read.php")]
+        public string EnemyReadAPI {
+            get {
+                return ((string)(this["EnemyReadAPI"]));
+            }
+        }
     }
 }
