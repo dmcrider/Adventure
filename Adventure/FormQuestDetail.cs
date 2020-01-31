@@ -74,7 +74,7 @@ namespace Adventure
 
         private void PopulateDetails()
         {
-            CurrentReward = API.questrewardsList.Find(x => x.UniqueID == CurrentQuest.QuestRewardID);
+            CurrentReward = QuestReward.QuestRewards.Find(x => x.UniqueID == CurrentQuest.QuestRewardID);
             lblEXPValue.Text = CurrentQuest.ExpAwarded.ToString();
 
             if (CurrentReward != null)

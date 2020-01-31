@@ -17,7 +17,6 @@ namespace Adventure
         // TODO: Decrypt passwords received
 
         // Lists that the rest of the application can access
-        public static List<QuestReward> questrewardsList = new List<QuestReward>();
         public static List<LevelUp> levelList = new List<LevelUp>();
         public static List<Enemy> enemyList = new List<Enemy>();
 
@@ -101,9 +100,6 @@ namespace Adventure
                         {
                             switch (type)
                             {
-                                case "questrewards":
-                                    questrewardsList.Add((QuestReward)obj.ToObject(typeof(QuestReward)));
-                                    break;
                                 case "levels":
                                     levelList.Add((LevelUp)obj.ToObject(typeof(LevelUp)));
                                     break;
@@ -427,7 +423,6 @@ namespace Adventure
         {
             WebClient updateClient = new WebClient();
             string[] apiStrings = new string[7];
-            apiStrings[5] = Properties.Settings.Default.QuestRewardReadAPI;
             apiStrings[6] = Properties.Settings.Default.LevelReadAPI;
             apiStrings[7] = Properties.Settings.Default.EnemyReadAPI;
 
@@ -445,9 +440,6 @@ namespace Adventure
                         {
                             switch (Array.IndexOf(apiStrings, apiName))
                             {
-                                case 7: // QuestRewards
-                                    questrewardsList.Add(new QuestReward((int)item.SelectToken("UniqueID"), (int)item.SelectToken("IsItem"), (int)item.SelectToken("ItemID"), (int)item.SelectToken("Gold")));
-                                    break;
                                 case 8: // LevelUp
                                     levelList.Add(new LevelUp((int)item.SelectToken("UniqueID"),(int)item.SelectToken("ExpNeeded"),(int)item.SelectToken("NumberOfSpells"), (int)item.SelectToken("STRIncrease"), (int)item.SelectToken("INTIncrease"), (int)item.SelectToken("CONIncrease"), (int)item.SelectToken("HPIncrease"), (int)item.SelectToken("MagicIncrease")));
                                     break;
@@ -651,7 +643,6 @@ namespace Adventure
             try
             {
                 // Convert each List to a JSON Object so we can save it
-                string questRewardsJSON = JsonConvert.SerializeObject(questrewardsList);
                 string levelJSON = JsonConvert.SerializeObject(levelList);
                 string enemyJSON = JsonConvert.SerializeObject(enemyList);
 
@@ -663,7 +654,6 @@ namespace Adventure
 
                 // Save each converted json string
                 // WriteAllText overwrites any existing data, if the file exists
-                File.WriteAllText(storageLocation + "questrewards.json", questRewardsJSON);
                 File.WriteAllText(storageLocation + "levels.json", levelJSON);
                 File.WriteAllText(storageLocation + "enemies.json", enemyJSON);
 

@@ -374,7 +374,7 @@ namespace Adventure
                     }
                     else if(log.StateID == State.COMPLETE_NO_REWARD || log.StateID == State.COMPLETE_REWARD_AVAIL) // completed quests
                     {
-                        tempReward = API.questrewardsList.Find(x => x.UniqueID == tempQuest.QuestRewardID);
+                        tempReward = QuestReward.QuestRewards.Find(x => x.UniqueID == tempQuest.QuestRewardID);
                         rewardItem = Item.Items.Find(y => y.UniqueID == tempReward.ItemID);
                         string[] rowBuilder = {tempQuest.Name, tempQuest.UniqueID.ToString() };
                         ListViewItem row = new ListViewItem();
@@ -462,7 +462,7 @@ namespace Adventure
             ctrlActive.Controls["lblDescription"].Text = tempQuest.Description;
 
             // Get the reward(s)
-            tempReward = API.questrewardsList.Find(y => y.UniqueID == tempQuest.QuestRewardID);
+            tempReward = QuestReward.QuestRewards.Find(y => y.UniqueID == tempQuest.QuestRewardID);
             if (tempReward.IsItem == 1)
             {
                 // Show the item
