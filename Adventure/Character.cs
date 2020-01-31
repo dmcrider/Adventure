@@ -107,9 +107,9 @@ namespace Adventure
                 LogWriter.Write("Character", "ExpPoints", LogWriter.LogType.GamePlay, $"EXP increased from {expPoints} to {value}");
                 expPoints = value;
 
-                if(API.levelList.Count() > 0 && Instances.Character != null)
+                if(CharacterLevel.CharacterLevels.Count() > 0 && Instances.Character != null)
                 {
-                    LevelUp level = API.levelList.Find(x => x.UniqueID == Instances.Character.Level);
+                    CharacterLevel level = CharacterLevel.CharacterLevels.Find(x => x.UniqueID == Instances.Character.Level);
 
                     if (expPoints >= level.ExpNeeded)
                     {

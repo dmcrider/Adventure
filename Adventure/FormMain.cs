@@ -85,7 +85,7 @@ namespace Adventure
         /// </summary>
         public void UpdatePlayerInfoUI()
         {
-            if(Instances.Character != null && API.levelList.Count() > 0)
+            if(Instances.Character != null && CharacterLevel.CharacterLevels.Count() > 0)
             {
                 LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Info, "Refreshing Player Info.");
                 lblHPValue.Text = Instances.Character.CurrentHP + "/" + Instances.Character.MaxHP;
@@ -95,7 +95,7 @@ namespace Adventure
                 txtINTValue.Text = Instances.Character.Intelligence.ToString();
                 txtCONValue.Text = Instances.Character.Constitution.ToString();
                 lblLevelValue.Text = Instances.Character.Level.ToString();
-                lblEXPValue.Text = Instances.Character.ExpPoints.ToString() + "/" + API.levelList.Find(x => x.UniqueID == Instances.Character.Level).ExpNeeded;
+                lblEXPValue.Text = Instances.Character.ExpPoints.ToString() + "/" + CharacterLevel.CharacterLevels.Find(x => x.UniqueID == Instances.Character.Level).ExpNeeded;
             }
         }
 

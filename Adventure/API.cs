@@ -17,7 +17,6 @@ namespace Adventure
         // TODO: Decrypt passwords received
 
         // Lists that the rest of the application can access
-        public static List<LevelUp> levelList = new List<LevelUp>();
         public static List<Enemy> enemyList = new List<Enemy>();
 
         // Single WebClient used throughout this class
@@ -83,7 +82,7 @@ namespace Adventure
         {
             try
             {
-                string[] filesArray = {"questrewards.json","levels.json", "enemies.json"};
+                string[] filesArray = {"enemies.json"};
                 
 
                 foreach (string file in filesArray)
@@ -100,9 +99,6 @@ namespace Adventure
                         {
                             switch (type)
                             {
-                                case "levels":
-                                    levelList.Add((LevelUp)obj.ToObject(typeof(LevelUp)));
-                                    break;
                                 case "enemies":
                                     enemyList.Add((Enemy)obj.ToObject(typeof(Enemy)));
                                     break;
@@ -423,7 +419,6 @@ namespace Adventure
         {
             WebClient updateClient = new WebClient();
             string[] apiStrings = new string[7];
-            apiStrings[6] = Properties.Settings.Default.LevelReadAPI;
             apiStrings[7] = Properties.Settings.Default.EnemyReadAPI;
 
             try
@@ -440,9 +435,6 @@ namespace Adventure
                         {
                             switch (Array.IndexOf(apiStrings, apiName))
                             {
-                                case 8: // LevelUp
-                                    levelList.Add(new LevelUp((int)item.SelectToken("UniqueID"),(int)item.SelectToken("ExpNeeded"),(int)item.SelectToken("NumberOfSpells"), (int)item.SelectToken("STRIncrease"), (int)item.SelectToken("INTIncrease"), (int)item.SelectToken("CONIncrease"), (int)item.SelectToken("HPIncrease"), (int)item.SelectToken("MagicIncrease")));
-                                    break;
                                 case 9: // Enemy
                                     enemyList.Add(new Enemy((int)item.SelectToken("UniqueID"),(string)item.SelectToken("Name"), (string)item.SelectToken("Race"), (int)item.SelectToken("CurrentHP"), (int)item.SelectToken("MaxHP"), (int)item.SelectToken("CurrentMagic"), (int)item.SelectToken("MaxMagic"), (int)item.SelectToken("AttackDamage"), (int)item.SelectToken("ExpAwarded"), (int)item.SelectToken("IsActive")));
                                     break;
@@ -643,7 +635,6 @@ namespace Adventure
             try
             {
                 // Convert each List to a JSON Object so we can save it
-                string levelJSON = JsonConvert.SerializeObject(levelList);
                 string enemyJSON = JsonConvert.SerializeObject(enemyList);
 
                 // Make sure the path exists before we try to save there
@@ -654,7 +645,6 @@ namespace Adventure
 
                 // Save each converted json string
                 // WriteAllText overwrites any existing data, if the file exists
-                File.WriteAllText(storageLocation + "levels.json", levelJSON);
                 File.WriteAllText(storageLocation + "enemies.json", enemyJSON);
 
                 LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Info, "Data successfully saved");

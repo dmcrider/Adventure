@@ -12,7 +12,7 @@ namespace Adventure
 {
     public partial class FormLevelUp : Form
     {
-        private readonly LevelUp NewStats;
+        private readonly CharacterLevel NewStats;
 
         public FormLevelUp()
         {
@@ -20,7 +20,7 @@ namespace Adventure
             this.CenterToScreen();
         }
 
-        public FormLevelUp(LevelUp level) : this()
+        public FormLevelUp(CharacterLevel level) : this()
         {
             NewStats = level;
         }
