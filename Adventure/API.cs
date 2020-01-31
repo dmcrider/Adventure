@@ -17,9 +17,6 @@ namespace Adventure
         // TODO: Decrypt passwords received
 
         // Lists that the rest of the application can access
-        public static List<Quest> questsList = new List<Quest>();
-        public static List<Spell> spellsList = new List<Spell>();
-        public static List<Stat> statsList = new List<Stat>();
         public static List<Race> racesList = new List<Race>();
         public static List<Npc> npcsList = new List<Npc>();
         public static List<QuestReward> questrewardsList = new List<QuestReward>();
@@ -89,7 +86,7 @@ namespace Adventure
         {
             try
             {
-                string[] filesArray = {"stats.json","races.json","npcs.json","questrewards.json","levels.json", "enemies.json"};
+                string[] filesArray = {"races.json","npcs.json","questrewards.json","levels.json", "enemies.json"};
                 
 
                 foreach (string file in filesArray)
@@ -106,9 +103,6 @@ namespace Adventure
                         {
                             switch (type)
                             {
-                                case "stats":
-                                    statsList.Add((Stat)obj.ToObject(typeof(Stat)));
-                                    break;
                                 case "races":
                                     racesList.Add((Race)obj.ToObject(typeof(Race)));
                                     break;
@@ -441,8 +435,6 @@ namespace Adventure
         {
             WebClient updateClient = new WebClient();
             string[] apiStrings = new string[7];
-            apiStrings[0] = Properties.Settings.Default.SpellReadAPI;
-            apiStrings[1] = Properties.Settings.Default.StatReadAPI;
             apiStrings[2] = Properties.Settings.Default.RaceReadAPI;
             apiStrings[3] = Properties.Settings.Default.StateReadAPI;
             apiStrings[4] = Properties.Settings.Default.NPCReadAPI;
@@ -464,12 +456,6 @@ namespace Adventure
                         {
                             switch (Array.IndexOf(apiStrings, apiName))
                             {
-                                case 2: // Spells
-                                    spellsList.Add(new Spell((int)item.SelectToken("UniqueID"), (string)item.SelectToken("Name"), (int)item.SelectToken("HealAmount"), (int)item.SelectToken("DamageAmount"), (int)item.SelectToken("Bonus"), (int)item.SelectToken("MagicCost"), (int)item.SelectToken("MinLevel")));
-                                    break;
-                                case 3: // Stats
-                                    statsList.Add(new Stat((int)item.SelectToken("UniqueID"), (string)item.SelectToken("Name")));
-                                    break;
                                 case 4: // Races
                                     racesList.Add(new Race((int)item.SelectToken("UniqueID"), (string)item.SelectToken("Name"), (int)item.SelectToken("BaseSTR"), (int)item.SelectToken("BaseINT"), (int)item.SelectToken("BaseCON"), (int)item.SelectToken("IsActive")));
                                     break;
@@ -682,8 +668,6 @@ namespace Adventure
             try
             {
                 // Convert each List to a JSON Object so we can save it
-                string spellsJSON = JsonConvert.SerializeObject(spellsList);
-                string statsJSON = JsonConvert.SerializeObject(statsList);
                 string racesJSON = JsonConvert.SerializeObject(racesList);
                 string npcsJSON = JsonConvert.SerializeObject(npcsList);
                 string questRewardsJSON = JsonConvert.SerializeObject(questrewardsList);
@@ -698,8 +682,6 @@ namespace Adventure
 
                 // Save each converted json string
                 // WriteAllText overwrites any existing data, if the file exists
-                File.WriteAllText(storageLocation + "spells.json", spellsJSON);
-                File.WriteAllText(storageLocation + "stats.json", statsJSON);
                 File.WriteAllText(storageLocation + "races.json", racesJSON);
                 File.WriteAllText(storageLocation + "npcs.json", npcsJSON);
                 File.WriteAllText(storageLocation + "questrewards.json", questRewardsJSON);
