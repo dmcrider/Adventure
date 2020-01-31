@@ -105,7 +105,7 @@ namespace Adventure
         private void BtnSave_Click(object sender, EventArgs e)
         {
             // Create and save the character
-            Instances.Character = new Character(Instances.Player.uniqueID, txtCharacterName.Text, selectedRace)
+            Instances.Character = new Character(Instances.Player.UniqueID, txtCharacterName.Text, selectedRace)
             {
                 Gold = selectedGold,
                 Gender = selectedGender
@@ -113,11 +113,11 @@ namespace Adventure
             bool creationSuccess = false;
             try
             {
-                creationSuccess = API.IsSuccess(Character.GetUniqueID(Instances.Character));
+                creationSuccess = API.IsSuccess(Character.GetUniqueID());
             }
             catch (Exception ex)
             {
-                LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, "Creating character: " + ex);
+                LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, ex.Message);
             }
 
             if (!creationSuccess)
@@ -131,16 +131,16 @@ namespace Adventure
                 // Create and save the inventory
                 if (selectedWeapon1 != 0)
                 {
-                    API.AddInventoryItem(Instances.Character, selectedWeapon1);
+                    Inventory.AddInventoryItem(selectedWeapon1);
                 }
 
                 if (selectedWeapon2 != 0)
                 {
-                    API.AddInventoryItem(Instances.Character, selectedWeapon2);
+                    Inventory.AddInventoryItem(selectedWeapon2);
                 }
 
                 // Load the inventory
-                API.LoadInventory(Instances.Character.UniqueID);
+                Inventory.LoadInventory();
             }
         }
     }

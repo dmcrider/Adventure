@@ -167,7 +167,7 @@ namespace Adventure
                     LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.GamePlay, "Player must create Character");
                     Instances.FormCharacterCreation.ShowDialog();
 
-                    if (Instances.Player.character == null)
+                    if (Instances.Player.LinkedCharacter == null)
                     {
                         LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Critical, "Player closed creation screen without saving");
                         MessageBox.Show(Properties.Resources.ErrorGeneral);
@@ -179,7 +179,7 @@ namespace Adventure
                 {
                     // Already has a character
                     // Load the inventory
-                    API.LoadInventory(Instances.Character.UniqueID);
+                    Inventory.LoadInventory();
                     UpdatePlayerInfoUI();
                 }
 
@@ -205,14 +205,14 @@ namespace Adventure
 
             // See if there's a character associated with the player
             // Verify the player has an ID - it's necessary for the API call
-            if(Instances.Player != null && Instances.Player.uniqueID != 0)
+            if(Instances.Player != null && Instances.Player.UniqueID != 0)
             {
                 Character character = Character.GetCharacter();
 
                 if(character != null)
                 {
                     hasCharacter = true;
-                    Instances.Player.character = Instances.Character = character;
+                    Instances.Player.LinkedCharacter = Instances.Character = character;
                     IsLoading = false;
                 }
             }

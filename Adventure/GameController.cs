@@ -15,7 +15,6 @@ namespace Adventure
     {
         // Constants
         private const string LOG_NAME = "ControllerGame";
-        private const int MAX_INVENTORY_SIZE = 10;
         public const int PLAYER = 1;
         public const int SHOP = 2;
         public const int SPECIAL = 3;
@@ -23,7 +22,6 @@ namespace Adventure
         public const int HP = 1;
         public const int MAGIC = 2;
         // Lists that the rest of the application can access
-        public static List<Inventory> inventoryList = new List<Inventory>();
         public static List<Item> shopItems = new List<Item>();
         public static List<QuestLog> questLog = new List<QuestLog>();
         public static List<Quest> questLogList = new List<Quest>();
@@ -50,7 +48,7 @@ namespace Adventure
             if(Instances.Player != null)
             {
                 // Access the Character Panel and the Inventory Panel
-                Instances.FormMain.MainMenuStrip.Items["playerToolStripMenuItem"].Text = Instances.Player.username;
+                Instances.FormMain.MainMenuStrip.Items["playerToolStripMenuItem"].Text = Instances.Player.Username;
                 panelCharacter = (Panel)Instances.FormMain.Controls["panelCharacter"];
                 panelInventory = (Panel)Instances.FormMain.Controls["panelInventory"];
                 panelQuest = (Panel)Instances.FormMain.Controls["panelQuest"];
@@ -92,9 +90,9 @@ namespace Adventure
             LogWriter.Write(LOG_NAME, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.GamePlay, "Setting Player Inventory");
             // Show any items the character is holding
             int inventoryCount = 1;
-            if (inventoryList.Count > 0)
+            if (Inventory.InventoryList.Count > 0)
             {
-                foreach (Inventory item in inventoryList)
+                foreach (Inventory item in Inventory.InventoryList)
                 {
                     if (item.IsUsing == 1)
                     {
@@ -207,31 +205,7 @@ namespace Adventure
             }
         }
 
-        /// <summary>
-        /// Determines if the Character has at least one empty slot in their inventory
-        /// </summary>
-        /// <returns>True if at least one slot is available, false otherwise</returns>
-        public static bool HasInventorySpace()
-        {
-            try
-            {
-                LogWriter.Write(LOG_NAME, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.GamePlay, "Current inventory size: " + inventoryList.Count);
-
-                if (inventoryList.Count < MAX_INVENTORY_SIZE)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            catch (Exception ex)
-            {
-                LogWriter.Write(LOG_NAME, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, "Checking inventory space: " + ex);
-                return false;
-            }
-        }
+        
 
         public static void AddAcceptedQuest(Quest q, State state)
         {

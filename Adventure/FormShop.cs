@@ -50,7 +50,7 @@ namespace Adventure
             try
             {
                 // Set the lists to be shown for the player's inventory
-                foreach (var item in Instances.Character.Inventory)
+                foreach (var item in Instances.Character.Pack)
                 {
                     Item tempItem = Item.Items.Find(x => x.UniqueID == item.ItemID);
 
@@ -127,7 +127,7 @@ namespace Adventure
                     txtGoldShop.Text = shopGold.ToString();
 
                     // Add the item to the player's inventory
-                    API.AddInventoryItem(Instances.Character, tempItem.UniqueID);
+                    Inventory.AddInventoryItem(tempItem.UniqueID);
 
                     // Show the item in the list
                     LoadPlayerList();
@@ -171,9 +171,9 @@ namespace Adventure
                     txtGoldShop.Text = shopGold.ToString();
 
                     // Remove the item from the player's inventory
-                    Instances.Character.Inventory.Remove(Instances.Character.Inventory.Find(y => y.ItemID == tempItem.UniqueID));
+                    Instances.Character.Pack.Remove(Instances.Character.Pack.Find(y => y.ItemID == tempItem.UniqueID));
 
-                    if (API.IsSuccess(API.UpdateInventory(Instances.Character.UniqueID)))
+                    if (API.IsSuccess(Inventory.UpdateInventory()))
                     {
                         // Show the item in the list
                         LoadPlayerList();
@@ -215,7 +215,7 @@ namespace Adventure
                 goldOnHand = int.Parse(txtGoldShop.Text);
             }
 
-            if (total <= goldOnHand && total != 0 && GameController.HasInventorySpace())
+            if (total <= goldOnHand && total != 0 && Inventory.HasSpace())
             {
                 return true;
             }

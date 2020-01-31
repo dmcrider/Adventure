@@ -58,6 +58,7 @@ namespace Adventure
             Active = DEFAULT_ACTIVE;
         }
 
+        #region Instance Variables
         public int UniqueID { get; set; }
         public int UserID { get; set; }
         public string Name { get; set; }
@@ -107,9 +108,10 @@ namespace Adventure
                 }
             }
         }
-        public List<Inventory> Inventory {
-            get => GameController.inventoryList;
+        public List<Inventory> Pack {
+            get => Inventory.InventoryList;
         }
+        #endregion
 
         /// <summary>
         /// Fully heal HP and Magic
@@ -137,9 +139,9 @@ namespace Adventure
                 {
                     foreach (JObject obj in item.Value)
                     {
-                        if (Instances.Player.uniqueID == (int)obj.SelectToken("UserID"))
+                        if (Instances.Player.UniqueID == (int)obj.SelectToken("UserID"))
                         {
-                            LogWriter.Write(typeof(Character).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Success, "Character was found for Player " + Instances.Player.uniqueID);
+                            LogWriter.Write(typeof(Character).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Success, "Character was found for Player " + Instances.Player.UniqueID);
                             return new Character((int)obj.GetValue("UniqueID"), (int)obj.GetValue("UserID"), (string)obj.GetValue("Name"), (int)obj.GetValue("RaceID"), (int)obj.GetValue("MaxHP"), (int)obj.GetValue("CurrentHP"), (int)obj.GetValue("MaxMagic"), (int)obj.GetValue("CurrentMagic"), (int)obj.GetValue("Strength"), (int)obj.GetValue("Intelligence"), (int)obj.GetValue("Constitution"), (int)obj.GetValue("Gold"), (int)obj.GetValue("Level"), (int)obj.GetValue("ExpPoints"), (int)obj.GetValue("IsActive"));
                         }
                     }
@@ -158,12 +160,12 @@ namespace Adventure
         /// </summary>
         /// <param name="character">A Character that has not yet been saved to the database</param>
         /// <returns>Returns an APIStatusCode</returns>
-        public static APIStatusCode GetUniqueID(Character character)
+        public static APIStatusCode GetUniqueID()
         {
             try
             {
                 WebClient client = new WebClient();
-                string charValues = $"{{\"UserID\":\"{Instances.Player.uniqueID}\",\"Name\":\"{character.Name}\",\"RaceID\":\"{character.RaceID}\",\"Gender\":\"{character.Gender}\",\"MaxHP\":\"{character.MaxHP}\",\"CurrentHP\":\"{character.CurrentHP}\",\"MaxMagic\":\"{character.MaxMagic}\",\"CurrentMagic\":\"{character.CurrentMagic}\",\"Strength\":\"{character.Strength}\",\"Intelligence\":\"{character.Intelligence}\",\"Constitution\":\"{character.Constitution}\",\"Gold\":\"{character.Gold}\",\"Level\":\"{character.Level}\",\"ExpPoints\":\"{character.ExpPoints}\"}}";
+                string charValues = $"{{\"UserID\":\"{Instances.Player.UniqueID}\",\"Name\":\"{Instances.Character.Name}\",\"RaceID\":\"{Instances.Character.RaceID}\",\"Gender\":\"{Instances.Character.Gender}\",\"MaxHP\":\"{Instances.Character.MaxHP}\",\"CurrentHP\":\"{Instances.Character.CurrentHP}\",\"MaxMagic\":\"{Instances.Character.MaxMagic}\",\"CurrentMagic\":\"{Instances.Character.CurrentMagic}\",\"Strength\":\"{Instances.Character.Strength}\",\"Intelligence\":\"{Instances.Character.Intelligence}\",\"Constitution\":\"{Instances.Character.Constitution}\",\"Gold\":\"{Instances.Character.Gold}\",\"Level\":\"{Instances.Character.Level}\",\"ExpPoints\":\"{Instances.Character.ExpPoints}\"}}";
                 string response = client.UploadString(Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.CharacterCreateAPI, charValues);
                 JObject convertedJSON = JObject.Parse(response);
 
@@ -171,7 +173,7 @@ namespace Adventure
                 {
                     if (obj.Key == "success")
                     {
-                        character.UniqueID = (int)convertedJSON.GetValue("UniqueID");
+                        Instances.Character.UniqueID = (int)convertedJSON.GetValue("UniqueID");
                         LogWriter.Write(typeof(Character).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Success, "Got UniqueID for Character");
                         return APIStatusCode.SUCCESS;
                     }
@@ -198,7 +200,7 @@ namespace Adventure
             WebClient client = new WebClient();
             try
             {
-                string charValues = $"{{\"UniqueID\":\"{UniqueID}\",\"UserID\":\"{Instances.Player.uniqueID}\",\"Name\":\"{Name}\",\"RaceID\":\"{RaceID}\",\"Gender\":\"{Gender}\",\"MaxHP\":\"{MaxHP}\",\"CurrentHP\":\"{CurrentHP}\",\"MaxMagic\":\"{MaxMagic}\",\"CurrentMagic\":\"{CurrentMagic}\",\"Strength\":\"{Strength}\",\"Intelligence\":\"{Intelligence}\",\"Constitution\":\"{Constitution}\",\"Gold\":\"{Gold}\",\"Level\":\"{Level}\",\"ExpPoints\":\"{ExpPoints}\",\"IsActive\":\"{Active}\"}}";
+                string charValues = $"{{\"UniqueID\":\"{UniqueID}\",\"UserID\":\"{Instances.Player.UniqueID}\",\"Name\":\"{Name}\",\"RaceID\":\"{RaceID}\",\"Gender\":\"{Gender}\",\"MaxHP\":\"{MaxHP}\",\"CurrentHP\":\"{CurrentHP}\",\"MaxMagic\":\"{MaxMagic}\",\"CurrentMagic\":\"{CurrentMagic}\",\"Strength\":\"{Strength}\",\"Intelligence\":\"{Intelligence}\",\"Constitution\":\"{Constitution}\",\"Gold\":\"{Gold}\",\"Level\":\"{Level}\",\"ExpPoints\":\"{ExpPoints}\",\"IsActive\":\"{Active}\"}}";
                 string response = client.UploadString(Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.CharacterUpdateAPI, charValues);
                 JObject convertedJSON = JObject.Parse(response);
 

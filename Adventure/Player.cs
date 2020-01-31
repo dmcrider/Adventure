@@ -8,33 +8,33 @@ namespace Adventure
 {
     public class Player
     {
-        public string username;
-        public string password;
-        public Character character;
-        public int uniqueID;
-
         public Player(string username, Character character, int id)
         {
-            this.username = username;
-            this.character = character;
-            uniqueID = id;
+            Username = username;
+            LinkedCharacter = character;
+            UniqueID = id;
         }
-
         public Player(string username, int id)
         {
-            this.username = username;
-            uniqueID = id;
+            Username = username;
+            UniqueID = id;
         }
-
         public Player(string username, string password)
         {
-            this.username = username;
-            this.password = password;
+            Username = username;
+            Password = password;
         }
+
+        #region Instance Variables
+        public string Username { get; set; }
+        public string Password { get; set; }
+        public Character LinkedCharacter { get; set; }
+        public int UniqueID { get; set; }
+        #endregion
 
         public bool HasID()
         {
-            return uniqueID != 0;
+            return UniqueID != 0;
         }
     }
 }

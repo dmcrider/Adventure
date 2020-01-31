@@ -140,18 +140,18 @@ namespace Adventure
             string credentials;
             if (player.HasID())
             {
-                credentials = $"{{\"Username\":\"{player.username}\",\"Password\":\"{player.password}\",\"ID\":\"{player.uniqueID}\"}}";
+                credentials = $"{{\"Username\":\"{player.Username}\",\"Password\":\"{player.Password}\",\"ID\":\"{player.UniqueID}\"}}";
             }
             else
             {
                 APIStatusCode playerExists = PlayerExistsLocally(ref player);
                 if (playerExists != APIStatusCode.FAIL && playerExists != APIStatusCode.SECONDARY_FAIL)
                 {
-                    credentials = $"{{\"Username\":\"{player.username}\",\"Password\":\"{player.password}\",\"ID\":\"{player.uniqueID}\"}}";
+                    credentials = $"{{\"Username\":\"{player.Username}\",\"Password\":\"{player.Password}\",\"ID\":\"{player.UniqueID}\"}}";
                 }
                 else
                 {
-                    credentials = $"{{\"Username\":\"{player.username}\",\"Password\":\"{player.password}\"}}";
+                    credentials = $"{{\"Username\":\"{player.Username}\",\"Password\":\"{player.Password}\"}}";
                 }
             }
             string response = client.UploadString(Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.LoginAPI, credentials);
@@ -161,7 +161,7 @@ namespace Adventure
             {
                 if(obj.Key == "success")
                 {
-                    player.uniqueID = (int)convertedJSON.GetValue("UniqueID");
+                    player.UniqueID = (int)convertedJSON.GetValue("UniqueID");
                     return APIStatusCode.SUCCESS;
                 }
                 else if (obj.Key == "fail" || obj.Key == "error")
@@ -253,114 +253,6 @@ namespace Adventure
                 }
             }
             // Database transaction failed
-            return APIStatusCode.FAIL;
-        }
-
-        /// <summary>
-        /// Adds an Item to the character's inventory
-        /// </summary>
-        /// <param name="character"></param>
-        /// <param name="itemID"></param>
-        /// <param name="quantity"></param>
-        public static APIStatusCode AddInventoryItem(Character character, int itemID, int quantity=1)
-        {
-            // Check that the character has space left
-            if (GameController.HasInventorySpace())
-            {
-                string dataString = $"{{\"CharacterID\":{character.UniqueID},\"ItemID\":{itemID},\"Quantity\":{quantity}}}";
-                string response = client.UploadString(Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.InventoryAddAPI, dataString);
-                JObject convertedJSON = JObject.Parse(response);
-
-                foreach (var obj in convertedJSON)
-                {
-                    if (obj.Key == "success")
-                    {
-                        LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Success, $"Item {convertedJSON.GetValue("DisplayName")} added to inventory successfully.");
-                        return LoadInventory(character.UniqueID);
-                    }
-                    else if(obj.Key == "fail")
-                    {
-                        LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, "Failed to add item to inventory: " + convertedJSON.GetValue("fail"));
-                        return APIStatusCode.FAIL;
-                    }
-                }
-            }
-            else
-            {
-                LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, "Inventory full for character with ID " + character.UniqueID);
-                FormMain.InventoryFullMessageBox();
-                return APIStatusCode.OUT_OF_SPACE;
-            }
-
-            return APIStatusCode.FAIL;
-        }
-
-        /// <summary>
-        /// Gets all inventory items for the associated Character
-        /// </summary>
-        /// <param name="characterID"></param>
-        /// <returns>Returns a List of Items</returns>
-        public static APIStatusCode LoadInventory(int characterID)
-        {
-            try
-            {
-                string dataString = $"{{\"CharacterID\":{characterID}}}";
-                string response = client.UploadString(Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.InventoryReadAPI, dataString);
-                JObject convertedJSON = JObject.Parse(response);
-
-                foreach (var obj in convertedJSON)
-                {
-                    foreach (JObject item in obj.Value)
-                    {
-                        GameController.inventoryList.Add((Inventory)item.ToObject(typeof(Inventory)));
-                    }
-                }
-                LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Success, "Inventory successfully loaded. Item Count: " + GameController.inventoryList.Count);
-                return APIStatusCode.SECONDARY_SUCCESS;
-            }
-            catch(Exception e)
-            {
-                LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, e.Message);
-                return APIStatusCode.SECONDARY_FAIL;
-            }
-        }
-
-        /// <summary>
-        /// Pushes local updates to a player's inventory to the database
-        /// </summary>
-        /// <param name="characterID">The ID of a Character</param>
-        /// <returns></returns>
-        public static APIStatusCode UpdateInventory(int characterID)
-        {
-            try
-            {
-                foreach (Inventory invItem in GameController.inventoryList)
-                {
-                    string dataString = $"{{\"CharacterID\":{characterID},\"ItemID\":{invItem.ItemID},\"Quantity\":{invItem.Quantity},\"IsUsing\":{invItem.IsUsing},\"Hand\":{invItem.Hand},\"IsActive\":{invItem.IsActive}}}";
-                    string response = client.UploadString(Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.InventoryUpdateAPI, dataString);
-                    JObject convertedJSON = JObject.Parse(response);
-
-                    foreach(var obj in convertedJSON)
-                    {
-                        if(obj.Key == "success")
-                        {
-                            LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Success, "Updating Inventory");
-                            return APIStatusCode.SUCCESS;
-                        }
-                        else
-                        {
-                            LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, "Updating Inventory");
-                            return APIStatusCode.FAIL;
-                        }
-                    }
-                }
-            }
-            catch(Exception e)
-            {
-                LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, "Updating inventory: " + e);
-                return APIStatusCode.FAIL;
-            }
-
             return APIStatusCode.FAIL;
         }
 
@@ -572,7 +464,7 @@ namespace Adventure
                             {
                                 JObject jsonInput = (JObject)input;
                                 Player tempPlayer = (Player)jsonInput.ToObject(typeof(Player));
-                                if (tempPlayer.username == player.username)
+                                if (tempPlayer.Username == player.Username)
                                 {
                                     LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Success, "Loaded Player data");
                                     return APIStatusCode.SECONDARY_SUCCESS;

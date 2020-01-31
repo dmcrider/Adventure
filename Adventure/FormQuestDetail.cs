@@ -175,7 +175,7 @@ namespace Adventure
 
         private bool ClaimRewardItem()
         {
-            APIStatusCode code = API.AddInventoryItem(Instances.Character, CurrentReward.ItemID);
+            APIStatusCode code = Inventory.AddInventoryItem(CurrentReward.ItemID);
             string message = "Reward(s) ";
             bool status = false;
 
