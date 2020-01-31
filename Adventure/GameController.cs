@@ -375,7 +375,7 @@ namespace Adventure
                     else if(log.StateID == State.COMPLETE_NO_REWARD || log.StateID == State.COMPLETE_REWARD_AVAIL) // completed quests
                     {
                         tempReward = API.questrewardsList.Find(x => x.UniqueID == tempQuest.QuestRewardID);
-                        rewardItem = API.itemsList.Find(y => y.UniqueID == tempReward.ItemID);
+                        rewardItem = Item.Items.Find(y => y.UniqueID == tempReward.ItemID);
                         string[] rowBuilder = {tempQuest.Name, tempQuest.UniqueID.ToString() };
                         ListViewItem row = new ListViewItem();
 
@@ -466,7 +466,7 @@ namespace Adventure
             if (tempReward.IsItem == 1)
             {
                 // Show the item
-                rewardItem = API.itemsList.Find(z => z.UniqueID == tempReward.ItemID);
+                rewardItem = Item.Items.Find(z => z.UniqueID == tempReward.ItemID);
                 ctrlActive.Controls["lblRewardItem"].Text = rewardItem.DisplayName;
             }
             else
@@ -582,7 +582,7 @@ namespace Adventure
             {
                 string assetName = "Item_";
 
-                foreach (Item item in API.itemsList)
+                foreach (Item item in Item.Items)
                 {
                     if (item.UniqueID == itemID)
                     {

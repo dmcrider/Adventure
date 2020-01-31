@@ -52,7 +52,7 @@ namespace Adventure
                 // Set the lists to be shown for the player's inventory
                 foreach (var item in Instances.Character.Inventory)
                 {
-                    Item tempItem = API.itemsList.Find(x => x.UniqueID == item.ItemID);
+                    Item tempItem = Item.Items.Find(x => x.UniqueID == item.ItemID);
 
                     // Make sure we can sell it and it's a valid item
                     if (tempItem.CanBuySell == 1 && tempItem.Active == 1)
@@ -80,7 +80,7 @@ namespace Adventure
             try
             {
                 // Set the lists to be shown from all available items
-                foreach (Item item in API.itemsList)
+                foreach (Item item in Item.Items)
                 {
                     // Make sure we can sell it, it's a valid item, and the character is the right level
                     if (item.CanBuySell == 1 && item.Active == 1 && item.MinPlayerLevel <= Instances.Character.Level)
@@ -113,7 +113,7 @@ namespace Adventure
                 try
                 {
                     // Get a reference to the item
-                    Item tempItem = API.itemsList.Find(x => x.UniqueID == int.Parse(listViewShop.SelectedItems[0].SubItems[2].Text));
+                    Item tempItem = Item.Items.Find(x => x.UniqueID == int.Parse(listViewShop.SelectedItems[0].SubItems[2].Text));
 
                     // Remove it from the shop
                     listViewShop.Items.RemoveByKey(tempItem.DisplayName);
@@ -157,7 +157,7 @@ namespace Adventure
                 try
                 {
                     // Get a reference to the item
-                    Item tempItem = API.itemsList.Find(x => x.UniqueID == int.Parse(listViewPlayer.SelectedItems[0].SubItems[2].Text));
+                    Item tempItem = Item.Items.Find(x => x.UniqueID == int.Parse(listViewPlayer.SelectedItems[0].SubItems[2].Text));
 
                     // Remove it from the player
                     listViewPlayer.Items.RemoveByKey(tempItem.DisplayName);

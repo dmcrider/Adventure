@@ -15,8 +15,8 @@ namespace Adventure
     {
         // TODO: Encrypt passwords sent
         // TODO: Decrypt passwords received
+
         // Lists that the rest of the application can access
-        public static List<Item> itemsList = new List<Item>();
         public static List<Quest> questsList = new List<Quest>();
         public static List<Spell> spellsList = new List<Spell>();
         public static List<Stat> statsList = new List<Stat>();
@@ -28,7 +28,7 @@ namespace Adventure
 
         // Single WebClient used throughout this class
         private static readonly WebClient client = new WebClient();
-        private static readonly string storageLocation = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Adventure\\";
+        public static readonly string storageLocation = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Adventure\\";
 
         /// <summary>
         /// Determines if an APIStatusCode is a successful code
@@ -89,7 +89,7 @@ namespace Adventure
         {
             try
             {
-                string[] filesArray = {"items.json","quests.json","spells.json","stats.json","races.json","npcs.json","questrewards.json","levels.json", "enemies.json"};
+                string[] filesArray = {"quests.json","spells.json","stats.json","races.json","npcs.json","questrewards.json","levels.json", "enemies.json"};
                 
 
                 foreach (string file in filesArray)
@@ -106,9 +106,6 @@ namespace Adventure
                         {
                             switch (type)
                             {
-                                case "items":
-                                    itemsList.Add((Item)obj.ToObject(typeof(Item)));
-                                    break;
                                 case "quests":
                                     questsList.Add((Quest)obj.ToObject(typeof(Quest)));
                                     break;
@@ -449,17 +446,16 @@ namespace Adventure
         public static APIStatusCode UpdateFromDatabase()
         {
             WebClient updateClient = new WebClient();
-            string[] apiStrings = new string[9];
-            apiStrings[0] = Properties.Settings.Default.ItemReadAPI;
-            apiStrings[1] = Properties.Settings.Default.QuestReadAPI;
-            apiStrings[2] = Properties.Settings.Default.SpellReadAPI;
-            apiStrings[3] = Properties.Settings.Default.StatReadAPI;
-            apiStrings[4] = Properties.Settings.Default.RaceReadAPI;
-            apiStrings[5] = Properties.Settings.Default.StateReadAPI;
-            apiStrings[6] = Properties.Settings.Default.NPCReadAPI;
-            apiStrings[7] = Properties.Settings.Default.QuestRewardReadAPI;
-            apiStrings[8] = Properties.Settings.Default.LevelReadAPI;
-            apiStrings[9] = Properties.Settings.Default.EnemyReadAPI;
+            string[] apiStrings = new string[8];
+            apiStrings[0] = Properties.Settings.Default.QuestReadAPI;
+            apiStrings[1] = Properties.Settings.Default.SpellReadAPI;
+            apiStrings[2] = Properties.Settings.Default.StatReadAPI;
+            apiStrings[3] = Properties.Settings.Default.RaceReadAPI;
+            apiStrings[4] = Properties.Settings.Default.StateReadAPI;
+            apiStrings[5] = Properties.Settings.Default.NPCReadAPI;
+            apiStrings[6] = Properties.Settings.Default.QuestRewardReadAPI;
+            apiStrings[7] = Properties.Settings.Default.LevelReadAPI;
+            apiStrings[8] = Properties.Settings.Default.EnemyReadAPI;
 
             try
             {
@@ -475,9 +471,6 @@ namespace Adventure
                         {
                             switch (Array.IndexOf(apiStrings, apiName))
                             {
-                                case 0: // Items
-                                    itemsList.Add(new Item((int)item.SelectToken("UniqueID"), (string)item.SelectToken("DisplayName"), (string)item.SelectToken("AssetName"), (int)item.SelectToken("AttackBonus"), (int)item.SelectToken("DefenseBonus"), (int)item.SelectToken("HPHealed"), (int)item.SelectToken("MagicHealed"), (int)item.SelectToken("MaxStackQuantity"), (int)item.SelectToken("ValueInGold"), (int)item.SelectToken("CanBuySell"), (int)item.SelectToken("MinPlayerLevel"), (int)item.SelectToken("IsActive")));
-                                    break;
                                 case 1: // Quests
                                     questsList.Add(new Quest((int)item.SelectToken("UniqueID"), (string)item.SelectToken("Name"), (int)item.SelectToken("ExpAwarded"), (int)item.SelectToken("QuestRewardID"), (int)item.SelectToken("MinCharacterLevel"), (int)item.SelectToken("MaxCharacterLevel"), (int)item.SelectToken("NPC_ID"), (string)item.SelectToken("Description")));
                                     break;
@@ -699,7 +692,6 @@ namespace Adventure
             try
             {
                 // Convert each List to a JSON Object so we can save it
-                string itemsJSON = JsonConvert.SerializeObject(itemsList);
                 string questsJSON = JsonConvert.SerializeObject(questsList);
                 string spellsJSON = JsonConvert.SerializeObject(spellsList);
                 string statsJSON = JsonConvert.SerializeObject(statsList);
@@ -717,7 +709,6 @@ namespace Adventure
 
                 // Save each converted json string
                 // WriteAllText overwrites any existing data, if the file exists
-                File.WriteAllText(storageLocation + "items.json", itemsJSON);
                 File.WriteAllText(storageLocation + "quests.json", questsJSON);
                 File.WriteAllText(storageLocation + "spells.json", spellsJSON);
                 File.WriteAllText(storageLocation + "stats.json", statsJSON);
@@ -786,6 +777,7 @@ namespace Adventure
         SECONDARY_SUCCESS = 105,
         FAIL = 200,
         SECONDARY_FAIL = 205,
-        OUT_OF_SPACE = 210
+        OUT_OF_SPACE = 210,
+        NOT_YET_IMPLEMENTED = 404
     }
 }

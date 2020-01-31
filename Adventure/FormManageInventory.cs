@@ -48,7 +48,7 @@ namespace Adventure
                 Item tempItem = new Item();
                 foreach(Inventory inv in Instances.Character.Inventory)
                 {
-                    foreach(Item item in API.itemsList)
+                    foreach(Item item in Item.Items)
                     {
                         if(item.UniqueID == inv.ItemID)
                         {
@@ -91,7 +91,7 @@ namespace Adventure
                     selectedItems.Add(int.Parse(tag));
 
                     // Enable appropriate buttons, if applicable
-                    Item tempItem = API.itemsList.Find(x => x.UniqueID == int.Parse(tag));
+                    Item tempItem = Item.Items.Find(x => x.UniqueID == int.Parse(tag));
 
                     // Enable the "use" button for potions
                     if(tempItem.HpHealed > 0 || tempItem.MagicHealed > 0)
@@ -245,7 +245,7 @@ namespace Adventure
                 {
                     int itemUniqueID = selectedItems.ElementAt(0);
 
-                    Item tempItem = API.itemsList.Find(x => x.UniqueID == itemUniqueID);
+                    Item tempItem = Item.Items.Find(x => x.UniqueID == itemUniqueID);
                     Inventory invItem = Instances.Character.Inventory.Find(y => y.ItemID == itemUniqueID);
 
                     if (tempItem.HpHealed > 0 && invItem.Quantity > 0)
@@ -337,7 +337,7 @@ namespace Adventure
                 for(int i = 0; i < selectedItems.Count; i++)
                 {
                     int itemID = selectedItems.ElementAt(i);
-                    Item tempItem = API.itemsList.Find(x => x.UniqueID == itemID);
+                    Item tempItem = Item.Items.Find(x => x.UniqueID == itemID);
 
                     selectedList += "- " + tempItem.DisplayName;
                 }
@@ -353,7 +353,7 @@ namespace Adventure
                         List<Item> itemsToDelete = new List<Item>();
                         for(int i = 0; i < selectedItems.Count; i++)
                         {
-                            Item tempItem = API.itemsList.Find(x => x.UniqueID == selectedItems.ElementAt(i));
+                            Item tempItem = Item.Items.Find(x => x.UniqueID == selectedItems.ElementAt(i));
                             itemsToDelete.Add(tempItem);
                         }
                         for(int j = 0; j < itemsToDelete.Count; j++)

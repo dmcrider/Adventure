@@ -83,7 +83,7 @@ namespace Adventure
 
                 if (CurrentReward.ItemID != 0)
                 {
-                    CurrentItem = API.itemsList.Find(x => x.UniqueID == CurrentReward.ItemID);
+                    CurrentItem = Item.Items.Find(x => x.UniqueID == CurrentReward.ItemID);
                     lblRewardValue.Text = CurrentItem.DisplayName;
                 }
                 else
