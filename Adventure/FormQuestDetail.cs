@@ -74,7 +74,7 @@ namespace Adventure
 
         private void PopulateDetails()
         {
-            CurrentReward = API.questrewardsList.Find(x => x.UniqueID == CurrentQuest.QuestRewardID);
+            CurrentReward = QuestReward.QuestRewards.Find(x => x.UniqueID == CurrentQuest.QuestRewardID);
             lblEXPValue.Text = CurrentQuest.ExpAwarded.ToString();
 
             if (CurrentReward != null)
@@ -83,7 +83,7 @@ namespace Adventure
 
                 if (CurrentReward.ItemID != 0)
                 {
-                    CurrentItem = API.itemsList.Find(x => x.UniqueID == CurrentReward.ItemID);
+                    CurrentItem = Item.Items.Find(x => x.UniqueID == CurrentReward.ItemID);
                     lblRewardValue.Text = CurrentItem.DisplayName;
                 }
                 else
@@ -158,7 +158,7 @@ namespace Adventure
                 }
             }
             // Save the updates
-            API.SaveProgress(Instances.Player);
+            Instances.Character.Save();
         }
 
         private bool ClaimRewardGold()
@@ -175,7 +175,7 @@ namespace Adventure
 
         private bool ClaimRewardItem()
         {
-            APIStatusCode code = API.AddInventoryItem(Instances.Character, CurrentReward.ItemID);
+            APIStatusCode code = Inventory.AddInventoryItem(CurrentReward.ItemID);
             string message = "Reward(s) ";
             bool status = false;
 

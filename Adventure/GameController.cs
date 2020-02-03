@@ -15,7 +15,6 @@ namespace Adventure
     {
         // Constants
         private const string LOG_NAME = "ControllerGame";
-        private const int MAX_INVENTORY_SIZE = 10;
         public const int PLAYER = 1;
         public const int SHOP = 2;
         public const int SPECIAL = 3;
@@ -23,7 +22,6 @@ namespace Adventure
         public const int HP = 1;
         public const int MAGIC = 2;
         // Lists that the rest of the application can access
-        public static List<Inventory> inventoryList = new List<Inventory>();
         public static List<Item> shopItems = new List<Item>();
         public static List<QuestLog> questLog = new List<QuestLog>();
         public static List<Quest> questLogList = new List<Quest>();
@@ -50,7 +48,7 @@ namespace Adventure
             if(Instances.Player != null)
             {
                 // Access the Character Panel and the Inventory Panel
-                Instances.FormMain.MainMenuStrip.Items["playerToolStripMenuItem"].Text = Instances.Player.username;
+                Instances.FormMain.MainMenuStrip.Items["playerToolStripMenuItem"].Text = Instances.Player.Username;
                 panelCharacter = (Panel)Instances.FormMain.Controls["panelCharacter"];
                 panelInventory = (Panel)Instances.FormMain.Controls["panelInventory"];
                 panelQuest = (Panel)Instances.FormMain.Controls["panelQuest"];
@@ -92,9 +90,9 @@ namespace Adventure
             LogWriter.Write(LOG_NAME, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.GamePlay, "Setting Player Inventory");
             // Show any items the character is holding
             int inventoryCount = 1;
-            if (inventoryList.Count > 0)
+            if (Inventory.InventoryList.Count > 0)
             {
-                foreach (Inventory item in inventoryList)
+                foreach (Inventory item in Inventory.InventoryList)
                 {
                     if (item.IsUsing == 1)
                     {
@@ -207,31 +205,7 @@ namespace Adventure
             }
         }
 
-        /// <summary>
-        /// Determines if the Character has at least one empty slot in their inventory
-        /// </summary>
-        /// <returns>True if at least one slot is available, false otherwise</returns>
-        public static bool HasInventorySpace()
-        {
-            try
-            {
-                LogWriter.Write(LOG_NAME, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.GamePlay, "Current inventory size: " + inventoryList.Count);
-
-                if (inventoryList.Count < MAX_INVENTORY_SIZE)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            catch (Exception ex)
-            {
-                LogWriter.Write(LOG_NAME, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, "Checking inventory space: " + ex);
-                return false;
-            }
-        }
+        
 
         public static void AddAcceptedQuest(Quest q, State state)
         {
@@ -300,7 +274,7 @@ namespace Adventure
         {
             foreach(QuestLog ql in questLog)
             {
-                questLogList.Add(API.questsList.Find(x => x.UniqueID == ql.QuestID));
+                questLogList.Add(Quest.Quests.Find(x => x.UniqueID == ql.QuestID));
             }
         }
 
@@ -356,7 +330,7 @@ namespace Adventure
             {
                 if (log.IsActive == 1)
                 {
-                    Quest tempQuest = API.questsList.Find(x => x.UniqueID == log.QuestID);
+                    Quest tempQuest = Quest.Quests.Find(x => x.UniqueID == log.QuestID);
                     QuestReward tempReward = new QuestReward();
                     Item rewardItem = new Item();
 
@@ -374,8 +348,8 @@ namespace Adventure
                     }
                     else if(log.StateID == State.COMPLETE_NO_REWARD || log.StateID == State.COMPLETE_REWARD_AVAIL) // completed quests
                     {
-                        tempReward = API.questrewardsList.Find(x => x.UniqueID == tempQuest.QuestRewardID);
-                        rewardItem = API.itemsList.Find(y => y.UniqueID == tempReward.ItemID);
+                        tempReward = QuestReward.QuestRewards.Find(x => x.UniqueID == tempQuest.QuestRewardID);
+                        rewardItem = Item.Items.Find(y => y.UniqueID == tempReward.ItemID);
                         string[] rowBuilder = {tempQuest.Name, tempQuest.UniqueID.ToString() };
                         ListViewItem row = new ListViewItem();
 
@@ -448,7 +422,7 @@ namespace Adventure
 
         private ControlActiveQuest SetActiveQuest(QuestLog log)
         {
-            Quest tempQuest = API.questsList.Find(x => x.UniqueID == log.QuestID);
+            Quest tempQuest = Quest.Quests.Find(x => x.UniqueID == log.QuestID);
             QuestReward tempReward = new QuestReward();
             Item rewardItem = new Item();
 
@@ -462,11 +436,11 @@ namespace Adventure
             ctrlActive.Controls["lblDescription"].Text = tempQuest.Description;
 
             // Get the reward(s)
-            tempReward = API.questrewardsList.Find(y => y.UniqueID == tempQuest.QuestRewardID);
+            tempReward = QuestReward.QuestRewards.Find(y => y.UniqueID == tempQuest.QuestRewardID);
             if (tempReward.IsItem == 1)
             {
                 // Show the item
-                rewardItem = API.itemsList.Find(z => z.UniqueID == tempReward.ItemID);
+                rewardItem = Item.Items.Find(z => z.UniqueID == tempReward.ItemID);
                 ctrlActive.Controls["lblRewardItem"].Text = rewardItem.DisplayName;
             }
             else
@@ -491,7 +465,7 @@ namespace Adventure
                 ListViewItem item = listView.SelectedItems[0];
                 string questIDstring = item.SubItems[1].Text;
                 int.TryParse(questIDstring, out int questID);
-                Quest quest = API.questsList.Find(x => x.UniqueID == questID);
+                Quest quest = Quest.Quests.Find(x => x.UniqueID == questID);
 
                 LogWriter.Write(LOG_NAME, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Info, "Displaying Quest Details for " + quest.Name);
 
@@ -534,7 +508,7 @@ namespace Adventure
                 ListView listView = (ListView)sender;
                 string questIDstring = listView.SelectedItems[0].SubItems[1].Text;
                 int.TryParse(questIDstring, out int questID);
-                Quest quest = API.questsList.Find(x => x.UniqueID == questID);
+                Quest quest = Quest.Quests.Find(x => x.UniqueID == questID);
 
                 LogWriter.Write(LOG_NAME, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Info, "Displaying Quest Details for " + quest.Name);
 
@@ -582,7 +556,7 @@ namespace Adventure
             {
                 string assetName = "Item_";
 
-                foreach (Item item in API.itemsList)
+                foreach (Item item in Item.Items)
                 {
                     if (item.UniqueID == itemID)
                     {

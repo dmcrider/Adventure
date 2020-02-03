@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Reflection;
+using System.Threading;
 
 namespace Adventure
 {
@@ -15,20 +16,10 @@ namespace Adventure
     {
         // TODO: Encrypt passwords sent
         // TODO: Decrypt passwords received
-        // Lists that the rest of the application can access
-        public static List<Item> itemsList = new List<Item>();
-        public static List<Quest> questsList = new List<Quest>();
-        public static List<Spell> spellsList = new List<Spell>();
-        public static List<Stat> statsList = new List<Stat>();
-        public static List<Race> racesList = new List<Race>();
-        public static List<Npc> npcsList = new List<Npc>();
-        public static List<QuestReward> questrewardsList = new List<QuestReward>();
-        public static List<LevelUp> levelList = new List<LevelUp>();
-        public static List<Enemy> enemyList = new List<Enemy>();
 
         // Single WebClient used throughout this class
         private static readonly WebClient client = new WebClient();
-        private static readonly string storageLocation = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Adventure\\";
+        public static readonly string storageLocation = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Adventure\\";
 
         /// <summary>
         /// Determines if an APIStatusCode is a successful code
@@ -85,65 +76,56 @@ namespace Adventure
         /// <summary>
         /// Loads local data into the appropriate list
         /// </summary>
-        public static APIStatusCode LoadData()
+        public static APIStatusCode LoadLocalData()
         {
             try
             {
-                string[] filesArray = {"items.json","quests.json","spells.json","stats.json","races.json","npcs.json","questrewards.json","levels.json", "enemies.json"};
-                
+                // Instantiate each thread
+                Thread statThread = new Thread(new ThreadStart(Stat.LoadFromFile));
+                Thread spellThread = new Thread(new ThreadStart(Spell.LoadFromFile));
+                Thread raceThread = new Thread(new ThreadStart(Race.LoadFromFile));
+                Thread questRewardThread = new Thread(new ThreadStart(QuestReward.LoadFromFile));
+                Thread questThread = new Thread(new ThreadStart(Quest.LoadFromFile));
+                Thread npcThread = new Thread(new ThreadStart(Npc.LoadFromFile));
+                Thread itemThread = new Thread(new ThreadStart(Item.LoadFromFile));
+                Thread enemyThread = new Thread(new ThreadStart(Enemy.LoadFromFile));
+                Thread characterLevelThread = new Thread(new ThreadStart(CharacterLevel.LoadFromFile));
 
-                foreach (string file in filesArray)
-                {
-                    string path = storageLocation + file;
-                    string type = file.Split('.')[0];
-                    // Read the file in and add an appropriate object to the arrays we got from the main class
-                    using(StreamReader inputFile = File.OpenText(path))
-                    {
-                        JsonSerializer serializer = new JsonSerializer();
-                        JArray response = (JArray)serializer.Deserialize(inputFile, typeof(JObject));
+                // Start each thread after the previous one has ended
+                statThread.Start();
+                statThread.Join();
 
-                        foreach(JObject obj in response)
-                        {
-                            switch (type)
-                            {
-                                case "items":
-                                    itemsList.Add((Item)obj.ToObject(typeof(Item)));
-                                    break;
-                                case "quests":
-                                    questsList.Add((Quest)obj.ToObject(typeof(Quest)));
-                                    break;
-                                case "spells":
-                                    spellsList.Add((Spell)obj.ToObject(typeof(Spell)));
-                                    break;
-                                case "stats":
-                                    statsList.Add((Stat)obj.ToObject(typeof(Stat)));
-                                    break;
-                                case "races":
-                                    racesList.Add((Race)obj.ToObject(typeof(Race)));
-                                    break;
-                                case "npcs":
-                                    npcsList.Add((Npc)obj.ToObject(typeof(Npc)));
-                                    break;
-                                case "questrewards":
-                                    questrewardsList.Add((QuestReward)obj.ToObject(typeof(QuestReward)));
-                                    break;
-                                case "levels":
-                                    levelList.Add((LevelUp)obj.ToObject(typeof(LevelUp)));
-                                    break;
-                                case "enemies":
-                                    enemyList.Add((Enemy)obj.ToObject(typeof(Enemy)));
-                                    break;
-                                default:
-                                    break;
-                            }
-                        }
-                    }
-                }
+                spellThread.Start();
+                spellThread.Join();
+
+                raceThread.Start();
+                raceThread.Join();
+
+                questRewardThread.Start();
+                questRewardThread.Join();
+
+                questThread.Start();
+                questThread.Join();
+
+                npcThread.Start();
+                npcThread.Join();
+
+                itemThread.Start();
+                itemThread.Join();
+
+                enemyThread.Start();
+                enemyThread.Join();
+
+                characterLevelThread.Start();
+                characterLevelThread.Join();
+
+                // Now that all threads have completed, return success
+                LogWriter.Write(typeof(API).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Success, "All threads completed");
                 return APIStatusCode.SUCCESS;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, "Loading local data: " + e);
+                LogWriter.Write(typeof(API).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, "Loading local data: " + ex);
                 return APIStatusCode.FAIL;
             }
         }
@@ -158,18 +140,18 @@ namespace Adventure
             string credentials;
             if (player.HasID())
             {
-                credentials = $"{{\"Username\":\"{player.username}\",\"Password\":\"{player.password}\",\"ID\":\"{player.uniqueID}\"}}";
+                credentials = $"{{\"Username\":\"{player.Username}\",\"Password\":\"{player.Password}\",\"ID\":\"{player.UniqueID}\"}}";
             }
             else
             {
                 APIStatusCode playerExists = PlayerExistsLocally(ref player);
                 if (playerExists != APIStatusCode.FAIL && playerExists != APIStatusCode.SECONDARY_FAIL)
                 {
-                    credentials = $"{{\"Username\":\"{player.username}\",\"Password\":\"{player.password}\",\"ID\":\"{player.uniqueID}\"}}";
+                    credentials = $"{{\"Username\":\"{player.Username}\",\"Password\":\"{player.Password}\",\"ID\":\"{player.UniqueID}\"}}";
                 }
                 else
                 {
-                    credentials = $"{{\"Username\":\"{player.username}\",\"Password\":\"{player.password}\"}}";
+                    credentials = $"{{\"Username\":\"{player.Username}\",\"Password\":\"{player.Password}\"}}";
                 }
             }
             string response = client.UploadString(Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.LoginAPI, credentials);
@@ -179,7 +161,7 @@ namespace Adventure
             {
                 if(obj.Key == "success")
                 {
-                    player.uniqueID = (int)convertedJSON.GetValue("UniqueID");
+                    player.UniqueID = (int)convertedJSON.GetValue("UniqueID");
                     return APIStatusCode.SUCCESS;
                 }
                 else if (obj.Key == "fail" || obj.Key == "error")
@@ -275,245 +257,58 @@ namespace Adventure
         }
 
         /// <summary>
-        /// Gets the Character associated with the parameter from the database
-        /// </summary>
-        /// <param name="userID"></param>
-        /// <returns>Returns a Character object if one is found, null otherwise</returns>
-        public static Character GetCharacter(int userID)
-        {
-            string response = client.DownloadString(Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.CharacterReadAPI);
-            JObject convertedJSON = JObject.Parse(response);
-
-            foreach (var item in convertedJSON)
-            {
-                foreach (JObject character in item.Value)
-                {
-                    if (userID == (int)character.SelectToken("UserID"))
-                    {
-                        //LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Debug, character.ToString());
-                        return new Character((int)character.GetValue("UniqueID"), (int)character.GetValue("UserID"), (string)character.GetValue("Name"), (int)character.GetValue("RaceID"), (int)character.GetValue("MaxHP"), (int)character.GetValue("CurrentHP"), (int)character.GetValue("MaxMagic"), (int)character.GetValue("CurrentMagic"), (int)character.GetValue("Strength"), (int)character.GetValue("Intelligence"), (int)character.GetValue("Constitution"), (int)character.GetValue("Gold"), (int)character.GetValue("Level"), (int)character.GetValue("ExpPoints"), (int)character.GetValue("IsActive"));
-                    }
-                }
-            }
-
-            return null;
-        }
-
-        /// <summary>
-        /// Saves the character to the database
-        /// </summary>
-        /// <param name="character"></param>
-        /// <param name="playerID"></param>
-        /// <returns>Returns true if database transaction was successful, false otherwise</returns>
-        public static APIStatusCode CreateCharacter(Character character, int playerID)
-        {
-            try
-            {
-                string charValues = $"{{\"UserID\":\"{playerID}\",\"Name\":\"{character.Name}\",\"RaceID\":\"{character.RaceID}\",\"Gender\":\"{character.Gender}\",\"MaxHP\":\"{character.MaxHP}\",\"CurrentHP\":\"{character.CurrentHP}\",\"MaxMagic\":\"{character.MaxMagic}\",\"CurrentMagic\":\"{character.CurrentMagic}\",\"Strength\":\"{character.Strength}\",\"Intelligence\":\"{character.Intelligence}\",\"Constitution\":\"{character.Constitution}\",\"Gold\":\"{character.Gold}\",\"Level\":\"{character.Level}\",\"ExpPoints\":\"{character.ExpPoints}\"}}";
-                string response = client.UploadString(Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.CharacterCreateAPI, charValues);
-                JObject convertedJSON = JObject.Parse(response);
-
-                foreach (var obj in convertedJSON)
-                {
-                    if (obj.Key == "success")
-                    {
-                        character.UniqueID = (int)convertedJSON.GetValue("UniqueID");
-                        return APIStatusCode.SUCCESS;
-                    }
-                    else if (obj.Key == "error")
-                    {
-                        LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, "Creating character: " + obj.Value);
-                        return APIStatusCode.FAIL;
-                    }
-                }
-                return APIStatusCode.FAIL;
-            }
-            catch (Exception ex)
-            {
-                LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, ex.Message);
-                return APIStatusCode.FAIL;
-            }
-        }
-
-        /// <summary>
-        /// Adds an Item to the character's inventory
-        /// </summary>
-        /// <param name="character"></param>
-        /// <param name="itemID"></param>
-        /// <param name="quantity"></param>
-        public static APIStatusCode AddInventoryItem(Character character, int itemID, int quantity=1)
-        {
-            // Check that the character has space left
-            if (GameController.HasInventorySpace())
-            {
-                string dataString = $"{{\"CharacterID\":{character.UniqueID},\"ItemID\":{itemID},\"Quantity\":{quantity}}}";
-                string response = client.UploadString(Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.InventoryAddAPI, dataString);
-                JObject convertedJSON = JObject.Parse(response);
-
-                foreach (var obj in convertedJSON)
-                {
-                    if (obj.Key == "success")
-                    {
-                        LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Success, $"Item {convertedJSON.GetValue("DisplayName")} added to inventory successfully.");
-                        return LoadInventory(character.UniqueID);
-                    }
-                    else if(obj.Key == "fail")
-                    {
-                        LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, "Failed to add item to inventory: " + convertedJSON.GetValue("fail"));
-                        return APIStatusCode.FAIL;
-                    }
-                }
-            }
-            else
-            {
-                LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, "Inventory full for character with ID " + character.UniqueID);
-                FormMain.InventoryFullMessageBox();
-                return APIStatusCode.OUT_OF_SPACE;
-            }
-
-            return APIStatusCode.FAIL;
-        }
-
-        /// <summary>
-        /// Gets all inventory items for the associated Character
-        /// </summary>
-        /// <param name="characterID"></param>
-        /// <returns>Returns a List of Items</returns>
-        public static APIStatusCode LoadInventory(int characterID)
-        {
-            try
-            {
-                string dataString = $"{{\"CharacterID\":{characterID}}}";
-                string response = client.UploadString(Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.InventoryReadAPI, dataString);
-                JObject convertedJSON = JObject.Parse(response);
-
-                foreach (var obj in convertedJSON)
-                {
-                    foreach (JObject item in obj.Value)
-                    {
-                        GameController.inventoryList.Add((Inventory)item.ToObject(typeof(Inventory)));
-                    }
-                }
-                LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Success, "Inventory successfully loaded. Item Count: " + GameController.inventoryList.Count);
-                return APIStatusCode.SECONDARY_SUCCESS;
-            }
-            catch(Exception e)
-            {
-                LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, e.Message);
-                return APIStatusCode.SECONDARY_FAIL;
-            }
-        }
-
-        /// <summary>
-        /// Pushes local updates to a player's inventory to the database
-        /// </summary>
-        /// <param name="characterID">The ID of a Character</param>
-        /// <returns></returns>
-        public static APIStatusCode UpdateInventory(int characterID)
-        {
-            try
-            {
-                foreach (Inventory invItem in GameController.inventoryList)
-                {
-                    string dataString = $"{{\"CharacterID\":{characterID},\"ItemID\":{invItem.ItemID},\"Quantity\":{invItem.Quantity},\"IsUsing\":{invItem.IsUsing},\"Hand\":{invItem.Hand},\"IsActive\":{invItem.IsActive}}}";
-                    string response = client.UploadString(Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.InventoryUpdateAPI, dataString);
-                    JObject convertedJSON = JObject.Parse(response);
-
-                    foreach(var obj in convertedJSON)
-                    {
-                        if(obj.Key == "success")
-                        {
-                            LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Success, "Updating Inventory");
-                            return APIStatusCode.SUCCESS;
-                        }
-                        else
-                        {
-                            LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, "Updating Inventory");
-                            return APIStatusCode.FAIL;
-                        }
-                    }
-                }
-            }
-            catch(Exception e)
-            {
-                LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, "Updating inventory: " + e);
-                return APIStatusCode.FAIL;
-            }
-
-            return APIStatusCode.FAIL;
-        }
-
-        /// <summary>
         /// Connects to the cloud database to update the appropriate list
         /// </summary>
         public static APIStatusCode UpdateFromDatabase()
         {
-            WebClient updateClient = new WebClient();
-            string[] apiStrings = new string[9];
-            apiStrings[0] = Properties.Settings.Default.ItemReadAPI;
-            apiStrings[1] = Properties.Settings.Default.QuestReadAPI;
-            apiStrings[2] = Properties.Settings.Default.SpellReadAPI;
-            apiStrings[3] = Properties.Settings.Default.StatReadAPI;
-            apiStrings[4] = Properties.Settings.Default.RaceReadAPI;
-            apiStrings[5] = Properties.Settings.Default.StateReadAPI;
-            apiStrings[6] = Properties.Settings.Default.NPCReadAPI;
-            apiStrings[7] = Properties.Settings.Default.QuestRewardReadAPI;
-            apiStrings[8] = Properties.Settings.Default.LevelReadAPI;
-            apiStrings[9] = Properties.Settings.Default.EnemyReadAPI;
-
             try
             {
-                foreach (string apiName in apiStrings)
-                {
-                    string fullAPI = Properties.Settings.Default.APIBaseAddress + apiName;
-                    string response = updateClient.DownloadString(fullAPI);
-                    JObject convertedJSON = JObject.Parse(response);
+                // Instantiate each thread
+                Thread statThread = new Thread(new ThreadStart(Stat.LoadFromDatabase));
+                Thread spellThread = new Thread(new ThreadStart(Spell.LoadFromDatabase));
+                Thread raceThread = new Thread(new ThreadStart(Race.LoadFromDatabase));
+                Thread questRewardThread = new Thread(new ThreadStart(QuestReward.LoadFromDatabase));
+                Thread questThread = new Thread(new ThreadStart(Quest.LoadFromDatabase));
+                Thread npcThread = new Thread(new ThreadStart(Npc.LoadFromDatabase));
+                Thread itemThread = new Thread(new ThreadStart(Item.LoadFromDatabase));
+                Thread enemyThread = new Thread(new ThreadStart(Enemy.LoadFromDatabase));
+                Thread characterLevelThread = new Thread(new ThreadStart(CharacterLevel.LoadFromDatabase));
 
-                    foreach (var obj in convertedJSON)
-                    {
-                        foreach (var item in obj.Value)
-                        {
-                            switch (Array.IndexOf(apiStrings, apiName))
-                            {
-                                case 0: // Items
-                                    itemsList.Add(new Item((int)item.SelectToken("UniqueID"), (string)item.SelectToken("DisplayName"), (string)item.SelectToken("AssetName"), (int)item.SelectToken("AttackBonus"), (int)item.SelectToken("DefenseBonus"), (int)item.SelectToken("HPHealed"), (int)item.SelectToken("MagicHealed"), (int)item.SelectToken("MaxStackQuantity"), (int)item.SelectToken("ValueInGold"), (int)item.SelectToken("CanBuySell"), (int)item.SelectToken("MinPlayerLevel"), (int)item.SelectToken("IsActive")));
-                                    break;
-                                case 1: // Quests
-                                    questsList.Add(new Quest((int)item.SelectToken("UniqueID"), (string)item.SelectToken("Name"), (int)item.SelectToken("ExpAwarded"), (int)item.SelectToken("QuestRewardID"), (int)item.SelectToken("MinCharacterLevel"), (int)item.SelectToken("MaxCharacterLevel"), (int)item.SelectToken("NPC_ID"), (string)item.SelectToken("Description")));
-                                    break;
-                                case 2: // Spells
-                                    spellsList.Add(new Spell((int)item.SelectToken("UniqueID"), (string)item.SelectToken("Name"), (int)item.SelectToken("HealAmount"), (int)item.SelectToken("DamageAmount"), (int)item.SelectToken("Bonus"), (int)item.SelectToken("MagicCost"), (int)item.SelectToken("MinLevel")));
-                                    break;
-                                case 3: // Stats
-                                    statsList.Add(new Stat((int)item.SelectToken("UniqueID"), (string)item.SelectToken("Name")));
-                                    break;
-                                case 4: // Races
-                                    racesList.Add(new Race((int)item.SelectToken("UniqueID"), (string)item.SelectToken("Name"), (int)item.SelectToken("BaseSTR"), (int)item.SelectToken("BaseINT"), (int)item.SelectToken("BaseCON"), (int)item.SelectToken("IsActive")));
-                                    break;
-                                case 6: // NPCs
-                                    npcsList.Add(new Npc((int)item.SelectToken("UniqueID"), (string)item.SelectToken("Name")));
-                                    break;
-                                case 7: // QuestRewards
-                                    questrewardsList.Add(new QuestReward((int)item.SelectToken("UniqueID"), (int)item.SelectToken("IsItem"), (int)item.SelectToken("ItemID"), (int)item.SelectToken("Gold")));
-                                    break;
-                                case 8: // LevelUp
-                                    levelList.Add(new LevelUp((int)item.SelectToken("UniqueID"),(int)item.SelectToken("ExpNeeded"),(int)item.SelectToken("NumberOfSpells"), (int)item.SelectToken("STRIncrease"), (int)item.SelectToken("INTIncrease"), (int)item.SelectToken("CONIncrease"), (int)item.SelectToken("HPIncrease"), (int)item.SelectToken("MagicIncrease")));
-                                    break;
-                                case 9: // Enemy
-                                    enemyList.Add(new Enemy((int)item.SelectToken("UniqueID"),(string)item.SelectToken("Name"), (string)item.SelectToken("Race"), (int)item.SelectToken("CurrentHP"), (int)item.SelectToken("MaxHP"), (int)item.SelectToken("CurrentMagic"), (int)item.SelectToken("MaxMagic"), (int)item.SelectToken("AttackDamage"), (int)item.SelectToken("ExpAwarded"), (int)item.SelectToken("IsActive")));
-                                    break;
-                                default: // Shouldn't ever happen
-                                    break;
-                            }
-                        }
-                    }
-                }
-                LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Success, "Updated from database");
-                return SaveData();
+                // Start each thread after the previous one has ended
+                statThread.Start();
+                statThread.Join();
+
+                spellThread.Start();
+                spellThread.Join();
+
+                raceThread.Start();
+                raceThread.Join();
+
+                questRewardThread.Start();
+                questRewardThread.Join();
+
+                questThread.Start();
+                questThread.Join();
+
+                npcThread.Start();
+                npcThread.Join();
+
+                itemThread.Start();
+                itemThread.Join();
+
+                enemyThread.Start();
+                enemyThread.Join();
+
+                characterLevelThread.Start();
+                characterLevelThread.Join();
+
+                // Now that all threads have completed, return success
+                LogWriter.Write(typeof(API).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Success, "All threads completed");
+                return APIStatusCode.SUCCESS;
             }
             catch (Exception e)
             {
-                LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, "Updating from database: " + e);
+                LogWriter.Write(typeof(API).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, "Updating from database: " + e);
                 return APIStatusCode.FAIL;
             }
         }
@@ -646,98 +441,6 @@ namespace Adventure
         }
 
         /// <summary>
-        /// Save a Player's settings and Character progress
-        /// </summary>
-        /// <param name="player">A Player object referencing the current user</param>
-        public static APIStatusCode SaveProgress(Player player)
-        {
-            return UpdateCharacter(player.character, player.uniqueID);
-        }
-
-        /// <summary>
-        /// Update a Character's database entry
-        /// </summary>
-        /// <param name="character">A Character object referencing the Character to be saved</param>
-        /// <param name="playerID">The ID of the Player associated with the Character</param>
-        private static APIStatusCode UpdateCharacter(Character character, int playerID)
-        {
-            try
-            {
-                string charValues = $"{{\"UniqueID\":\"{Instances.Character.UniqueID}\",\"UserID\":\"{playerID}\",\"Name\":\"{character.Name}\",\"RaceID\":\"{character.RaceID}\",\"Gender\":\"{character.Gender}\",\"MaxHP\":\"{character.MaxHP}\",\"CurrentHP\":\"{character.CurrentHP}\",\"MaxMagic\":\"{character.MaxMagic}\",\"CurrentMagic\":\"{character.CurrentMagic}\",\"Strength\":\"{character.Strength}\",\"Intelligence\":\"{character.Intelligence}\",\"Constitution\":\"{character.Constitution}\",\"Gold\":\"{character.Gold}\",\"Level\":\"{character.Level}\",\"ExpPoints\":\"{character.ExpPoints}\",\"IsActive\":\"{character.Active}\"}}";
-                string response = client.UploadString(Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.CharacterUpdateAPI, charValues);
-                JObject convertedJSON = JObject.Parse(response);
-                //LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Debug, charValues);
-
-                foreach (var obj in convertedJSON)
-                {
-                    if (obj.Key == "success")
-                    {
-                        LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Success, "Updating character: " + character.Name);
-                        return APIStatusCode.SECONDARY_SUCCESS;
-                    }
-                    else if (obj.Key == "error")
-                    {
-                        LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, "Updating character: " + obj.Value);
-                        return APIStatusCode.SECONDARY_FAIL;
-                    }
-                }
-            }
-            catch(Exception ex)
-            {
-                LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, ex.Message);
-                return APIStatusCode.SECONDARY_FAIL;
-            }
-
-            return APIStatusCode.SECONDARY_FAIL;
-        }
-
-        /// <summary>
-        /// Saves each list locally as a json file
-        /// </summary>
-        private static APIStatusCode SaveData()
-        {
-            try
-            {
-                // Convert each List to a JSON Object so we can save it
-                string itemsJSON = JsonConvert.SerializeObject(itemsList);
-                string questsJSON = JsonConvert.SerializeObject(questsList);
-                string spellsJSON = JsonConvert.SerializeObject(spellsList);
-                string statsJSON = JsonConvert.SerializeObject(statsList);
-                string racesJSON = JsonConvert.SerializeObject(racesList);
-                string npcsJSON = JsonConvert.SerializeObject(npcsList);
-                string questRewardsJSON = JsonConvert.SerializeObject(questrewardsList);
-                string levelJSON = JsonConvert.SerializeObject(levelList);
-                string enemyJSON = JsonConvert.SerializeObject(enemyList);
-
-                // Make sure the path exists before we try to save there
-                if (!Directory.Exists(storageLocation))
-                {
-                    Directory.CreateDirectory(storageLocation);
-                }
-
-                // Save each converted json string
-                // WriteAllText overwrites any existing data, if the file exists
-                File.WriteAllText(storageLocation + "items.json", itemsJSON);
-                File.WriteAllText(storageLocation + "quests.json", questsJSON);
-                File.WriteAllText(storageLocation + "spells.json", spellsJSON);
-                File.WriteAllText(storageLocation + "stats.json", statsJSON);
-                File.WriteAllText(storageLocation + "races.json", racesJSON);
-                File.WriteAllText(storageLocation + "npcs.json", npcsJSON);
-                File.WriteAllText(storageLocation + "questrewards.json", questRewardsJSON);
-                File.WriteAllText(storageLocation + "levels.json", levelJSON);
-                File.WriteAllText(storageLocation + "enemies.json", enemyJSON);
-
-                LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Info, "Data successfully saved");
-                return APIStatusCode.SECONDARY_SUCCESS;
-            }
-            catch(Exception ex)
-            {
-                LogWriter.Write("API",MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Critical, "Cannot convert data to be saved: " + ex.Message);
-                return APIStatusCode.SECONDARY_FAIL;
-            }
-        }
-
-        /// <summary>
         /// Check if the player information is stored locally and load it if it exists
         /// </summary>
         /// <param name="player"></param>
@@ -761,7 +464,7 @@ namespace Adventure
                             {
                                 JObject jsonInput = (JObject)input;
                                 Player tempPlayer = (Player)jsonInput.ToObject(typeof(Player));
-                                if (tempPlayer.username == player.username)
+                                if (tempPlayer.Username == player.Username)
                                 {
                                     LogWriter.Write("API", MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Success, "Loaded Player data");
                                     return APIStatusCode.SECONDARY_SUCCESS;
@@ -786,6 +489,7 @@ namespace Adventure
         SECONDARY_SUCCESS = 105,
         FAIL = 200,
         SECONDARY_FAIL = 205,
-        OUT_OF_SPACE = 210
+        OUT_OF_SPACE = 210,
+        NOT_YET_IMPLEMENTED = 404
     }
 }

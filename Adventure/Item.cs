@@ -3,6 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Reflection;
+using System.IO;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System.Net;
 
 namespace Adventure
 {
@@ -12,18 +17,24 @@ namespace Adventure
         private const double SPECIAL_VALUE = 1.0;
         private const double PLAYER_VALUE = 0.75;
 
-        private int uniqueID;
-        private string displayName;
-        private string assetName;
-        private int attackBonus;
-        private int defenseBonus;
-        private int hpHealed;
-        private int magicHealed;
-        private int maxStackQunatity;
-        private int valueInGold;
-        private int canBuySell;
-        private int minPlayerLevel;
-        private int active;
+        #region Static Variables
+        public static List<Item> Items;
+        #endregion
+
+        #region Instance Variables
+        public int UniqueID { get; set; }
+        public string DisplayName { get; set; }
+        public string AssetName { get; set; }
+        public int AttackBonus { get; set; }
+        public int DefenseBonus { get; set; }
+        public int HpHealed { get; set; }
+        public int MagicHealed { get; set; }
+        public int MaxStackQunatity { get; set; }
+        public int ValueInGold { get; set; }
+        public int CanBuySell { get; set; }
+        public int MinPlayerLevel { get; set; }
+        public int Active { get; set; }
+        #endregion
 
         public Item() { }
 
@@ -42,19 +53,6 @@ namespace Adventure
             MinPlayerLevel = minplayerlvl;
             Active = active;
         }
-
-        public int UniqueID { get => uniqueID; set => uniqueID = value; }
-        public string DisplayName { get => displayName; set => displayName = value; }
-        public string AssetName { get => assetName; set => assetName = value; }
-        public int AttackBonus { get => attackBonus; set => attackBonus = value; }
-        public int DefenseBonus { get => defenseBonus; set => defenseBonus = value; }
-        public int HpHealed { get => hpHealed; set => hpHealed = value; }
-        public int MagicHealed { get => magicHealed; set => magicHealed = value; }
-        public int MaxStackQunatity { get => maxStackQunatity; set => maxStackQunatity = value; }
-        public int ValueInGold { get => valueInGold; set => valueInGold = value; }
-        public int CanBuySell { get => canBuySell; set => canBuySell = value; }
-        public int MinPlayerLevel { get => minPlayerLevel; set => minPlayerLevel = value; }
-        public int Active { get => active; set => active = value; }
 
         /// <summary>
         /// Populate a listview with item details
@@ -83,6 +81,96 @@ namespace Adventure
 
             string[] retValue = { DisplayName, outValue.ToString(), UniqueID.ToString() };
             return new System.Windows.Forms.ListViewItem(retValue);
+        }
+
+        /// <summary>
+        /// Loads all items from the local file into the Items list.
+        /// </summary>
+        public static void LoadFromFile()
+        {
+            try
+            {
+                LogWriter.Write(typeof(Item).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Info, "Loading Items from file");
+                Items = new List<Item>();
+                string path = API.storageLocation + "items.json";
+
+                using (StreamReader inputFile = File.OpenText(path))
+                {
+                    JsonSerializer serializer = new JsonSerializer();
+                    JArray response = (JArray)serializer.Deserialize(inputFile, typeof(JObject));
+
+                    foreach (JObject obj in response)
+                    {
+                        Items.Add((Item)obj.ToObject(typeof(Item)));
+                    }
+                }
+
+                if(Items.Count() > 0)
+                {
+                    LogWriter.Write(typeof(Item).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Success, "Items loaded successfully");
+                }
+                LogWriter.Write(typeof(Item).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Warning, "No Items to load");
+            }
+            catch(Exception ex)
+            {
+                LogWriter.Write(typeof(Item).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, ex.Message + "\n\t" + ex.StackTrace);
+            }
+        }
+
+        /// <summary>
+        /// Loads all items from the database into the Items list.
+        /// </summary>
+        public static void LoadFromDatabase()
+        {
+            WebClient client = new WebClient();
+            Items = new List<Item>();
+            string api = Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.ItemReadAPI;
+
+            try
+            {
+                LogWriter.Write(typeof(Item).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Info, "Loading Items from database");
+                string response = client.DownloadString(api);
+                JObject convertedJSON = JObject.Parse(response);
+
+                foreach (var obj in convertedJSON)
+                {
+                    foreach (var item in obj.Value)
+                    {
+                        Items.Add(new Item((int)item.SelectToken("UniqueID"), (string)item.SelectToken("DisplayName"), (string)item.SelectToken("AssetName"), (int)item.SelectToken("AttackBonus"), (int)item.SelectToken("DefenseBonus"), (int)item.SelectToken("HPHealed"), (int)item.SelectToken("MagicHealed"), (int)item.SelectToken("MaxStackQuantity"), (int)item.SelectToken("ValueInGold"), (int)item.SelectToken("CanBuySell"), (int)item.SelectToken("MinPlayerLevel"), (int)item.SelectToken("IsActive")));
+                    }
+                }
+                LogWriter.Write(typeof(Item).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Success, "Items successfully updated from database");
+                Save();
+            }
+            catch (Exception ex)
+            {
+                LogWriter.Write(typeof(Item).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, ex.Message + "\n\t" + ex.StackTrace);
+            }
+        }
+
+        /// <summary>
+        /// Saves the list of items to a local file.
+        /// </summary>
+        private static void Save()
+        {
+            try
+            {
+                string itemsJSON = JsonConvert.SerializeObject(Items);
+
+                // Make sure the path exists before we try to save there
+                if (!Directory.Exists(API.storageLocation))
+                {
+                    Directory.CreateDirectory(API.storageLocation);
+                }
+
+                File.WriteAllText(API.storageLocation + "items.json", itemsJSON);
+
+                LogWriter.Write(typeof(Item).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Success, "Items successfully saved locally");
+            }
+            catch(Exception ex)
+            {
+                LogWriter.Write(typeof(Item).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, ex.Message + "\n\t" + ex.StackTrace);
+            }
         }
     }
 }

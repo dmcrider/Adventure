@@ -1,6 +1,9 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -8,24 +11,8 @@ namespace Adventure
 {
     public class Character
     {
-        // UniqueID, UserID, Name, RaceID, MaxHP, CurrentHP, MaxMagic, CurrentMagic
-        // Strength, Intelligence, Constitution, Gold, Level, ExperiencePoints, IsActive
-        private int uniqueID;
-        private int userID;
-        private string name;
-        private int raceID;
-        private int gender;
-        private int maxHP;
-        private int currentHP;
-        private int maxMagic;
-        private int currentMagic;
-        private int strength;
-        private int intelligence;
-        private int constitution;
         private int gold;
-        private int level;
         private int expPoints;
-        private int active;
 
         private const int DEFAULT_HP = 20;
         private const int DEFAULT_MAGIC = 20;
@@ -71,58 +58,60 @@ namespace Adventure
             Active = DEFAULT_ACTIVE;
         }
 
-        public int UniqueID { get => uniqueID; set => uniqueID = value; }
-        public int UserID { get => userID; set => userID = value; }
-        public string Name { get => name; set => name = value; }
-        public int RaceID { get => raceID; set => raceID = value; }
-        public int MaxHP { get => maxHP; set => maxHP = value; }
-        public int CurrentHP { get => currentHP; set => currentHP = value; }
-        public int MaxMagic { get => maxMagic; set => maxMagic = value; }
-        public int CurrentMagic { get => currentMagic; set => currentMagic = value; }
-        public int Strength { get => strength; set => strength = value; }
-        public int Intelligence { get => intelligence; set => intelligence = value; }
-        public int Constitution { get => constitution; set => constitution = value; }
-        public int Active { get => active; set => active = value; }
-        public int Gender { get => gender; set => gender = value; }
-
-        public int Level { get => level; set => level = value; }
-
+        #region Instance Variables
+        public int UniqueID { get; set; }
+        public int UserID { get; set; }
+        public string Name { get; set; }
+        public int RaceID { get; set; }
+        public int MaxHP { get; set; }
+        public int CurrentHP { get; set; }
+        public int MaxMagic { get; set; }
+        public int CurrentMagic { get; set; }
+        public int Strength { get; set; }
+        public int Intelligence { get; set; }
+        public int Constitution { get; set; }
+        public int Active { get; set; }
+        public int Gender { get; set; }
+        public int Level { get; set; }
         public int Gold
         {
             get => gold;
             set
             {
-                LogWriter.Write("Character", "Gold", LogWriter.LogType.GamePlay, $"Gold changed from {gold} to {value}");
+                LogWriter.Write(typeof(Character).Name, "Gold", LogWriter.LogType.GamePlay, $"Gold changed from {gold} to {value}");
                 gold = value;
 
                 Instances.FormMain.UpdatePlayerInfoUI();
             }
         }
-
         public int ExpPoints
         {
             get => expPoints;
             set
             {
-                LogWriter.Write("Character", "ExpPoints", LogWriter.LogType.GamePlay, $"EXP increased from {expPoints} to {value}");
+                LogWriter.Write(typeof(Character).Name, "ExpPoints", LogWriter.LogType.GamePlay, $"EXP increased from {expPoints} to {value}");
                 expPoints = value;
 
-                if(API.levelList.Count() > 0 && Instances.Character != null)
+                if(CharacterLevel.CharacterLevels.Count() > 0 && Instances.Character != null)
                 {
-                    LevelUp level = API.levelList.Find(x => x.UniqueID == Instances.Character.Level);
+                    CharacterLevel level = CharacterLevel.CharacterLevels.Find(x => x.UniqueID == Instances.Character.Level);
 
                     if (expPoints >= level.ExpNeeded)
                     {
-                        LogWriter.Write("Character", "ExpPoints", LogWriter.LogType.GamePlay, "LEVEL UP!");
+                        LogWriter.Write(typeof(Character).Name, "ExpPoints", LogWriter.LogType.GamePlay, "LEVEL UP!");
                         expPoints -= level.ExpNeeded;
                         new FormLevelUp(level).ShowDialog();
                         // Save after level up
-                        API.SaveProgress(Instances.Player);
+                        Save();
                     }
                     Instances.FormMain.UpdatePlayerInfoUI();
                 }
             }
         }
+        public List<Inventory> Pack {
+            get => Inventory.InventoryList;
+        }
+        #endregion
 
         /// <summary>
         /// Fully heal HP and Magic
@@ -133,9 +122,104 @@ namespace Adventure
             CurrentMagic = MaxMagic;
         }
 
-        public List<Inventory> Inventory
+        /// <summary>
+        /// Gets the Character associated with the parameter from the database
+        /// </summary>
+        /// <returns>Returns a Character object if one is found, null otherwise</returns>
+        public static Character GetCharacter()
         {
-            get => GameController.inventoryList;
+            WebClient client = new WebClient();
+
+            try
+            {
+                string response = client.DownloadString(Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.CharacterReadAPI);
+                JObject convertedJSON = JObject.Parse(response);
+
+                foreach (var item in convertedJSON)
+                {
+                    foreach (JObject obj in item.Value)
+                    {
+                        if (Instances.Player.UniqueID == (int)obj.SelectToken("UserID"))
+                        {
+                            LogWriter.Write(typeof(Character).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Success, "Character was found for Player " + Instances.Player.UniqueID);
+                            return new Character((int)obj.GetValue("UniqueID"), (int)obj.GetValue("UserID"), (string)obj.GetValue("Name"), (int)obj.GetValue("RaceID"), (int)obj.GetValue("MaxHP"), (int)obj.GetValue("CurrentHP"), (int)obj.GetValue("MaxMagic"), (int)obj.GetValue("CurrentMagic"), (int)obj.GetValue("Strength"), (int)obj.GetValue("Intelligence"), (int)obj.GetValue("Constitution"), (int)obj.GetValue("Gold"), (int)obj.GetValue("Level"), (int)obj.GetValue("ExpPoints"), (int)obj.GetValue("IsActive"));
+                        }
+                    }
+                }
+            }
+            catch(Exception ex)
+            {
+                LogWriter.Write(typeof(Character).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, ex.Message);
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Gets a UniqueID for a Character that has not yet been saved to the database
+        /// </summary>
+        /// <param name="character">A Character that has not yet been saved to the database</param>
+        /// <returns>Returns an APIStatusCode</returns>
+        public static APIStatusCode GetUniqueID()
+        {
+            try
+            {
+                WebClient client = new WebClient();
+                string charValues = $"{{\"UserID\":\"{Instances.Player.UniqueID}\",\"Name\":\"{Instances.Character.Name}\",\"RaceID\":\"{Instances.Character.RaceID}\",\"Gender\":\"{Instances.Character.Gender}\",\"MaxHP\":\"{Instances.Character.MaxHP}\",\"CurrentHP\":\"{Instances.Character.CurrentHP}\",\"MaxMagic\":\"{Instances.Character.MaxMagic}\",\"CurrentMagic\":\"{Instances.Character.CurrentMagic}\",\"Strength\":\"{Instances.Character.Strength}\",\"Intelligence\":\"{Instances.Character.Intelligence}\",\"Constitution\":\"{Instances.Character.Constitution}\",\"Gold\":\"{Instances.Character.Gold}\",\"Level\":\"{Instances.Character.Level}\",\"ExpPoints\":\"{Instances.Character.ExpPoints}\"}}";
+                string response = client.UploadString(Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.CharacterCreateAPI, charValues);
+                JObject convertedJSON = JObject.Parse(response);
+
+                foreach (var obj in convertedJSON)
+                {
+                    if (obj.Key == "success")
+                    {
+                        Instances.Character.UniqueID = (int)convertedJSON.GetValue("UniqueID");
+                        LogWriter.Write(typeof(Character).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Success, "Got UniqueID for Character");
+                        return APIStatusCode.SUCCESS;
+                    }
+                    else if (obj.Key == "error")
+                    {
+                        LogWriter.Write(typeof(Character).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, ""+obj.Value);
+                        return APIStatusCode.FAIL;
+                    }
+                }
+                return APIStatusCode.FAIL;
+            }
+            catch (Exception ex)
+            {
+                LogWriter.Write(typeof(Character).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, ex.Message);
+                return APIStatusCode.FAIL;
+            }
+        }
+
+        /// <summary>
+        /// Saves the current Character to the database
+        /// </summary>
+        public void Save()
+        {
+            WebClient client = new WebClient();
+            try
+            {
+                string charValues = $"{{\"UniqueID\":\"{UniqueID}\",\"UserID\":\"{Instances.Player.UniqueID}\",\"Name\":\"{Name}\",\"RaceID\":\"{RaceID}\",\"Gender\":\"{Gender}\",\"MaxHP\":\"{MaxHP}\",\"CurrentHP\":\"{CurrentHP}\",\"MaxMagic\":\"{MaxMagic}\",\"CurrentMagic\":\"{CurrentMagic}\",\"Strength\":\"{Strength}\",\"Intelligence\":\"{Intelligence}\",\"Constitution\":\"{Constitution}\",\"Gold\":\"{Gold}\",\"Level\":\"{Level}\",\"ExpPoints\":\"{ExpPoints}\",\"IsActive\":\"{Active}\"}}";
+                string response = client.UploadString(Properties.Settings.Default.APIBaseAddress + Properties.Settings.Default.CharacterUpdateAPI, charValues);
+                JObject convertedJSON = JObject.Parse(response);
+
+                foreach (var obj in convertedJSON)
+                {
+                    if (obj.Key == "success")
+                    {
+                        LogWriter.Write(typeof(Character).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Success, "Updating character: " + this.Name);
+                    }
+                    else if (obj.Key == "error")
+                    {
+                        LogWriter.Write(typeof(Character).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, "Updating character: " + obj.Value);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                LogWriter.Write(typeof(Character).Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Error, ex.Message);
+            }
         }
     }
 }

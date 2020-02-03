@@ -12,8 +12,6 @@ using System.Threading;
 using System.Windows.Forms;
 using System.Reflection;
 
-//LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, "message");
-
 namespace Adventure
 {
     public partial class FormMain : Form
@@ -36,7 +34,7 @@ namespace Adventure
         public void Save_Click(object sender, EventArgs e)
         {
             LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Info, "Saving Progress");
-            API.SaveProgress(Instances.Player);
+            Instances.Character.Save();
         }
 
         public void Logout_Click(object sender, EventArgs e)
@@ -85,7 +83,7 @@ namespace Adventure
         /// </summary>
         public void UpdatePlayerInfoUI()
         {
-            if(Instances.Character != null && API.levelList.Count() > 0)
+            if(Instances.Character != null && CharacterLevel.CharacterLevels.Count() > 0)
             {
                 LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Info, "Refreshing Player Info.");
                 lblHPValue.Text = Instances.Character.CurrentHP + "/" + Instances.Character.MaxHP;
@@ -95,7 +93,7 @@ namespace Adventure
                 txtINTValue.Text = Instances.Character.Intelligence.ToString();
                 txtCONValue.Text = Instances.Character.Constitution.ToString();
                 lblLevelValue.Text = Instances.Character.Level.ToString();
-                lblEXPValue.Text = Instances.Character.ExpPoints.ToString() + "/" + API.levelList.Find(x => x.UniqueID == Instances.Character.Level).ExpNeeded;
+                lblEXPValue.Text = Instances.Character.ExpPoints.ToString() + "/" + CharacterLevel.CharacterLevels.Find(x => x.UniqueID == Instances.Character.Level).ExpNeeded;
             }
         }
 
@@ -139,7 +137,7 @@ namespace Adventure
             {
                 // Load local data
                 LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Info, "Loading local data");
-                API.LoadData();
+                API.LoadLocalData();
             }
 
             LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Success, "Everything is loaded");
@@ -169,7 +167,7 @@ namespace Adventure
                     LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.GamePlay, "Player must create Character");
                     Instances.FormCharacterCreation.ShowDialog();
 
-                    if (Instances.Player.character == null)
+                    if (Instances.Player.LinkedCharacter == null)
                     {
                         LogWriter.Write(this.GetType().Name, MethodBase.GetCurrentMethod().Name, LogWriter.LogType.Critical, "Player closed creation screen without saving");
                         MessageBox.Show(Properties.Resources.ErrorGeneral);
@@ -181,7 +179,7 @@ namespace Adventure
                 {
                     // Already has a character
                     // Load the inventory
-                    API.LoadInventory(Instances.Character.UniqueID);
+                    Inventory.LoadInventory();
                     UpdatePlayerInfoUI();
                 }
 
@@ -207,14 +205,14 @@ namespace Adventure
 
             // See if there's a character associated with the player
             // Verify the player has an ID - it's necessary for the API call
-            if(Instances.Player != null && Instances.Player.uniqueID != 0)
+            if(Instances.Player != null && Instances.Player.UniqueID != 0)
             {
-                Character character = API.GetCharacter(Instances.Player.uniqueID);
+                Character character = Character.GetCharacter();
 
                 if(character != null)
                 {
                     hasCharacter = true;
-                    Instances.Player.character = Instances.Character = character;
+                    Instances.Player.LinkedCharacter = Instances.Character = character;
                     IsLoading = false;
                 }
             }

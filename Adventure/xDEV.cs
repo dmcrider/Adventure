@@ -34,11 +34,11 @@ namespace Adventure
 
         private void BtnNewQuest_Click(object sender, EventArgs e)
         {
-            DialogResult r = new FormQuestDetail(API.questsList[1]).ShowDialog();
+            DialogResult r = new FormQuestDetail(Quest.Quests[1]).ShowDialog();
 
             if(r == DialogResult.Yes)
             {
-                GameController.AddAcceptedQuest(API.questsList[1], State.NEW);
+                GameController.AddAcceptedQuest(Quest.Quests[1], State.NEW);
             }
         }
 
