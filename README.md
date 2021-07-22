@@ -1,6 +1,1 @@
-# Adventure
-Text-based adventure game.
-
-This game is mainly text-based with minimal graphics for items/some monsters.
-
-For now, if you wish to play the game, you will need to download the source code and compile it yourself. I'm working on making a download-ready .exe file.
+This is not being actively maintained. The idea and passion behind this are now being focused on the [Anagorth](https://dayloncrider.com/projects/anagorth) project.
